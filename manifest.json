@@ -1,0 +1,25 @@
+{
+  "name": "TravelPilot — US Travel Assistant",
+  "short_name": "TravelPilot",
+  "description": "Complete US travel planner for teams visiting from India. Transport, hotels, expenses, alerts & more.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#08090e",
+  "theme_color": "#3d8bfd",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

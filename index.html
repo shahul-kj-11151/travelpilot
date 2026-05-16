@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TravelPilot">
+<meta name="theme-color" content="#3d8bfd">
+<meta name="description" content="Complete US travel planner for teams visiting from India">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<title>TravelPilot — US Travel Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{--bg:#08090e;--s1:#10121f;--s2:#171b2d;--s3:#1e2340;--s4:#252b4a;--bdr:#2a3055;--t1:#eef0f7;--t2:#9499b3;--t3:#5c6180;--acc:#3d8bfd;--acc2:#7c5cfc;--accg:rgba(61,139,253,.12);--grn:#00d68f;--grng:rgba(0,214,143,.08);--ylw:#ffb347;--ylwg:rgba(255,179,71,.08);--red:#ff6b6b;--redg:rgba(255,107,107,.08);--r:14px;--rs:10px;--mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 25% 15%,rgba(61,139,253,.04) 0%,transparent 55%),radial-gradient(ellipse at 75% 85%,rgba(124,92,252,.03) 0%,transparent 55%);pointer-events:none;z-index:0;-webkit-transform:translateZ(0)}
+.app{max-width:860px;margin:0 auto;padding:12px;position:relative;z-index:1}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-in{animation:fadeUp .45s ease}
+
+/* SETUP */
+.setup-wrap{display:flex;align-items:center;justify-content:center;min-height:92vh}
+.setup{background:var(--s1);border:1px solid var(--bdr);border-radius:22px;padding:44px 32px;width:100%;max-width:500px;text-align:center}
+.setup-logo{font-size:56px;margin-bottom:10px}
+.setup h2{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.setup h2 span{background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.setup .sub{color:var(--t2);font-size:13px;margin:6px 0 28px;line-height:1.5}
+
+/* FORMS */
+.fg{margin-bottom:16px;text-align:left}
+.fr{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.fr>div{flex:1;min-width:140px}
+label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+input,textarea,select{width:100%;padding:10px 13px;background:var(--s2);border:1.5px solid var(--bdr);border-radius:var(--rs);color:var(--t1);font-family:inherit;font-size:14px;outline:none;transition:border .2s,box-shadow .2s}
+input:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accg)}
+textarea{min-height:48px;resize:vertical}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 14px;border-radius:18px;border:1.5px solid var(--bdr);background:var(--s2);color:var(--t2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;font-family:inherit}
+.chip:hover{border-color:var(--acc);color:var(--t1)}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:var(--rs);border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:all .2s}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-p{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 4px 18px rgba(61,139,253,.25)}
+.btn-p:hover:not(:disabled){box-shadow:0 6px 26px rgba(61,139,253,.35);transform:translateY(-1px)}
+.btn-g{background:var(--s2);color:var(--t2);border:1px solid var(--bdr)}
+.btn-g:hover{background:var(--s3);color:var(--t1)}
+.btn-s{padding:5px 12px;font-size:11px;border-radius:7px}
+
+/* HEADER */
+.hdr{padding:8px 0 10px;display:flex;align-items:center;justify-content:space-between}
+.hdr h1{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.hdr h1 em{font-style:normal;background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-size:12px;color:var(--t2);margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:3px;background:var(--s1);border-radius:var(--r);padding:3px;margin-bottom:14px;border:1px solid var(--bdr);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;padding:9px 4px;border-radius:var(--rs);border:none;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--t3);font-family:inherit;transition:all .2s;white-space:nowrap;position:relative;min-width:fit-content}
+.tab:hover{color:var(--t2)}
+.tab.on{background:var(--acc);color:#fff;box-shadow:0 2px 10px rgba(61,139,253,.3)}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;margin-bottom:14px;animation:fadeUp .35s ease}
+.card-t{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section{margin-top:14px;padding-top:12px;border-top:1px solid var(--bdr)}
+.section-t{font-size:13px;font-weight:700;margin-bottom:8px}
+
+/* TRANSPORT */
+.tc{padding:10px 12px;border-radius:var(--rs);background:var(--s2);margin-bottom:7px;border-left:4px solid var(--bdr);position:relative}
+.tc.rec{background:var(--grng);border-left-color:var(--grn)}
+.rec-badge{position:absolute;top:7px;right:8px;font-size:9px;font-weight:700;color:var(--grn);background:rgba(0,214,143,.12);padding:2px 7px;border-radius:7px;font-family:var(--mono)}
+.tc-head{display:flex;align-items:center;gap:10px}
+.tc-icon{font-size:20px}
+.tc-mode{font-size:13px;font-weight:700}
+.tc-dur{font-size:11px;color:var(--t2)}
+.tc-cost{margin-left:auto;font-size:13px;font-weight:700;color:var(--grn);font-family:var(--mono)}
+.tc-note{font-size:11px;color:var(--t3);margin-top:5px}
+
+/* HOTELS */
+.hr{display:flex;gap:8px;padding:7px 0;font-size:12px;align-items:flex-start}
+.hr strong{color:var(--t1)}
+.h-ex{font-size:11px;color:var(--t3)}
+.h-tot{font-size:11px;color:var(--grn);font-weight:600;margin-top:1px}
+.h-tip{font-size:11px;color:var(--ylw);background:var(--ylwg);padding:7px 10px;border-radius:7px;margin-top:8px}
+
+/* STOP LIST */
+.sl{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.sl:last-child{border-bottom:none}
+.sl-l{display:flex;align-items:center;gap:10px}
+.sl-n{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sl-c{font-weight:600;font-size:13px}
+.sl-d{font-size:11px;color:var(--t2);margin-top:1px}
+.sl-a{display:flex;gap:3px}
+.ib{width:26px;height:26px;border-radius:7px;border:1px solid var(--bdr);background:var(--s2);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.ib:hover{background:var(--s3);color:var(--t1)}
+.ib.x:hover{color:var(--red);border-color:var(--red)}
+
+/* ITIN */
+.itin-h{text-align:center;margin-bottom:20px}
+.itin-h h2{font-size:18px;font-weight:800}
+.itin-sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.itin-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0}
+.itin-city{font-size:17px;font-weight:800}
+.itin-dates{font-size:12px;color:var(--t2);margin-top:2px}
+.nights-b{display:inline-block;background:var(--accg);color:var(--acc);border-radius:8px;padding:1px 8px;font-size:10px;font-weight:600;margin-left:6px}
+.dist-b{display:inline-block;background:rgba(124,92,252,.12);color:var(--acc2);border-radius:7px;padding:2px 9px;font-size:11px;font-weight:600;margin-bottom:8px;font-family:var(--mono)}
+.detail{font-size:12px;color:var(--t2);padding:4px 0;line-height:1.5}
+.detail strong{color:var(--t1)}
+.connector{display:flex;align-items:center;justify-content:center;padding:6px 0;color:var(--t3);font-size:18px}
+
+/* SUMMARY */
+.sg{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.si{flex:1;min-width:90px;text-align:center;background:var(--s2);border-radius:var(--rs);padding:16px 8px;border:1px solid var(--bdr)}
+.si-v{font-size:28px;font-weight:800;color:var(--acc);font-family:var(--mono)}
+.si-l{font-size:11px;color:var(--t2);margin-top:3px}
+.tips{background:var(--s2);border-radius:var(--rs);padding:14px;font-size:12px;line-height:1.8;border:1px solid var(--bdr)}
+.tips strong{color:var(--ylw)}
+.tips ul{margin:6px 0 0 16px;padding:0}
+.tips li{color:var(--t2);margin-bottom:2px}
+
+/* ALERTS */
+.al{padding:11px 12px;border-radius:var(--rs);background:var(--s2);margin-bottom:7px;border-left:4px solid var(--bdr)}
+.al.urgent{border-left-color:var(--red);background:var(--redg)}
+.al.warning{border-left-color:var(--ylw);background:var(--ylwg)}
+.al.info{border-left-color:var(--acc);background:var(--accg)}
+.al-h{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.al-b{font-size:12px;color:var(--t2);margin-top:5px;white-space:pre-line;line-height:1.6}
+.dbtn{background:none;border:none;cursor:pointer;font-size:15px;color:var(--t3);padding:2px 5px}
+.dbtn:hover{color:var(--t1)}
+
+/* CHECKLIST */
+.cc{font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 7px;padding-top:10px;border-top:1px solid var(--bdr)}
+.cc:first-child{margin-top:0;border-top:none;padding-top:0}
+.ci{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:12px;cursor:pointer;color:var(--t2);line-height:1.4}
+.ci:hover{color:var(--t1)}
+.ci input{width:15px;height:15px;accent-color:var(--acc);cursor:pointer;margin-top:1px;flex-shrink:0}
+.ci .done{text-decoration:line-through;color:var(--t3)}
+
+/* GUIDE SECTIONS */
+.guide-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.guide-card h3{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.guide-card p,.guide-card li{font-size:12px;color:var(--t2);line-height:1.7}
+.guide-card ul{margin:6px 0 0 16px;padding:0}
+.guide-card li{margin-bottom:3px}
+.guide-card .step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.guide-card .step:last-child{border-bottom:none}
+.guide-card .step-n{width:24px;height:24px;border-radius:50%;background:var(--accg);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.guide-card .step-c{font-size:12px;color:var(--t2);line-height:1.5}
+.guide-card .step-c strong{color:var(--t1)}
+.callout{background:var(--s2);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:11px;color:var(--t2);border-left:3px solid var(--acc)}
+.callout.warn{border-left-color:var(--ylw);background:var(--ylwg)}
+.callout.danger{border-left-color:var(--red);background:var(--redg)}
+.weather-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:10px 0}
+.w-item{background:var(--s2);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--bdr)}
+.w-item .w-season{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px}
+.w-item .w-temp{font-size:16px;font-weight:800;margin:4px 0}
+.w-item .w-desc{font-size:10px;color:var(--t3)}
+
+/* DOWNLOAD */
+.dl-bar{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+
+/* EXPENSE TRACKER */
+.exp-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px}
+.exp-sbox{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--rs);padding:12px 10px;text-align:center}
+.exp-sbox .ev{font-size:22px;font-weight:800;font-family:var(--mono)}
+.exp-sbox .ev.green{color:var(--grn)}.exp-sbox .ev.blue{color:var(--acc)}.exp-sbox .ev.yellow{color:var(--ylw)}
+.exp-sbox .el{font-size:10px;color:var(--t3);margin-top:2px}
+.exp-form{background:var(--s2);border-radius:var(--rs);padding:14px;margin-bottom:14px;border:1px solid var(--bdr)}
+.exp-list-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);align-items:flex-start;animation:fadeUp .3s ease}
+.exp-list-item:last-child{border-bottom:none}
+.exp-cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.exp-info{flex:1;min-width:0}
+.exp-info .exp-desc{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-info .exp-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.exp-amt{text-align:right;flex-shrink:0}
+.exp-amt .exp-usd{font-size:14px;font-weight:700;color:var(--grn);font-family:var(--mono)}
+.exp-amt .exp-inr{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.exp-receipt-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;cursor:pointer;border:1px solid var(--bdr);flex-shrink:0}
+.exp-actions{display:flex;gap:3px;flex-shrink:0;align-items:center}
+.receipt-preview{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer}
+.receipt-preview img{max-width:100%;max-height:90vh;border-radius:10px}
+.camera-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rs);border:1.5px dashed var(--bdr);background:var(--s3);color:var(--t2);cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;width:100%}
+.camera-btn:hover{border-color:var(--acc);color:var(--t1)}
+.camera-btn.has-img{border-color:var(--grn);border-style:solid;color:var(--grn)}
+.converter-box{background:var(--s2);border-radius:var(--rs);padding:14px;border:1px solid var(--bdr);margin-bottom:14px}
+.conv-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.conv-row input{flex:1}
+.conv-row .conv-label{font-size:12px;font-weight:600;color:var(--t2);width:40px;flex-shrink:0}
+.conv-result{font-size:20px;font-weight:800;color:var(--acc);font-family:var(--mono);text-align:center;padding:8px}
+.exp-filter-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.exp-filter-bar select{width:auto;min-width:120px;padding:6px 10px;font-size:12px}
+
+/* ROUTE OPTIMIZER */
+.route-card{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--rs);padding:14px;margin-bottom:10px}
+.route-card.best{border-color:var(--grn);background:var(--grng)}
+.route-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.route-label.best{color:var(--grn)}.route-label.alt{color:var(--ylw)}
+.route-path{font-size:13px;font-weight:600;margin-bottom:4px}
+.route-stats{display:flex;gap:14px;font-size:11px;color:var(--t2)}
+.route-stats span{font-weight:600;color:var(--t1)}
+.hotel-card{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--rs);padding:12px;margin-bottom:8px}
+.hotel-name{font-size:13px;font-weight:700}
+.hotel-price{font-size:13px;font-weight:700;color:var(--grn);font-family:var(--mono)}
+.hotel-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.hotel-link{display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accg);color:var(--acc);font-size:10px;font-weight:600;text-decoration:none;margin-top:4px;transition:all .2s}
+.hotel-link:hover{background:var(--acc);color:#fff}
+.attire-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.attire-card{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--rs);padding:12px;text-align:center}
+.attire-card .att-icon{font-size:42px;margin-bottom:6px}
+.attire-card h4{font-size:12px;font-weight:700;margin-bottom:4px}
+.attire-card p{font-size:10px;color:var(--t3);line-height:1.4}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--t3)}
+.empty-i{font-size:48px;margin-bottom:10px}
+
+@media(max-width:600px){
+  .fr{flex-direction:column;gap:8px}
+  .sg{flex-direction:column}
+  .tab{font-size:10px;padding:8px 3px}
+  .setup{padding:28px 18px}
+  .weather-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+const AIRPORTS={"new york":["JFK — John F. Kennedy Intl","LGA — LaGuardia","EWR — Newark Liberty"],"los angeles":["LAX — Los Angeles Intl"],"chicago":["ORD — O'Hare Intl","MDW — Midway"],"detroit":["DTW — Detroit Metro Wayne County"],"michigan":["DTW — Detroit Metro","GRR — Gerald R. Ford (Grand Rapids)","FNT — Bishop (Flint)","LAN — Capital Region (Lansing)"],"maine":["PWM — Portland Intl Jetport","BGR — Bangor Intl"],"san francisco":["SFO — San Francisco Intl","OAK — Oakland Intl"],"boston":["BOS — Logan Intl"],"seattle":["SEA — Seattle-Tacoma"],"dallas":["DFW — Dallas/Fort Worth","DAL — Love Field"],"atlanta":["ATL — Hartsfield-Jackson"],"denver":["DEN — Denver Intl"],"miami":["MIA — Miami Intl","FLL — Fort Lauderdale"],"houston":["IAH — George Bush","HOU — Hobby"],"phoenix":["PHX — Sky Harbor"],"washington dc":["IAD — Dulles","DCA — Reagan National"],"philadelphia":["PHL — Philadelphia Intl"],"minneapolis":["MSP — Minneapolis-St. Paul"],"orlando":["MCO — Orlando Intl"],"portland":["PDX — Portland Intl"],"portland maine":["PWM — Portland Intl Jetport"],"nashville":["BNA — Nashville Intl"],"austin":["AUS — Austin-Bergstrom"],"las vegas":["LAS — Harry Reid Intl"],"san diego":["SAN — San Diego Intl"],"grand rapids":["GRR — Gerald R. Ford"],"bangor":["BGR — Bangor Intl"],"charlotte":["CLT — Charlotte Douglas"]};
+const COORDS={"new york":{lat:40.71,lon:-74.01},"michigan":{lat:42.73,lon:-84.56},"detroit":{lat:42.33,lon:-83.05},"maine":{lat:43.66,lon:-70.26},"portland maine":{lat:43.66,lon:-70.26},"los angeles":{lat:33.94,lon:-118.41},"chicago":{lat:41.88,lon:-87.63},"san francisco":{lat:37.77,lon:-122.42},"boston":{lat:42.36,lon:-71.06},"seattle":{lat:47.61,lon:-122.33},"dallas":{lat:32.78,lon:-96.80},"atlanta":{lat:33.75,lon:-84.39},"denver":{lat:39.74,lon:-104.99},"miami":{lat:25.76,lon:-80.19},"houston":{lat:29.76,lon:-95.37},"phoenix":{lat:33.45,lon:-112.07},"washington dc":{lat:38.91,lon:-77.04},"philadelphia":{lat:39.95,lon:-75.17},"minneapolis":{lat:44.98,lon:-93.27},"charlotte":{lat:35.23,lon:-80.84},"orlando":{lat:28.54,lon:-81.38},"portland":{lat:45.52,lon:-122.68},"nashville":{lat:36.16,lon:-86.78},"austin":{lat:30.27,lon:-97.74},"las vegas":{lat:36.17,lon:-115.14},"san diego":{lat:32.72,lon:-117.16},"grand rapids":{lat:42.96,lon:-85.67},"bangor":{lat:44.80,lon:-68.77}};
+const HOTELS=[{tier:"Budget",range:"$60–$100/night",ex:"Motel 6, Super 8, Red Roof Inn, La Quinta",icon:"🏨",lo:60,hi:100,dep:"$0–$50"},{tier:"Mid-Range",range:"$100–$180/night",ex:"Hampton Inn, Holiday Inn Express, Fairfield Inn, Best Western",icon:"🏢",lo:100,hi:180,dep:"$50–$100"},{tier:"Business",range:"$150–$300/night",ex:"Courtyard Marriott, Hilton Garden Inn, Hyatt Place, AC Hotels",icon:"🏬",lo:150,hi:300,dep:"$75–$200"}];
+const TRANSPORT_M={flight:{i:"✈️",l:"Flight"},car:{i:"🚗",l:"Drive"},train:{i:"🚆",l:"Train"},bus:{i:"🚌",l:"Bus"},uber:{i:"🚕",l:"Uber/Taxi"},transit:{i:"🚇",l:"Transit"}};
+
+// ─── HOTEL DATABASE ────────────────────────────────────────────
+const HOTEL_DB={
+  "new york":[
+    {name:"Pod Times Square",tier:"budget",price:"$99–$150",rating:"8.0",area:"Midtown",dep:"$50",features:"Compact rooms, rooftop bar, great location",book:"https://www.booking.com/searchresults.html?ss=Pod+Times+Square+New+York"},
+    {name:"Hampton Inn Manhattan/Times Square Central",tier:"mid",price:"$170–$250",rating:"8.5",area:"Midtown",dep:"$75",features:"Free breakfast, fitness center, clean rooms",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Times+Square+New+York"},
+    {name:"Courtyard by Marriott Midtown East",tier:"mid",price:"$180–$280",rating:"8.6",area:"Midtown East",dep:"$100",features:"Business center, restaurant, modern rooms",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Marriott+Midtown+East+New+York"},
+    {name:"Hilton Garden Inn Midtown Park Ave",tier:"business",price:"$200–$320",rating:"8.7",area:"Midtown",dep:"$100",features:"Restaurant, pool, business center, great views",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Midtown+New+York"},
+    {name:"Hyatt Place New York/Chelsea",tier:"business",price:"$190–$300",rating:"8.8",area:"Chelsea",dep:"$100",features:"Free breakfast, modern, gallery district location",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Chelsea+New+York"},
+    {name:"Holiday Inn Express Manhattan Midtown",tier:"mid",price:"$150–$220",rating:"8.2",area:"Midtown West",dep:"$50",features:"Free breakfast, clean, near Penn Station",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Express+Midtown+New+York"},
+  ],
+  "michigan":[
+    {name:"Hampton Inn Detroit Dearborn",tier:"budget",price:"$110–$150",rating:"8.8",area:"Dearborn",dep:"$50",features:"Free breakfast, pool, free shuttle, near Ford HQ",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Dearborn+Detroit"},
+    {name:"Courtyard by Marriott Detroit Downtown",tier:"mid",price:"$140–$220",rating:"8.6",area:"Downtown Detroit",dep:"$75",features:"Indoor pool, near Little Caesars Arena, modern",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Marriott+Downtown+Detroit"},
+    {name:"Hilton Garden Inn Detroit Downtown",tier:"business",price:"$150–$250",rating:"8.5",area:"Downtown",dep:"$100",features:"Restaurant, business center, walkable downtown",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Downtown+Detroit"},
+    {name:"Hampton Inn Auburn Hills",tier:"budget",price:"$95–$140",rating:"8.4",area:"Auburn Hills",dep:"$75",features:"Free breakfast, pool, free shuttle within 7mi",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Auburn+Hills+Detroit"},
+    {name:"Holiday Inn Express Dearborn",tier:"mid",price:"$120–$170",rating:"8.1",area:"Dearborn",dep:"$50",features:"Free breakfast, near Henry Ford Museum",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Express+Dearborn+Detroit"},
+  ],
+  "detroit":[
+    {name:"Hampton Inn Detroit Dearborn",tier:"budget",price:"$110–$150",rating:"8.8",area:"Dearborn",dep:"$50",features:"Free breakfast, pool, free shuttle",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Dearborn+Detroit"},
+    {name:"Courtyard by Marriott Detroit Downtown",tier:"mid",price:"$140–$220",rating:"8.6",area:"Downtown",dep:"$75",features:"Indoor pool, modern rooms, great location",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Marriott+Downtown+Detroit"},
+    {name:"Hilton Garden Inn Detroit Downtown",tier:"business",price:"$150–$250",rating:"8.5",area:"Downtown",dep:"$100",features:"Restaurant, fitness center, business center",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Downtown+Detroit"},
+  ],
+  "maine":[
+    {name:"Hampton Inn Portland Downtown Waterfront",tier:"mid",price:"$160–$240",rating:"8.5",area:"Old Port",dep:"$75",features:"Free breakfast, pool, waterfront views, walkable",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Portland+Waterfront+Maine"},
+    {name:"Holiday Inn Portland By The Bay",tier:"mid",price:"$130–$200",rating:"8.0",area:"Downtown",dep:"$50",features:"Restaurant, pool, near Old Port, bay views",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Portland+By+The+Bay+Maine"},
+    {name:"Hampton Inn Portland Airport",tier:"budget",price:"$110–$160",rating:"8.4",area:"South Portland",dep:"$50",features:"Free breakfast, pool, near Maine Mall, airport shuttle",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Portland+Airport+Maine"},
+    {name:"Hyatt Place Portland Old Port",tier:"business",price:"$180–$280",rating:"8.7",area:"Old Port",dep:"$100",features:"Free breakfast, modern, downtown location",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Portland+Old+Port+Maine"},
+    {name:"Embassy Suites Portland",tier:"business",price:"$170–$260",rating:"8.3",area:"Near Airport",dep:"$100",features:"Suite-style, free breakfast, airport shuttle, pool",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Portland+Maine"},
+  ],
+  "portland maine":[
+    {name:"Hampton Inn Portland Downtown Waterfront",tier:"mid",price:"$160–$240",rating:"8.5",area:"Old Port",dep:"$75",features:"Free breakfast, pool, waterfront",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Portland+Waterfront+Maine"},
+    {name:"Holiday Inn Portland By The Bay",tier:"mid",price:"$130–$200",rating:"8.0",area:"Downtown",dep:"$50",features:"Restaurant, pool, bay views",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Portland+By+The+Bay+Maine"},
+  ],
+};
+
+function getHotels(city){
+  const k=city.toLowerCase().trim();
+  const m=Object.keys(HOTEL_DB).find(a=>k.includes(a)||a.includes(k));
+  return m?HOTEL_DB[m]:null;
+}
+
+function hotelBookingLink(city,checkin,checkout){
+  return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city)}&checkin=${checkin}&checkout=${checkout}&group_adults=1&no_rooms=1`;
+}
+
+// ─── ROUTE OPTIMIZER ───────────────────────────────────────────
+function optimizeRoute(stops){
+  if(stops.length<=2)return{best:stops,alternatives:[]};
+  
+  // Generate permutations for small sets, nearest-neighbor for larger
+  const perms=stops.length<=7?getPermutations(stops):[];
+  
+  if(perms.length>0){
+    // Evaluate all permutations
+    const scored=perms.map(p=>({
+      route:p,
+      totalDist:calcRouteDist(p),
+      backtrack:calcBacktracking(p)
+    }));
+    scored.sort((a,b)=>a.totalDist-b.totalDist);
+    return {
+      best:scored[0].route,
+      bestDist:scored[0].totalDist,
+      alternatives:scored.slice(1,3).map(s=>({route:s.route,dist:s.totalDist}))
+    };
+  } else {
+    // Nearest neighbor heuristic
+    const nn=nearestNeighborRoute(stops);
+    return {best:nn.route,bestDist:nn.dist,alternatives:[]};
+  }
+}
+
+function getPermutations(arr){
+  if(arr.length<=1)return[arr];
+  const result=[];
+  for(let i=0;i<arr.length;i++){
+    const rest=[...arr.slice(0,i),...arr.slice(i+1)];
+    for(const perm of getPermutations(rest)){result.push([arr[i],...perm])}
+  }
+  return result;
+}
+
+function calcRouteDist(stops){
+  let total=0;
+  for(let i=0;i<stops.length-1;i++){total+=dist(stops[i].city,stops[i+1].city)}
+  return total;
+}
+
+function calcBacktracking(stops){
+  // Check if we're going east-then-west-then-east etc.
+  let backtrack=0;
+  for(let i=1;i<stops.length-1;i++){
+    const prev=getC(stops[i-1].city),curr=getC(stops[i].city),next=getC(stops[i+1].city);
+    const dir1=curr.lon-prev.lon;const dir2=next.lon-curr.lon;
+    if((dir1>0&&dir2<0)||(dir1<0&&dir2>0))backtrack++;
+  }
+  return backtrack;
+}
+
+function nearestNeighborRoute(stops){
+  const remaining=[...stops];const route=[remaining.shift()];
+  while(remaining.length>0){
+    const last=route[route.length-1];
+    let nearest=0,nearestDist=Infinity;
+    remaining.forEach((s,i)=>{
+      const d=dist(last.city,s.city);
+      if(d<nearestDist){nearestDist=d;nearest=i}
+    });
+    route.push(remaining.splice(nearest,1)[0]);
+  }
+  return {route,dist:calcRouteDist(route)};
+}
+const FAMOUS_PLACES={"new york":"Statue of Liberty, Times Square, Central Park, Empire State Building, Brooklyn Bridge, Top of the Rock, 9/11 Memorial, Metropolitan Museum","michigan":"Mackinac Island, Sleeping Bear Dunes, Henry Ford Museum, Pictured Rocks, Great Lakes shoreline, Ann Arbor, Frankenmuth","maine":"Acadia National Park, Portland Old Port, Lighthouse Trail, Bar Harbor, Camden, Kennebunkport, Lobster shacks","detroit":"Detroit Institute of Arts, Motown Museum, Belle Isle, Ford Piquette Plant, Eastern Market","boston":"Freedom Trail, Fenway Park, Harvard Yard, Boston Common, Faneuil Hall","chicago":"Millennium Park, Art Institute, Willis Tower Skydeck, Navy Pier, Magnificent Mile","san francisco":"Golden Gate Bridge, Alcatraz, Fisherman's Wharf, Chinatown, Cable Cars","los angeles":"Hollywood, Santa Monica Pier, Griffith Observatory, Getty Center","washington dc":"National Mall, Smithsonian Museums, Lincoln Memorial, Capitol Building","miami":"South Beach, Wynwood Walls, Everglades, Little Havana","dallas":"Dallas Arboretum, Sixth Floor Museum, Deep Ellum, Perot Museum","seattle":"Pike Place Market, Space Needle, Museum of Pop Culture","denver":"Red Rocks, Rocky Mountain NP, Denver Art Museum","atlanta":"Georgia Aquarium, MLK Jr. Historic Site, Piedmont Park"};
+const INDIAN_FOOD={"new york":"Jackson Heights (Queens) — NYC's Little India. Dozens of Indian restaurants, grocery stores with Indian brands. Also try Curry Hill (Lexington Ave, 27th–30th St). Uber Eats/DoorDash have many Indian options.","michigan":"Troy & Canton have Indian grocery stores (Patel Brothers). Restaurants: Shalimar, Cardamom, Royal Indian Cuisine in Ann Arbor/Detroit area.","maine":"Limited but available: Taste of India (Bangor), Bombay Mahal & Tandoor Restaurant (Portland), Shere Punjab (Brunswick). Carry instant foods as backup.","detroit":"Patel Brothers grocery in Troy. Restaurants in Troy/Novi area. Indian community centered around Troy, MI.","boston":"Cambridge has multiple Indian restaurants. Patel Brothers in Waltham. Large Indian community.","chicago":"Devon Avenue — Chicago's Indian corridor. Dozens of restaurants and Indian grocery stores.","san francisco":"Sunnyvale/Santa Clara for South Indian food. Curry Up Now chain. Large Indian community in Bay Area.","los angeles":"Artesia (Little India) — Indian restaurants, grocery stores. Pioneer Boulevard."};
+
+function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function getC(c){return COORDS[c.toLowerCase().trim()]||{lat:40.7,lon:-74.0}}
+function dist(a,b){const f=getC(a),t=getC(b),R=3959,dLat=(t.lat-f.lat)*Math.PI/180,dLon=(t.lon-f.lon)*Math.PI/180,x=Math.sin(dLat/2)**2+Math.cos(f.lat*Math.PI/180)*Math.cos(t.lat*Math.PI/180)*Math.sin(dLon/2)**2;return Math.round(R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)))}
+function airport(c){const k=c.toLowerCase().trim(),m=Object.keys(AIRPORTS).find(a=>k.includes(a)||a.includes(k));return m?AIRPORTS[m]:["Search Google Flights for nearest airport"]}
+function isAmtrak(a,b){const c=["new york","boston","philadelphia","washington dc","chicago","detroit"];const f=a.toLowerCase(),t=b.toLowerCase();return c.some(x=>f.includes(x))&&c.some(x=>t.includes(x))}
+function famousPlaces(c){const k=c.toLowerCase().trim();const m=Object.keys(FAMOUS_PLACES).find(a=>k.includes(a)||a.includes(k));return m?FAMOUS_PLACES[m]:"Search Google for 'things to do in "+c+"'"}
+function indianFood(c){const k=c.toLowerCase().trim();const m=Object.keys(INDIAN_FOOD).find(a=>k.includes(a)||a.includes(k));return m?INDIAN_FOOD[m]:"Search Google Maps for 'Indian restaurant near "+c+"'. Carry instant noodles, MTR ready meals, and spice packs as backup."}
+function fD(d){return new Date(d+"T00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
+function fDL(d){return new Date(d+"T00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}
+function nights(a,d){return Math.max(1,Math.ceil((new Date(d)-new Date(a))/864e5))}
+
+function estTransport(from,to){const d=dist(from,to);const r=[];
+  if(d>250)r.push({mode:"flight",dur:`${Math.round(d/450*60+120)} min total`,cost:`$${Math.round(80+d*.12)}–$${Math.round(150+d*.22)}`,rec:d>400,note:`Book on Google Flights or Kayak. Airports: ${airport(from)[0]} → ${airport(to)[0]}. Arrive 2 hrs early.`,so:d>400?1:3});
+  r.push({mode:"car",dur:`${Math.round(d/55)}h ${Math.round(d%55/55*60)}m`,cost:`Gas: $${Math.round(d*.15)}–$${Math.round(d*.25)} · Rental: ~$${Math.round(d*.35+45)}/day`,rec:d>=50&&d<=400,note:d>300?"Long drive — consider overnight stop. Rent via Enterprise/Hertz. Need valid license.":"Direct drive OK. Rent via Enterprise, Hertz, or Turo app. Valid license needed.",so:d>=50&&d<=400?1:4});
+  if(d<50){r.push({mode:"uber",dur:`${Math.round(d/30*60)} min`,cost:`$${Math.round(15+d*1.5)}–$${Math.round(25+d*2.2)}`,rec:d<30,note:"Use Uber or Lyft app. UberX = cheapest. Tip 15–20% is customary.",so:d<30?1:2});
+    r.push({mode:"transit",dur:`${Math.round(d/15*60)} min`,cost:`$2.75–$${Math.round(5+d*.3)}`,rec:d<15,note:"Use Google Maps for transit routes. NYC: MetroCard/OMNY. Most cities have bus.",so:d<15?1:2})}
+  if(d>80&&d<600)r.push({mode:"bus",dur:`${Math.round(d/45)}h ${Math.round(d%45/45*60)}m`,cost:`$${Math.round(15+d*.06)}–$${Math.round(30+d*.12)}`,rec:false,note:"Greyhound or FlixBus. Book early on Wanderu.com for best rates.",so:5});
+  if(d>100&&d<500&&isAmtrak(from,to))r.push({mode:"train",dur:`${Math.round(d/60)}h ${Math.round(d%60/60*60)}m`,cost:`$${Math.round(30+d*.1)}–$${Math.round(60+d*.2)}`,rec:d<300,note:"Amtrak Northeast Corridor. Book at amtrak.com. Comfortable, WiFi, power outlets.",so:d<300?2:4});
+  return r.sort((a,b)=>a.so-b.so)}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let S={screen:"setup",trip:null,stops:[],tab:"guide",dismissed:new Set(),checked:new Set(),expenses:[],expRate:84.5,expFilter:"all",receiptPreview:null};
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════
+function render(){const a=document.getElementById("app");if(S.screen==="setup"){a.innerHTML=rSetup();bSetup()}else{a.innerHTML=rMain();bMain()}}
+
+function rSetup(){return `<div class="setup-wrap"><div class="setup fade-in">
+  <div class="setup-logo">🛫</div>
+  <h2><span>TravelPilot</span></h2>
+  <p class="sub">Your complete US travel assistant. Built for teams visiting the US from India.<br>Works on iPhone, Android & Desktop — save this page to your home screen.</p>
+  <div class="fg"><label>Your Name</label><input id="inp-n" placeholder="e.g. Rajesh Kumar"></div>
+  <div class="fg"><label>Trip Start Date</label><input id="inp-d" type="date"></div>
+  <div class="fg"><label>Departing From</label><input id="inp-from" value="Chennai (MAA)" placeholder="e.g. Chennai (MAA)"></div>
+  <div class="fg"><label>Landing At</label>
+    <select id="inp-land"><option value="JFK">New York — JFK</option><option value="EWR">New York — Newark</option><option value="ORD">Chicago — O'Hare</option><option value="SFO">San Francisco — SFO</option><option value="LAX">Los Angeles — LAX</option><option value="IAD">Washington DC — Dulles</option><option value="BOS">Boston — Logan</option><option value="ATL">Atlanta — ATL</option><option value="DFW">Dallas — DFW</option><option value="SEA">Seattle — SEA</option></select></div>
+  <div class="fg"><label>Trip Duration</label><div class="chips" id="dur-ch">
+    <button class="chip on" data-v="1week">1 Week</button><button class="chip" data-v="2weeks">2 Weeks</button><button class="chip" data-v="1month">1 Month</button><button class="chip" data-v="2months">2 Months</button>
+  </div></div>
+  <button class="btn btn-p" style="width:100%;margin-top:14px" id="btn-go">Launch TravelPilot →</button>
+</div></div>`}
+
+function bSetup(){let dur="1week";
+  document.querySelectorAll("#dur-ch .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#dur-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");dur=c.dataset.v});
+  document.getElementById("btn-go").onclick=()=>{
+    const n=document.getElementById("inp-n").value.trim(),d=document.getElementById("inp-d").value,from=document.getElementById("inp-from").value.trim(),land=document.getElementById("inp-land").value;
+    if(!n||!d)return alert("Please enter your name and trip start date.");
+    S.trip={name:n,startDate:d,from,land,duration:dur};S.screen="main";render()}}
+
+function rMain(){
+  const tabs=[{k:"guide",l:"📖 Guide"},{k:"plan",l:"📍 Stops"},{k:"itin",l:"🗺️ Itinerary"},{k:"expenses",l:"💰 Expenses"},{k:"alerts",l:"🔔 Alerts"},{k:"check",l:"✅ Checklist"}];
+  let content="";
+  if(S.tab==="guide")content=rGuide();
+  else if(S.tab==="plan")content=rPlan();
+  else if(S.tab==="itin")content=rItin();
+  else if(S.tab==="expenses")content=rExpenses();
+  else if(S.tab==="alerts")content=rAlerts();
+  else if(S.tab==="check")content=rChecklist();
+  return `<div class="hdr"><div><h1>🛫 <em>TravelPilot</em></h1><p class="hdr-sub">${esc(S.trip.name)} · ${S.stops.length} stop${S.stops.length!==1?'s':''} · ${S.trip.from} → ${S.trip.land}</p></div></div>
+  <div class="tabs">${tabs.map(t=>`<button class="tab ${S.tab===t.k?'on':''}" data-tab="${t.k}">${t.l}</button>`).join("")}</div>${content}`}
+
+// ─── GUIDE TAB ─────────────────────────────────────────────────
+function rGuide(){return `
+<div class="guide-card fade-in"><h3>🛬 Step-by-Step: Landing at ${S.trip.land}</h3>
+  <div class="step"><div class="step-n">1</div><div class="step-c"><strong>On the flight:</strong> Fill the customs declaration form (blue card given by crew). Declare any food items you're carrying (pickles, spices etc.). Keep passport, visa, I-797, return ticket handy.</div></div>
+  <div class="step"><div class="step-n">2</div><div class="step-c"><strong>Immigration (CBP):</strong> Join the line for non-US citizens. Have passport + visa + I-94 ready. Officer will ask: purpose of visit, company name, duration, where staying. Keep answers short and confident. They'll take your photo and fingerprints.</div></div>
+  <div class="step"><div class="step-n">3</div><div class="step-c"><strong>Collect luggage:</strong> Check the screens for your flight's carousel number. Grab a free luggage cart ($6 at JFK if needed). Proceed to customs — usually they wave you through.</div></div>
+  <div class="step"><div class="step-n">4</div><div class="step-c"><strong>Exit & connectivity:</strong> Once past customs, connect to airport WiFi (free at most US airports). Activate your eSIM immediately (see eSIM guide below). Call/text your team to confirm arrival.</div></div>
+  <div class="step"><div class="step-n">5</div><div class="step-c"><strong>Get to your hotel:</strong> Open Uber/Lyft app → request ride to hotel. From JFK to Manhattan: ~$55–75 Uber, ~60–90 min. <em>DO NOT take unmarked/unlicensed cabs.</em> Yellow taxis are also OK (flat rate $70 + tolls + tip from JFK).</div></div>
+  <div class="step"><div class="step-n">6</div><div class="step-c"><strong>At the hotel:</strong> Check-in (usually 3 PM). They'll ask for ID (passport) + credit card. A <strong>security deposit hold of $50–$200</strong> will be placed on your card (not charged — released at checkout). Keep your card ready.</div></div>
+  <div class="step"><div class="step-n">7</div><div class="step-c"><strong>First night:</strong> Get dinner (hotel restaurant or nearby — use Yelp/Google Maps). Buy water & essentials from CVS/Walgreens if needed. Set alarm for tomorrow. Rest — you'll have jet lag!</div></div>
+</div>
+
+<div class="guide-card fade-in"><h3>📱 eSIM Activation Guide</h3>
+  <p>Your office will provide an eSIM QR code or activation details. Here's how to set it up:</p>
+  <div class="callout"><strong>iPhone:</strong> Settings → Cellular → Add eSIM → Use QR Code → Scan the QR code from your office. Label it "US Travel". Set it as default for Mobile Data. Keep your Indian SIM active for calls/SMS but turn OFF its Data Roaming.</div>
+  <div class="callout"><strong>Android:</strong> Settings → Connections → SIM Manager → Add eSIM → Scan QR Code. Set as default for Mobile Data. Toggle Data Roaming ON for the eSIM only.</div>
+  <div class="callout warn"><strong>⚠️ Important:</strong> Install the eSIM before leaving India (while on WiFi) but only activate it when you land. Turn ON "Data Roaming" for the travel eSIM. Turn OFF "Data Roaming" for your Indian SIM to avoid roaming charges. Restart phone after activation.</div>
+  <p style="margin-top:8px"><strong>Speed issues?</strong> Go to Settings → Cellular → your eSIM → toggle "Data Roaming" ON. Check if "Voice & Data" is set to LTE/5G. Restart phone. If still slow, check if your plan has data remaining. T-Mobile/AT&T eSIMs generally have the best US coverage.</p>
+  <p style="margin-top:6px"><strong>Need more data?</strong> Your office eSIM should suffice. If not, buy Airalo or Holafly eSIM from their apps for backup data plans ($5–15 for extra GB).</p>
+</div>
+
+<div class="guide-card fade-in"><h3>🏨 Hotel Booking Guide</h3>
+  <p><strong>Where to book:</strong> Booking.com, Hotels.com, Google Hotels, or direct hotel websites. Compare prices across all.</p>
+  <ul>
+    <li><strong>Budget ($60–100):</strong> Motel 6, Super 8, Red Roof Inn, La Quinta — basic, clean, near highways</li>
+    <li><strong>Mid-Range ($100–180):</strong> Hampton Inn, Holiday Inn Express, Fairfield Inn — includes breakfast, WiFi, business center</li>
+    <li><strong>Business ($150–300):</strong> Courtyard Marriott, Hilton Garden Inn, Hyatt Place — ideal for client visits, professional setting</li>
+  </ul>
+  <div class="callout warn"><strong>Security Deposit:</strong> Almost ALL US hotels place a hold of $50–$200 on your credit/debit card at check-in. This is NOT a charge — it's released 3–7 business days after checkout. Use a credit card (not debit) to avoid cash flow issues. If using debit, ensure sufficient balance above the hold amount.</div>
+  <p style="margin-top:8px"><strong>Pro tip:</strong> Book hotels near your office/client site to minimize daily commute. Use the itinerary tab to find the best central location for multiple stops.</p>
+  <p style="margin-top:6px"><strong>Check-in:</strong> Usually 3 PM. <strong>Checkout:</strong> Usually 11 AM. Ask for late checkout if needed (often free or $20–50). Many hotels have mobile check-in via their app.</p>
+</div>
+
+<div class="guide-card fade-in"><h3>🚕 Getting Around in the US</h3>
+  <ul>
+    <li><strong>Uber / Lyft:</strong> Download both apps. Link your credit/debit card. UberX is cheapest. Always compare prices between the two. Tip 15–20%.</li>
+    <li><strong>Public Transit:</strong> NYC has subway (MetroCard or OMNY tap-to-pay). Chicago has CTA. Most other cities — Uber is better than transit.</li>
+    <li><strong>Rental Car:</strong> Enterprise, Hertz, or Turo app. Need valid driver's license + international driving permit (recommended). Book in advance on kayak.com.</li>
+    <li><strong>Walking:</strong> Most downtown areas are walkable. Use Google Maps walking directions.</li>
+  </ul>
+  <div class="callout"><strong>For office visits (1–3 hours):</strong> Take an Uber to the office, attend your meeting, then Uber back. Don't rent a car for just city visits — parking is expensive ($20–50/day in cities). For multiple stops in one day within a city, Uber is most efficient.</div>
+</div>
+
+<div class="guide-card fade-in"><h3>🍛 Indian Food & Dining</h3>
+  <p>You'll find Indian restaurants in most US cities. Search "Indian restaurant near me" on Google Maps. Also:</p>
+  <ul>
+    <li><strong>Food delivery apps:</strong> Uber Eats, DoorDash, Grubhub — all deliver Indian food to your hotel</li>
+    <li><strong>Indian groceries:</strong> Patel Brothers (chain), India Bazaar, or search "Indian grocery store near me"</li>
+    <li><strong>Carry from India:</strong> MTR ready meals (heat & eat), instant noodles, pickle packets, spice mixes, tea/coffee powder, chapati flour if staying 30+ days</li>
+    <li><strong>Vegetarian:</strong> Most US restaurants have veg options. Ask for "no meat, no fish". Paneer-based dishes are widely available at Indian restaurants.</li>
+  </ul>
+  <div class="callout"><strong>Ordering at US restaurants:</strong> Seat yourself or wait to be seated (varies). Water is free. Order from your server. Sales tax (5–10%) is added to the bill. Tip 18–20% on the pre-tax total — this is mandatory culture, not optional. Write tip on the receipt when paying by card.</div>
+  <p style="margin-top:8px"><strong>Walmart/Target:</strong> For groceries, snacks, toiletries. Most have instant rice, frozen meals, and international food aisles with Indian items.</p>
+</div>
+
+<div class="guide-card fade-in"><h3>👔 What to Wear — Visual Guide</h3>
+  <p><strong>For office/client visits:</strong></p>
+  <div class="attire-grid">
+    <div class="attire-card"><div class="att-icon">👔</div><h4>Business Casual</h4><p>Collared shirt or polo, chinos or dark jeans, leather belt, clean shoes (loafers or oxfords). No sneakers.</p></div>
+    <div class="attire-card"><div class="att-icon">🧥</div><h4>Business Formal</h4><p>Blazer + dress shirt + trousers. Only if client is a bank/law firm. Ask your team lead first.</p></div>
+    <div class="attire-card"><div class="att-icon">👟</div><h4>Tech/Startup</h4><p>Clean t-shirt or henley + jeans + sneakers. Only for very casual tech offices. When in doubt, go business casual.</p></div>
+    <div class="attire-card"><div class="att-icon">🧣</div><h4>Winter Layer</h4><p>Thermal innerwear + sweater + heavy jacket + scarf + gloves + beanie. Essential for MI & ME in Nov–Mar.</p></div>
+  </div>
+  <div class="callout">
+    <strong>📸 What NOT to wear:</strong> Shorts to meetings, sandals/flip-flops in office, wrinkled or stained clothes, strong cologne/perfume (Americans are sensitive to fragrance), logos/graphics t-shirts to client meetings.
+  </div>
+  <p style="margin-top:10px"><strong>Key tip:</strong> When unsure, slightly overdress. You can always remove a blazer, but you can't add one. Keep a spare formal shirt in your carry-on bag.</p>
+  <p style="margin-top:8px"><strong>Where to buy if needed:</strong> Target, Walmart (budget), Uniqlo, H&M, Zara (mid-range), Macy's (department store with everything). All widely available in US cities.</p>
+
+  <p style="margin-top:10px"><strong>Weather-based clothing:</strong></p>
+  <div class="weather-grid">
+    <div class="w-item"><div class="w-season">Summer</div><div class="w-temp">75–95°F</div><div class="w-desc">24–35°C · Hot & humid. T-shirts, shorts, sunscreen</div></div>
+    <div class="w-item"><div class="w-season">Fall</div><div class="w-temp">40–70°F</div><div class="w-desc">4–21°C · Layers! Jacket + sweater essential</div></div>
+    <div class="w-item"><div class="w-season">Winter</div><div class="w-temp">10–35°F</div><div class="w-desc">-12 to 2°C · Heavy coat, gloves, boots, thermals</div></div>
+    <div class="w-item"><div class="w-season">Spring</div><div class="w-temp">40–70°F</div><div class="w-desc">4–21°C · Rain jacket + layers. Umbrella needed</div></div>
+  </div>
+  <div class="callout warn"><strong>Michigan & Maine winters are BRUTAL.</strong> If visiting Nov–Mar, pack: thermal innerwear, heavy winter jacket, waterproof boots, wool socks, gloves, scarf, beanie. Buy at Walmart/Target on arrival if you don't own these.</div>
+</div>
+
+<div class="guide-card fade-in"><h3>🪪 Passport & Documents</h3>
+  <ul>
+    <li><strong>Carry passport daily?</strong> Not required, but keep a <strong>photo of your passport + visa on your phone</strong> at all times. Carry the physical passport only when flying domestically (or use a state ID if you get one).</li>
+    <li><strong>Best practice:</strong> Store passport in hotel room safe. Carry a color photocopy in your wallet + digital copies in Google Drive/iCloud.</li>
+    <li><strong>Domestic flights:</strong> You DO need a valid ID. Passport works. TSA accepts foreign passports.</li>
+    <li><strong>Keep safe:</strong> I-94 printout (from i94.cbp.dhs.gov), visa pages, company letter, hotel confirmations — all as digital copies.</li>
+  </ul>
+</div>
+
+<div class="guide-card fade-in"><h3>🆘 Emergency Information</h3>
+  <div class="callout danger"><strong>Emergency (Police/Fire/Ambulance): 911</strong> — Works from any phone, even without SIM. Free to call.</div>
+  <ul>
+    <li><strong>Non-emergency police:</strong> 311 (in most cities)</li>
+    <li><strong>Poison Control:</strong> 1-800-222-1222</li>
+    <li><strong>Indian Embassy (Washington DC):</strong> +1-202-939-7000</li>
+    <li><strong>Indian Consulate (New York):</strong> +1-212-774-0600</li>
+    <li><strong>Roadside assistance:</strong> AAA: 1-800-222-4357</li>
+    <li><strong>Hospital:</strong> Go to nearest "Emergency Room (ER)" — they MUST treat you regardless of insurance. But it's expensive ($500+). Always have travel insurance.</li>
+  </ul>
+  <p style="margin-top:8px"><strong>Safety tips:</strong> US is generally safe in business/tourist areas. Avoid walking alone late at night in unfamiliar areas. Keep valuables secure. Lock car doors. Don't leave bags unattended.</p>
+</div>
+
+<div class="guide-card fade-in"><h3>🗣️ Talking to Locals</h3>
+  <ul>
+    <li><strong>Greeting:</strong> "Hi" or "Hey, how are you?" — standard greeting. Response: "Good, thanks! How about you?"</li>
+    <li><strong>Small talk:</strong> Americans are friendly. Common topics: weather, sports, where you're from. Avoid politics & religion.</li>
+    <li><strong>At stores/restaurants:</strong> "Hi, I'd like to..." or "Could I get a..." — polite and works everywhere</li>
+    <li><strong>Tipping:</strong> Restaurants: 18–20%. Coffee shops: $1–2. Uber: 15%. Hotel housekeeping: $2–5/night on nightstand.</li>
+    <li><strong>Queueing:</strong> Always wait in line. Cutting in line is very rude in the US.</li>
+    <li><strong>Personal space:</strong> Maintain arm's length distance in conversations. No touching unless handshake/hug is initiated by them.</li>
+    <li><strong>"How are you?"</strong> is a greeting, NOT a real question. Just say "Good, thanks!" — don't give a detailed answer.</li>
+  </ul>
+</div>
+
+<div class="guide-card fade-in"><h3>🧳 Packing Essentials</h3>
+  <ul>
+    <li>Passport + visa copies (physical & digital)</li>
+    <li>Power adapter — US uses Type A/B plugs, 120V (Indian chargers usually work, but bring adapter)</li>
+    <li>Travel insurance documents</li>
+    <li>Company invitation/approval letter</li>
+    <li>Clothes based on season (see weather guide above)</li>
+    <li>Medicines — carry prescription + generic names (brand names differ in US)</li>
+    <li>Indian snacks & ready meals for the first few days</li>
+    <li>Laptop + charger for work</li>
+    <li>Universal power strip (one adapter powers all your devices)</li>
+    <li>Reusable water bottle (tap water is safe to drink in the US)</li>
+    <li>Umbrella / rain jacket</li>
+    <li>Comfortable walking shoes</li>
+  </ul>
+</div>
+`}
+
+// ─── PLAN TAB ──────────────────────────────────────────────────
+function rPlan(){
+  const purposes=[["office","🏢 Office"],["client","🤝 Client"],["training","📚 Training"],["conference","🎤 Conference"],["other","📌 Other"]];
+  let list="";
+  if(S.stops.length>0){
+    list=`<div class="card"><div class="card-t">Your Stops (${S.stops.length})</div>
+    ${S.stops.map((s,i)=>`<div class="sl"><div class="sl-l"><div class="sl-n">${i+1}</div><div><div class="sl-c">${esc(s.city)}</div><div class="sl-d">${fD(s.arrive)} – ${fD(s.depart)}</div></div></div><div class="sl-a"><button class="ib" data-a="up" data-id="${s.id}">↑</button><button class="ib" data-a="dn" data-id="${s.id}">↓</button><button class="ib x" data-a="rm" data-id="${s.id}">✕</button></div></div>`).join("")}
+    <button class="btn btn-p" style="width:100%;margin-top:12px" id="btn-itin">Generate Full Itinerary →</button>
+    ${S.stops.length>=3?`<button class="btn btn-g" style="width:100%;margin-top:8px" id="btn-optimize">🧠 Optimize Route Order</button>`:''}
+    </div>`;
+  }
+  // Route optimization result
+  if(S.optimizedRoute){
+    const opt=S.optimizedRoute;
+    list+=`<div class="card fade-in"><div class="card-t">🧠 Route Optimization Result</div>
+      <div class="route-card best">
+        <div class="route-label best">✦ BEST ROUTE — saves ${opt.saved||0} miles</div>
+        <div class="route-path">${opt.best.map(s=>s.city).join(' → ')}</div>
+        <div class="route-stats">Total: <span>${opt.bestDist?.toLocaleString()||'?'} miles</span></div>
+      </div>
+      ${(opt.alternatives||[]).map((a,i)=>`
+        <div class="route-card">
+          <div class="route-label alt">Alternative ${i+1}</div>
+          <div class="route-path">${a.route.map(s=>s.city).join(' → ')}</div>
+          <div class="route-stats">Total: <span>${a.dist.toLocaleString()} miles</span> (+${(a.dist-opt.bestDist).toLocaleString()} extra)</div>
+        </div>`).join('')}
+      <button class="btn btn-p btn-s" id="btn-apply-route" style="margin-top:8px">✅ Apply Best Route</button>
+      <button class="btn btn-g btn-s" id="btn-dismiss-route" style="margin-top:8px;margin-left:6px">Dismiss</button>
+    </div>`;
+  }
+  return `<div class="card"><div class="card-t">📍 Add Destination</div>
+  <div class="fr"><div><label>City/Region *</label><input id="a-city" placeholder="e.g. New York, Detroit, Portland Maine"></div><div><label>Office/Site Address</label><input id="a-addr" placeholder="e.g. 123 Main St, Suite 400"></div></div>
+  <div class="fr"><div><label>Arrive *</label><input id="a-arr" type="date"></div><div><label>Depart *</label><input id="a-dep" type="date"></div></div>
+  <div class="fg"><label>Purpose</label><div class="chips" id="purp-ch">${purposes.map(([v,l])=>`<button class="chip ${v==="office"?"on":""}" data-v="${v}">${l}</button>`).join("")}</div></div>
+  <div class="fg"><label>Visit Details / Schedule</label><textarea id="a-notes" placeholder="e.g. Meeting at 10 AM with John, training 2-5 PM, dinner with team 7 PM..."></textarea></div>
+  <button class="btn btn-p" id="btn-add">+ Add This Stop</button></div>${list}`}
+
+// ─── ITINERARY TAB ─────────────────────────────────────────────
+function rItin(){
+  if(!S.stops.length)return `<div class="empty"><div class="empty-i">🗺️</div><p>Add stops first to generate your itinerary</p><button class="btn btn-p" id="btn-gp" style="margin-top:14px">Go to Stops →</button></div>`;
+  let html=S.stops.map((s,i)=>{
+    const next=S.stops[i+1];const n=nights(s.arrive,s.depart);const ap=airport(s.city);const fp=famousPlaces(s.city);const ifo=indianFood(s.city);
+    let tHTML="";
+    if(next){const d=dist(s.city,next.city);const t=estTransport(s.city,next.city);
+      tHTML=`<div class="section"><div class="section-t">🚀 Getting to ${esc(next.city)}</div><div class="dist-b">~${d.toLocaleString()} miles</div>
+      ${t.map(x=>{const m=TRANSPORT_M[x.mode];return `<div class="tc ${x.rec?'rec':''}">${x.rec?'<div class="rec-badge">✦ BEST OPTION</div>':''}<div class="tc-head"><span class="tc-icon">${m.i}</span><div><div class="tc-mode">${m.l}</div><div class="tc-dur">${x.dur}</div></div><div class="tc-cost">${x.cost}</div></div><div class="tc-note">${x.note}</div></div>`}).join("")}</div>`}
+    return `<div class="card">
+      <div class="itin-sh"><div class="itin-num">${i+1}</div><div><div class="itin-city">${esc(s.city)}</div><div class="itin-dates">${fD(s.arrive)} → ${fD(s.depart)} <span class="nights-b">${n} night${n!==1?'s':''}</span></div></div></div>
+      ${s.addr?`<div class="detail">📍 <strong>Site:</strong> ${esc(s.addr)}</div>`:''}
+      ${s.notes?`<div class="detail">📋 <strong>Schedule:</strong> ${esc(s.notes)}</div>`:''}
+      <div class="section"><div class="section-t">✈️ Nearest Airports</div><div class="detail">${ap.join(" · ")}</div></div>
+      <div class="section"><div class="section-t">🏨 Hotels (${n} night${n!==1?'s':''})</div>
+        ${(()=>{
+          const dbHotels=getHotels(s.city);
+          if(dbHotels){
+            return dbHotels.map(h=>`<div class="hotel-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div><div class="hotel-name">${h.name}</div>
+                  <div class="hotel-meta">⭐ ${h.rating}/10 · ${h.area} · Deposit: ${h.dep}</div>
+                  <div class="hotel-meta">${h.features}</div></div>
+                <div class="hotel-price">${h.price}</div>
+              </div>
+              <a href="${h.book}" target="_blank" class="hotel-link">🔗 Check Availability</a>
+              <a href="${hotelBookingLink(s.city,s.arrive,s.depart)}" target="_blank" class="hotel-link" style="margin-left:4px">📅 Book for ${fD(s.arrive)}</a>
+            </div>`).join('');
+          } else {
+            return HOTELS.map(h=>`<div class="hr"><span>${h.icon}</span><div><strong>${h.tier}</strong> — ${h.range}<div class="h-ex">${h.ex}</div><div class="h-tot">Est. total: $${h.lo*n}–$${h.hi*n} · Deposit hold: ${h.dep}</div></div></div>`).join('');
+          }
+        })()}
+        <div class="h-tip">💡 <a href="${hotelBookingLink(s.city,s.arrive,s.depart)}" target="_blank" style="color:var(--ylw)">Search all hotels in ${esc(s.city)} on Booking.com →</a> Filter by proximity to: ${esc(s.addr||s.city)}</div></div>
+      <div class="section"><div class="section-t">🍛 Indian Food Near ${esc(s.city)}</div><div class="detail">${indianFood(s.city)}</div></div>
+      <div class="section"><div class="section-t">🏛️ Places to Visit (After Work)</div><div class="detail">${famousPlaces(s.city)}</div></div>
+      ${tHTML}</div>${next?'<div class="connector">⬇︎</div>':''}`
+  }).join("");
+
+  const tN=S.stops.reduce((a,s)=>a+nights(s.arrive,s.depart),0);
+  const tM=S.stops.slice(0,-1).reduce((a,s,i)=>a+dist(s.city,S.stops[i+1].city),0);
+
+  return `<div class="itin-h"><h2>📋 Complete Travel Itinerary</h2><p class="hdr-sub">Transport · Hotels · Food · Sightseeing · Costs</p>
+    <div class="dl-bar" style="justify-content:center;margin-top:10px"><button class="btn btn-g btn-s" id="btn-dl">📥 Download as Text</button><button class="btn btn-g btn-s" id="btn-share">📤 Share / Copy</button></div></div>
+    ${html}
+    <div class="card"><div class="card-t">📊 Trip Summary</div>
+    <div class="sg">
+      <div class="si"><div class="si-v">${S.stops.length}</div><div class="si-l">Cities</div></div>
+      <div class="si"><div class="si-v">${tN}</div><div class="si-l">Total Nights</div></div>
+      <div class="si"><div class="si-v">${tM.toLocaleString()}</div><div class="si-l">Total Miles</div></div>
+      <div class="si"><div class="si-v">$${Math.round(tN*100)}–$${Math.round(tN*200)}</div><div class="si-l">Hotel Est.</div></div>
+    </div>
+    <div class="tips"><strong>💡 Cost-Saving Tips</strong><ul>
+      <li>Book hotels 2+ weeks in advance for best rates</li>
+      <li>Use Uber Pool / Lyft Shared for cheaper rides</li>
+      <li>Cook basic meals if hotel has kitchen (extended stay hotels)</li>
+      <li>Buy groceries at Walmart/Aldi — cheaper than eating out daily</li>
+      <li>Gas station food + Subway/Chipotle for quick cheap meals ($8–12)</li>
+      <li>Use Google Flights' price tracking to find cheapest flights</li>
+    </ul></div></div>`}
+
+// ─── ALERTS TAB ────────────────────────────────────────────────
+const REMIND_OPTIONS=[
+  {k:"0",l:"At event time"},{k:"15",l:"15 min before"},{k:"30",l:"30 min before"},
+  {k:"60",l:"1 hour before"},{k:"120",l:"2 hours before"},{k:"1440",l:"1 day before"},
+  {k:"2880",l:"2 days before"},{k:"custom",l:"Custom..."}
+];
+
+function rAlerts(){
+  const als=genAlerts().filter(a=>!S.dismissed.has(a.id));
+  const notifStatus=("Notification" in window)?Notification.permission:"unsupported";
+  const customReminders=S.customReminders||[];
+
+  return `
+  <!-- Notification Permission Banner -->
+  <div class="card fade-in">
+    <div class="card-t">🔔 Notification Center</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);background:${notifStatus==="granted"?"var(--grng)":notifStatus==="denied"?"var(--redg)":"var(--ylwg)"};margin-bottom:12px">
+      <span style="font-size:22px">${notifStatus==="granted"?"✅":notifStatus==="denied"?"🚫":"⚠️"}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${notifStatus==="granted"?"Push notifications enabled!":notifStatus==="denied"?"Notifications blocked — enable in browser settings":"Enable push notifications for real-time alerts"}</div>
+        <div style="font-size:11px;color:var(--t3)">${notifStatus==="granted"?"You'll get alerts even when the tab is in the background":"Tap the button to allow — works on iPhone (Safari), Android (Chrome) & Desktop"}</div>
+      </div>
+      ${notifStatus!=="granted"&&notifStatus!=="denied"?`<button class="btn btn-p btn-s" id="btn-notif-enable">Enable</button>`:""}
+      ${notifStatus==="denied"?`<button class="btn btn-g btn-s" id="btn-notif-help">How to fix</button>`:""}
+    </div>
+
+    <!-- Notification check interval -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <label style="margin:0;font-size:11px;white-space:nowrap">Check every:</label>
+      <select id="notif-interval" style="width:auto;padding:5px 8px;font-size:12px">
+        <option value="1" ${(S.notifInterval||5)===1?"selected":""}>1 min</option>
+        <option value="5" ${(S.notifInterval||5)===5?"selected":""}>5 min</option>
+        <option value="15" ${(S.notifInterval||5)===15?"selected":""}>15 min</option>
+        <option value="30" ${(S.notifInterval||5)===30?"selected":""}>30 min</option>
+      </select>
+      <span style="font-size:10px;color:var(--t3)">How often the app checks for upcoming events</span>
+    </div>
+  </div>
+
+  <!-- Add Custom Reminder -->
+  <div class="card fade-in">
+    <div class="card-t">⏰ Add Custom Reminder</div>
+    <div class="fr">
+      <div><label>Title *</label><input id="rem-title" placeholder="e.g. Meeting with John, Pack bags"></div>
+      <div><label>City</label>
+        <select id="rem-city"><option value="">— Optional —</option>${S.stops.map(s=>`<option value="${esc(s.city)}">${esc(s.city)}</option>`).join("")}</select>
+      </div>
+    </div>
+    <div class="fr">
+      <div><label>Date *</label><input type="date" id="rem-date"></div>
+      <div><label>Time *</label><input type="time" id="rem-time" value="09:00"></div>
+    </div>
+    <div class="fg"><label>Remind me</label>
+      <div class="chips" id="rem-when-ch">
+        ${REMIND_OPTIONS.filter(r=>r.k!=="custom").map((r,i)=>`<button class="chip ${i===2?'on':''}" data-v="${r.k}">${r.l}</button>`).join("")}
+      </div>
+    </div>
+    <div class="fg"><label>Notes</label><input id="rem-notes" placeholder="Optional details..."></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" id="btn-add-rem" style="flex:1">+ Add Reminder</button>
+      <button class="btn btn-g" id="btn-add-rem-cal" title="Also add to calendar">📅 + Calendar</button>
+    </div>
+  </div>
+
+  <!-- Google Calendar Export -->
+  <div class="card fade-in">
+    <div class="card-t">📅 Export to Calendar</div>
+    <p style="font-size:12px;color:var(--t2);margin:-8px 0 12px">Add all your stops as calendar events with built-in reminders. Works with Google Calendar, Apple Calendar, and Outlook.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p btn-s" id="btn-cal-all">📅 Download All Events (.ics)</button>
+      <button class="btn btn-g btn-s" id="btn-gcal-all">🔗 Open in Google Calendar</button>
+    </div>
+    ${S.stops.length>0?`
+    <div style="margin-top:14px;border-top:1px solid var(--bdr);padding-top:12px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px">Individual events:</div>
+      ${S.stops.map((s,i)=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bdr)">
+          <div class="sl-n" style="width:22px;height:22px;font-size:10px">${i+1}</div>
+          <div style="flex:1;font-size:12px">
+            <strong>${esc(s.city)}</strong>
+            <span style="color:var(--t3);margin-left:6px">${fD(s.arrive)} → ${fD(s.depart)}</span>
+          </div>
+          <button class="btn btn-g btn-s" data-cal-stop="${i}">📅 .ics</button>
+          <button class="btn btn-g btn-s" data-gcal-stop="${i}">🔗 GCal</button>
+        </div>`).join("")}
+    </div>`:'<div class="empty" style="padding:16px"><p style="font-size:12px">Add stops first to generate calendar events</p></div>'}
+  </div>
+
+  <!-- Custom Reminders List -->
+  ${customReminders.length>0?`
+  <div class="card fade-in">
+    <div class="card-t">⏰ Your Custom Reminders (${customReminders.length})</div>
+    ${customReminders.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime)).map(r=>{
+      const dt=new Date(r.datetime);
+      const isPast=dt<new Date();
+      const remindAt=new Date(dt.getTime()-r.remindMin*60000);
+      return `<div class="al ${isPast?'info':'warning'}" style="margin-bottom:6px">
+        <div class="al-h">
+          <span>${isPast?'✅':'⏰'} <strong>${esc(r.title)}</strong></span>
+          <div style="display:flex;gap:3px">
+            <button class="btn btn-g btn-s" data-rem-cal="${r.id}" title="Add to calendar">📅</button>
+            <button class="dbtn" data-rem-del="${r.id}">✕</button>
+          </div>
+        </div>
+        <div class="al-b">${dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})} at ${dt.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}${r.city?' · '+esc(r.city):''}${r.notes?'\n'+esc(r.notes):''}
+🔔 Reminder: ${r.remindMin===0?'At event time':r.remindMin<60?r.remindMin+' min before':r.remindMin<1440?Math.round(r.remindMin/60)+' hr before':Math.round(r.remindMin/1440)+' day before'}</div>
+      </div>`}).join("")}
+  </div>`:''}
+
+  <!-- Auto-generated Alerts -->
+  <div class="card fade-in">
+    <div class="card-t">🤖 Auto-Generated Alerts</div>
+    <p style="font-size:11px;color:var(--t3);margin:-8px 0 12px">Based on your itinerary timing</p>
+    ${als.length===0?'<div class="empty" style="padding:24px"><p>No alerts. Add stops to see reminders.</p></div>':''}
+    ${als.map(a=>`<div class="al ${a.type}"><div class="al-h"><span>${a.icon} <strong>${esc(a.title)}</strong></span>
+      <div style="display:flex;gap:3px">
+        <button class="btn btn-g btn-s" data-alert-cal="${a.id}" title="Add to calendar">📅</button>
+        <button class="dbtn" data-dis="${a.id}">✕</button>
+      </div>
+    </div><div class="al-b">${esc(a.body)}</div></div>`).join("")}
+  </div>`}
+
+function genAlerts(){const als=[];const now=new Date();
+  S.stops.forEach((s,i)=>{
+    const ar=new Date(s.arrive+"T00:00"),dp=new Date(s.depart+"T00:00");
+    const dIn=Math.ceil((ar-now)/864e5),dDep=Math.ceil((dp-now)/864e5);
+    const next=S.stops[i+1];
+    if(dIn>=0&&dIn<=3)als.push({id:`ar-${s.id}`,type:"urgent",icon:"🔴",title:`Arriving in ${s.city} in ${dIn} day${dIn!==1?'s':''}!`,body:`Check-in: ${fDL(s.arrive)}${s.addr?'\nSite: '+s.addr:''}${s.notes?'\n📋 '+s.notes:''}\n\n🏨 Hotel checkout: 11 AM · Check-in: 3 PM\n🚕 Use Uber/Lyft to get around`,date:s.arrive});
+    else if(dIn>3&&dIn<=7)als.push({id:`pr-${s.id}`,type:"warning",icon:"🟡",title:`Prepare: ${s.city} in ${dIn} days`,body:`Book hotel NOW if not done.\nCheck transport options in Itinerary tab.${s.notes?'\n📋 '+s.notes:''}`,date:s.arrive});
+    else if(dIn>7&&dIn<=14)als.push({id:`ad-${s.id}`,type:"info",icon:"🔵",title:`${s.city} coming up in ${dIn} days`,body:`Start booking flights/hotels. Compare prices on Google Flights + Hotels.com`,date:s.arrive});
+    if(next&&dDep>=0&&dDep<=2){const d=dist(s.city,next.city);const best=d>400?"flight":d>50?"car rental":"uber";
+      als.push({id:`dp-${s.id}`,type:"urgent",icon:"🔴",title:`Depart ${s.city} → ${next.city} in ${dDep}d`,body:`~${d} miles. Best: ${best}.\n⏰ Hotel checkout by 11 AM\n${d>400?'✈️ Arrive at airport 2 hrs early\n':''}🧳 Pack everything, check room safe`,date:s.depart})}
+  });
+  if(!als.length&&S.stops.length)als.push({id:"ok",type:"info",icon:"✅",title:"All clear!",body:"No immediate actions. All stops are 2+ weeks away."});
+  return als.sort((a,b)=>{const p={urgent:0,warning:1,info:2};return(p[a.type]||2)-(p[b.type]||2)})}
+
+// ─── NOTIFICATION ENGINE ───────────────────────────────────────
+function requestNotifPermission(){
+  if(!("Notification" in window)){alert("Your browser does not support notifications. Try Chrome or Safari.");return}
+  Notification.requestPermission().then(p=>{render()});
+}
+
+function sendNotification(title,body,icon="🔔"){
+  if(Notification.permission!=="granted")return;
+  try{
+    const n=new Notification(title,{body:body,icon:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>"+encodeURIComponent(icon)+"</text></svg>",badge:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛫</text></svg>",requireInteraction:true,tag:title});
+    n.onclick=()=>{window.focus();n.close()};
+  }catch(e){/* SW not available, try basic */}
+}
+
+let notifTimer=null;
+function startNotifChecker(){
+  if(notifTimer)clearInterval(notifTimer);
+  const intervalMin=S.notifInterval||5;
+  notifTimer=setInterval(checkAndNotify,intervalMin*60*1000);
+  checkAndNotify(); // run once immediately
+}
+
+function checkAndNotify(){
+  if(Notification.permission!=="granted")return;
+  const now=new Date();
+  const fired=S.firedNotifs||new Set();
+
+  // Check custom reminders
+  (S.customReminders||[]).forEach(r=>{
+    const eventTime=new Date(r.datetime);
+    const remindTime=new Date(eventTime.getTime()-r.remindMin*60000);
+    const key=`rem-${r.id}-${r.remindMin}`;
+    if(!fired.has(key)&&now>=remindTime&&now<eventTime){
+      sendNotification(`⏰ ${r.title}`,`${r.remindMin===0?'Now!':r.remindMin<60?'In '+r.remindMin+' min':'In '+Math.round(r.remindMin/60)+' hr'}${r.city?' — '+r.city:''}${r.notes?'\n'+r.notes:''}`,"⏰");
+      fired.add(key);
+    }
+  });
+
+  // Check auto alerts for stops
+  S.stops.forEach((s,i)=>{
+    const ar=new Date(s.arrive+"T09:00");
+    const dp=new Date(s.depart+"T08:00");
+    // 1 day before arrival
+    const dayBefore=new Date(ar.getTime()-24*3600000);
+    if(!fired.has(`arr1d-${s.id}`)&&now>=dayBefore&&now<ar){
+      sendNotification(`📍 Arriving in ${s.city} tomorrow!`,`Check-in: ${fDL(s.arrive)}\n${s.notes||'Review your schedule'}`,"📍");
+      fired.add(`arr1d-${s.id}`);
+    }
+    // Day of arrival
+    if(!fired.has(`arr0d-${s.id}`)&&now.toDateString()===ar.toDateString()&&now.getHours()>=7){
+      sendNotification(`🛬 Today: ${s.city}`,`${s.addr?'Site: '+s.addr+'\n':''}${s.notes||'Check your itinerary'}`,"🛬");
+      fired.add(`arr0d-${s.id}`);
+    }
+    // Departure day
+    const next=S.stops[i+1];
+    if(next&&!fired.has(`dep0d-${s.id}`)&&now.toDateString()===dp.toDateString()&&now.getHours()>=7){
+      const d=dist(s.city,next.city);
+      sendNotification(`🚀 Departing ${s.city} → ${next.city}`,`~${d} miles. Hotel checkout by 11 AM.\n${d>400?'Confirm flight booking!':'Check transport options'}`,"🚀");
+      fired.add(`dep0d-${s.id}`);
+    }
+  });
+
+  S.firedNotifs=fired;
+  try{localStorage.setItem("tp_fired",[...fired].join("|||"))}catch(e){}
+}
+
+// ─── CALENDAR GENERATION (.ics & Google Calendar) ──────────────
+function icsDate(d,timeStr){
+  const dt=new Date(d+"T"+(timeStr||"09:00")+":00");
+  return dt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
+}
+
+function generateICS(events){
+  let ics=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//TravelPilot//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n`;
+  events.forEach(e=>{
+    ics+=`BEGIN:VEVENT\r\nUID:${e.uid||genId()}@travelpilot\r\nDTSTART:${e.start}\r\nDTEND:${e.end}\r\nSUMMARY:${e.title}\r\n`;
+    if(e.desc)ics+=`DESCRIPTION:${e.desc.replace(/\n/g,"\\n")}\r\n`;
+    if(e.loc)ics+=`LOCATION:${e.loc}\r\n`;
+    if(e.remindMin!==undefined)ics+=`BEGIN:VALARM\r\nTRIGGER:-PT${e.remindMin}M\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n`;
+    ics+=`END:VEVENT\r\n`;
+  });
+  ics+=`END:VCALENDAR\r\n`;
+  return ics;
+}
+
+function downloadICSFile(icsContent,filename){
+  const blob=new Blob([icsContent],{type:"text/calendar;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=filename+".ics";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function stopToICSEvents(s,i){
+  const events=[];
+  const n=nights(s.arrive,s.depart);
+  // Arrival event
+  events.push({uid:`arrive-${s.id}`,start:icsDate(s.arrive,"09:00"),end:icsDate(s.arrive,"10:00"),
+    title:`📍 Arrive: ${s.city}`,desc:`Check into hotel (3 PM)\\n${s.addr?'Site: '+s.addr+'\\n':''}${s.notes||''}\\nStay: ${n} nights`,
+    loc:s.addr||s.city,remindMin:1440});
+  // Visit notes as event if present
+  if(s.notes){
+    events.push({uid:`visit-${s.id}`,start:icsDate(s.arrive,"10:00"),end:icsDate(s.arrive,"12:00"),
+      title:`💼 ${s.city}: ${s.notes.substring(0,50)}`,desc:s.notes,loc:s.addr||s.city,remindMin:60});
+  }
+  // Departure event
+  const next=S.stops[i+1];
+  if(next){
+    const d=dist(s.city,next.city);
+    events.push({uid:`depart-${s.id}`,start:icsDate(s.depart,"08:00"),end:icsDate(s.depart,"09:00"),
+      title:`🚀 Depart ${s.city} → ${next.city}`,desc:`~${d} miles\\nCheckout by 11 AM\\n${d>400?"Confirm flight!":"Check transport options"}`,
+      loc:s.city,remindMin:120});
+  }
+  return events;
+}
+
+function googleCalURL(title,start,end,desc,loc){
+  const u=new URL("https://calendar.google.com/calendar/render");
+  u.searchParams.set("action","TEMPLATE");
+  u.searchParams.set("text",title);
+  u.searchParams.set("dates",start+"/"+end);
+  if(desc)u.searchParams.set("details",desc.replace(/\\n/g,"\n"));
+  if(loc)u.searchParams.set("location",loc);
+  return u.toString();
+}
+
+function bAlerts(){
+  // Dismiss auto alerts
+  document.querySelectorAll("[data-dis]").forEach(b=>b.onclick=()=>{S.dismissed.add(b.dataset.dis);render()});
+
+  // Enable notifications
+  const enableBtn=document.getElementById("btn-notif-enable");
+  if(enableBtn)enableBtn.onclick=()=>requestNotifPermission();
+
+  // How to fix blocked notifications
+  const helpBtn=document.getElementById("btn-notif-help");
+  if(helpBtn)helpBtn.onclick=()=>alert("To enable notifications:\n\n📱 iPhone/Safari: Settings → Safari → Notifications → Find this site → Allow\n\n📱 Android/Chrome: Tap 🔒 icon in address bar → Site settings → Notifications → Allow\n\n💻 Desktop Chrome: Click 🔒 next to URL → Notifications → Allow\n\nThen refresh this page.");
+
+  // Notification interval
+  const intEl=document.getElementById("notif-interval");
+  if(intEl)intEl.onchange=()=>{S.notifInterval=parseInt(intEl.value);startNotifChecker()};
+
+  // Custom reminder chips
+  let remWhen=30;
+  document.querySelectorAll("#rem-when-ch .chip").forEach(c=>c.onclick=()=>{
+    document.querySelectorAll("#rem-when-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");remWhen=parseInt(c.dataset.v)});
+
+  // Add custom reminder
+  const addReminder=(alsoCalendar)=>{
+    const title=document.getElementById("rem-title").value.trim();
+    const date=document.getElementById("rem-date").value;
+    const time=document.getElementById("rem-time").value;
+    const city=document.getElementById("rem-city").value;
+    const notes=document.getElementById("rem-notes").value.trim();
+    if(!title||!date||!time)return alert("Enter title, date, and time.");
+    const rem={id:genId(),title,datetime:`${date}T${time}:00`,city,notes,remindMin:remWhen};
+    if(!S.customReminders)S.customReminders=[];
+    S.customReminders.push(rem);
+    try{localStorage.setItem("tp_reminders",JSON.stringify(S.customReminders))}catch(e){}
+    if(alsoCalendar){
+      const ev={uid:rem.id,start:icsDate(date,time),end:icsDate(date,time.replace(/:\d{2}$/,m=>":"+(parseInt(m.slice(1))+30).toString().padStart(2,"0")).replace(/:(\d{2})$/,(m,p)=>parseInt(p)>=60?":"+"00":m)),title:rem.title,desc:rem.notes||"",loc:rem.city||"",remindMin:rem.remindMin};
+      // Simpler: 30 min event
+      const endDt=new Date(`${date}T${time}:00`);endDt.setMinutes(endDt.getMinutes()+30);
+      ev.end=endDt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
+      downloadICSFile(generateICS([ev]),"TravelPilot_Reminder_"+title.replace(/\s+/g,"_"));
+    }
+    render();
+  };
+  document.getElementById("btn-add-rem").onclick=()=>addReminder(false);
+  document.getElementById("btn-add-rem-cal").onclick=()=>addReminder(true);
+
+  // Delete custom reminder
+  document.querySelectorAll("[data-rem-del]").forEach(b=>b.onclick=()=>{
+    S.customReminders=(S.customReminders||[]).filter(r=>r.id!==b.dataset.remDel);
+    try{localStorage.setItem("tp_reminders",JSON.stringify(S.customReminders))}catch(e){}
+    render()});
+
+  // Export individual reminder to calendar
+  document.querySelectorAll("[data-rem-cal]").forEach(b=>b.onclick=()=>{
+    const rem=(S.customReminders||[]).find(r=>r.id===b.dataset.remCal);
+    if(!rem)return;
+    const dt=new Date(rem.datetime);const endDt=new Date(dt.getTime()+30*60000);
+    const ev={uid:rem.id,start:dt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),end:endDt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),title:rem.title,desc:rem.notes||"",loc:rem.city||"",remindMin:rem.remindMin};
+    downloadICSFile(generateICS([ev]),"TravelPilot_"+rem.title.replace(/\s+/g,"_"));
+  });
+
+  // Export all stops to .ics
+  document.getElementById("btn-cal-all").onclick=()=>{
+    if(!S.stops.length)return alert("Add stops first.");
+    const events=S.stops.flatMap((s,i)=>stopToICSEvents(s,i));
+    downloadICSFile(generateICS(events),"TravelPilot_Full_Itinerary_"+S.trip.name.replace(/\s+/g,"_"));
+  };
+
+  // Open all in Google Calendar (opens first stop)
+  document.getElementById("btn-gcal-all").onclick=()=>{
+    if(!S.stops.length)return alert("Add stops first.");
+    const s=S.stops[0];
+    const url=googleCalURL(`📍 ${s.city} Trip`,icsDate(s.arrive,"09:00"),icsDate(s.depart,"18:00"),
+      `${s.notes||"Business visit"}\\n${s.addr||""}`,s.addr||s.city);
+    window.open(url,"_blank");
+  };
+
+  // Individual stop calendar buttons
+  document.querySelectorAll("[data-cal-stop]").forEach(b=>b.onclick=()=>{
+    const i=parseInt(b.dataset.calStop);const s=S.stops[i];if(!s)return;
+    const events=stopToICSEvents(s,i);
+    downloadICSFile(generateICS(events),"TravelPilot_"+s.city.replace(/\s+/g,"_"));
+  });
+  document.querySelectorAll("[data-gcal-stop]").forEach(b=>b.onclick=()=>{
+    const i=parseInt(b.dataset.gcalStop);const s=S.stops[i];if(!s)return;
+    const url=googleCalURL(`📍 ${s.city}`,icsDate(s.arrive,"09:00"),icsDate(s.depart,"18:00"),
+      `${s.notes||""}\\n${s.addr||""}`,s.addr||s.city);
+    window.open(url,"_blank");
+  });
+
+  // Export alert to calendar
+  document.querySelectorAll("[data-alert-cal]").forEach(b=>b.onclick=()=>{
+    const al=genAlerts().find(a=>a.id===b.dataset.alertCal);
+    if(!al||!al.date)return;
+    const ev={uid:al.id,start:icsDate(al.date,"09:00"),end:icsDate(al.date,"10:00"),title:al.title,desc:al.body.replace(/\n/g,"\\n"),remindMin:60};
+    downloadICSFile(generateICS([ev]),"TravelPilot_Alert");
+  });
+
+  // Start the notification checker
+  startNotifChecker();
+}
+
+// ─── CHECKLIST TAB ─────────────────────────────────────────────
+function rChecklist(){
+  const cats=[
+    {c:"Before Leaving India",items:["Valid passport (6+ months validity beyond return date)","US visa (B1/B2 or L1/L2) approved and stamped","Flight tickets booked (Chennai → JFK or as applicable)","Travel insurance purchased (covers medical + cancellation)","International credit/debit card activated for overseas use","Inform your bank about US travel to avoid card blocks","eSIM QR code received from office / or Airalo eSIM purchased","Color photocopies of passport, visa, I-797 (if applicable)","Company invitation letter / client site visit approval","Power adapter — US Type A/B plug (120V, Indian chargers work)","Carry medicines with prescriptions (generic names — brands differ in US)","Indian snacks: MTR ready meals, instant noodles, pickle, tea powder","Clothes appropriate for season (check weather guide)","Universal power strip (1 adapter powers all devices)","Reusable water bottle (US tap water is safe)","Download offline Google Maps for all cities"]},
+    {c:"Apps to Install Before Flying",items:["Uber — ride hailing (link card before travel)","Lyft — alternative to Uber (compare prices)","Google Maps — download offline maps for each city","Google Flights — compare and track flight prices","Booking.com or Hotels.com — hotel booking","Yelp — restaurant reviews & ratings","Uber Eats or DoorDash — food delivery to hotel","Amtrak — train booking (Northeast corridor)","Google Translate — just in case","WhatsApp / Slack — stay in touch with team","Wallet / Apple Pay / Google Pay — set up contactless payments"]},
+    {c:"On Landing in the US",items:["Clear immigration — have passport + visa + I-94 ready","Collect luggage from carousel","Activate eSIM (Settings → Cellular → turn on travel eSIM)","Connect to airport WiFi while eSIM activates","Book Uber/Lyft to hotel (DO NOT take unmarked cabs)","Notify team of safe arrival","Check into hotel (passport + credit card needed for deposit)","Buy US SIM or top-up data if eSIM insufficient","Find nearest CVS/Walgreens for essentials","Set alarm and review next day's schedule"]},
+    {c:"Daily Office Visit Routine",items:["Dress business casual (collared shirt + chinos + clean shoes)","Carry laptop, charger, notepad, business cards","Check Uber/Google Maps for travel time to office","Arrive 10 minutes early","After visit (1-3 hrs): Uber back to hotel or explore nearby","Keep passport photo on phone (don't carry physical daily)","Track expenses for reimbursement","Charge all devices overnight"]}
+  ];
+  return `<div class="card"><div class="card-t">✅ Complete Travel Checklist</div>
+  ${cats.map(c=>`<div class="cc">${c.c}</div>${c.items.map(it=>`<label class="ci"><input type="checkbox" data-ck="${esc(it)}" ${S.checked.has(it)?'checked':''}><span class="${S.checked.has(it)?'done':''}">${it}</span></label>`).join('')}`).join('')}</div>`}
+
+// ─── BINDING ───────────────────────────────────────────────────
+function bMain(){
+  document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{S.tab=t.dataset.tab;render()});
+  if(S.tab==="plan")bPlan();
+  if(S.tab==="alerts")bAlerts();
+  if(S.tab==="check")bCheck();
+  if(S.tab==="itin")bItin();
+  if(S.tab==="expenses")bExpenses();
+}
+
+function bPlan(){
+  let purp="office";
+  document.querySelectorAll("#purp-ch .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#purp-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");purp=c.dataset.v});
+  document.getElementById("btn-add").onclick=()=>{
+    const city=document.getElementById("a-city").value.trim(),addr=document.getElementById("a-addr").value.trim(),arrive=document.getElementById("a-arr").value,depart=document.getElementById("a-dep").value,notes=document.getElementById("a-notes").value.trim();
+    if(!city||!arrive||!depart)return alert("Enter city, arrive & depart dates.");
+    if(new Date(depart)<=new Date(arrive))return alert("Depart must be after arrive date.");
+    S.stops.push({id:genId(),city,addr,arrive,depart,purpose:purp,notes});render()};
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.a,id=b.dataset.id;
+    if(a==="rm"){S.stops=S.stops.filter(s=>s.id!==id)}
+    else{const idx=S.stops.findIndex(s=>s.id===id);const dir=a==="up"?-1:1;
+      if((dir===-1&&idx===0)||(dir===1&&idx===S.stops.length-1))return;
+      [S.stops[idx],S.stops[idx+dir]]=[S.stops[idx+dir],S.stops[idx]]}
+    render()});
+  const gi=document.getElementById("btn-itin");if(gi)gi.onclick=()=>{S.tab="itin";render()};
+  // Route optimizer
+  const optBtn=document.getElementById("btn-optimize");
+  if(optBtn)optBtn.onclick=()=>{
+    if(S.stops.length<3)return alert("Need at least 3 stops to optimize.");
+    const result=optimizeRoute(S.stops);
+    const currentDist=calcRouteDist(S.stops);
+    S.optimizedRoute={...result,saved:Math.max(0,currentDist-result.bestDist)};
+    render();
+  };
+  const applyBtn=document.getElementById("btn-apply-route");
+  if(applyBtn)applyBtn.onclick=()=>{
+    S.stops=S.optimizedRoute.best;S.optimizedRoute=null;render();
+  };
+  const dismissBtn=document.getElementById("btn-dismiss-route");
+  if(dismissBtn)dismissBtn.onclick=()=>{S.optimizedRoute=null;render()};
+}
+
+function bItin(){
+  const gp=document.getElementById("btn-gp");if(gp)gp.onclick=()=>{S.tab="plan";render()};
+  const dl=document.getElementById("btn-dl");if(dl)dl.onclick=()=>downloadItin();
+  const sh=document.getElementById("btn-share");if(sh)sh.onclick=()=>copyItin()}
+
+function bCheck(){document.querySelectorAll("[data-ck]").forEach(cb=>cb.onchange=()=>{const it=cb.dataset.ck;if(cb.checked)S.checked.add(it);else S.checked.delete(it);render()})}
+
+// ─── EXPENSES TAB ──────────────────────────────────────────────
+const EXP_CATS=[
+  {k:"food",i:"🍽️",l:"Food & Drinks",bg:"rgba(255,179,71,.15)"},
+  {k:"transport",i:"🚕",l:"Transport",bg:"rgba(61,139,253,.15)"},
+  {k:"hotel",i:"🏨",l:"Hotel / Stay",bg:"rgba(124,92,252,.15)"},
+  {k:"grocery",i:"🛒",l:"Grocery",bg:"rgba(0,214,143,.15)"},
+  {k:"shopping",i:"🛍️",l:"Shopping",bg:"rgba(255,107,107,.15)"},
+  {k:"telecom",i:"📱",l:"Phone / Data",bg:"rgba(6,182,212,.15)"},
+  {k:"office",i:"💼",l:"Work / Office",bg:"rgba(168,162,158,.15)"},
+  {k:"other",i:"📌",l:"Other",bg:"rgba(148,153,179,.15)"}
+];
+const PAY_METHODS=[
+  {k:"credit",l:"💳 Credit Card"},{k:"debit",l:"💳 Debit Card"},{k:"cash",l:"💵 Cash"},
+  {k:"gpay",l:"📱 Google Pay"},{k:"applepay",l:"🍎 Apple Pay"},{k:"other",l:"📌 Other"}
+];
+
+function rExpenses(){
+  const filtered=S.expFilter==="all"?S.expenses:S.expenses.filter(e=>e.cat===S.expFilter);
+  const totalUSD=S.expenses.reduce((a,e)=>a+e.amount,0);
+  const totalINR=totalUSD*S.expRate;
+  const todayExp=S.expenses.filter(e=>e.date===new Date().toISOString().split("T")[0]).reduce((a,e)=>a+e.amount,0);
+  const catTotals={};S.expenses.forEach(e=>{catTotals[e.cat]=(catTotals[e.cat]||0)+e.amount});
+
+  // Receipt preview overlay
+  let previewHTML="";
+  if(S.receiptPreview){
+    previewHTML=`<div class="receipt-preview" id="rcpt-overlay"><img src="${S.receiptPreview}" alt="Receipt"></div>`;
+  }
+
+  return `${previewHTML}
+  <div class="card fade-in">
+    <div class="card-t">💰 Expense Tracker</div>
+    <div class="exp-summary">
+      <div class="exp-sbox"><div class="ev green">$${totalUSD.toFixed(2)}</div><div class="el">Total USD</div></div>
+      <div class="exp-sbox"><div class="ev blue">₹${Math.round(totalINR).toLocaleString()}</div><div class="el">Total INR</div></div>
+      <div class="exp-sbox"><div class="ev yellow">$${todayExp.toFixed(2)}</div><div class="el">Today</div></div>
+      <div class="exp-sbox"><div class="ev green">${S.expenses.length}</div><div class="el">Entries</div></div>
+    </div>
+  </div>
+
+  <!-- Currency Converter -->
+  <div class="converter-box fade-in">
+    <div class="section-t">💱 Currency Converter (USD ↔ INR)</div>
+    <div class="conv-row">
+      <span class="conv-label">USD</span>
+      <input type="number" id="conv-usd" placeholder="Enter USD" step="0.01">
+      <span style="color:var(--t3)">⇄</span>
+      <span class="conv-label">INR</span>
+      <input type="number" id="conv-inr" placeholder="Enter INR" step="1">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <label style="margin:0;font-size:10px">Rate: 1 USD =</label>
+      <input type="number" id="conv-rate" value="${S.expRate}" step="0.1" style="width:80px;padding:5px 8px;font-size:12px">
+      <label style="margin:0;font-size:10px">INR</label>
+    </div>
+  </div>
+
+  <!-- Add Expense Form -->
+  <div class="exp-form fade-in">
+    <div class="section-t" style="margin-bottom:10px">➕ Add Expense</div>
+    <div class="fr">
+      <div><label>Amount (USD) *</label><input type="number" id="exp-amt" placeholder="0.00" step="0.01"></div>
+      <div><label>Date *</label><input type="date" id="exp-date" value="${new Date().toISOString().split('T')[0]}"></div>
+    </div>
+    <div class="fg"><label>Description</label><input id="exp-desc" placeholder="e.g. Uber to office, Lunch at Chipotle"></div>
+    <div class="fg"><label>Category</label>
+      <div class="chips" id="exp-cat-ch">${EXP_CATS.map((c,i)=>`<button class="chip ${i===0?'on':''}" data-v="${c.k}">${c.i} ${c.l}</button>`).join("")}</div>
+    </div>
+    <div class="fg"><label>Payment Method</label>
+      <div class="chips" id="exp-pay-ch">${PAY_METHODS.map((p,i)=>`<button class="chip ${i===0?'on':''}" data-v="${p.k}">${p.l}</button>`).join("")}</div>
+    </div>
+    <div class="fg"><label>📷 Receipt Photo</label>
+      <input type="file" id="exp-receipt" accept="image/*" capture="environment" style="display:none">
+      <button class="camera-btn" id="exp-camera-btn">📷 Tap to take photo or upload receipt</button>
+      <img id="exp-receipt-preview" style="display:none;width:60px;height:60px;border-radius:8px;object-fit:cover;margin-top:8px;border:1px solid var(--bdr)">
+    </div>
+    <div class="fg"><label>City (for grouping)</label>
+      <select id="exp-city"><option value="">— Select city —</option>${S.stops.map(s=>`<option value="${esc(s.city)}">${esc(s.city)}</option>`).join("")}<option value="Other">Other</option></select>
+    </div>
+    <div class="fg"><label>Notes</label><input id="exp-notes" placeholder="Optional notes..."></div>
+    <button class="btn btn-p" id="btn-add-exp" style="width:100%">+ Add Expense</button>
+  </div>
+
+  <!-- Filter & List -->
+  <div class="card">
+    <div class="card-t">📋 All Expenses</div>
+    <div class="exp-filter-bar">
+      <select id="exp-filter">
+        <option value="all">All Categories</option>
+        ${EXP_CATS.map(c=>`<option value="${c.k}" ${S.expFilter===c.k?'selected':''}>${c.i} ${c.l}</option>`).join("")}
+      </select>
+      <div style="margin-left:auto;display:flex;gap:6px">
+        <button class="btn btn-g btn-s" id="btn-exp-csv">📥 Export CSV</button>
+        <button class="btn btn-g btn-s" id="btn-exp-copy">📋 Copy All</button>
+      </div>
+    </div>
+    ${filtered.length===0?'<div class="empty" style="padding:24px"><p>No expenses yet. Add your first one above.</p></div>':''}
+    ${filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>{
+      const cat=EXP_CATS.find(c=>c.k===e.cat)||EXP_CATS[7];
+      const pay=PAY_METHODS.find(p=>p.k===e.pay)||PAY_METHODS[5];
+      return `<div class="exp-list-item">
+        <div class="exp-cat-icon" style="background:${cat.bg}">${cat.i}</div>
+        <div class="exp-info">
+          <div class="exp-desc">${esc(e.desc||cat.l)}</div>
+          <div class="exp-meta">${fD(e.date)} · ${pay.l}${e.city?' · '+esc(e.city):''}${e.notes?' · '+esc(e.notes):''}</div>
+        </div>
+        ${e.receipt?`<img class="exp-receipt-thumb" src="${e.receipt}" data-rcpt="${e.id}" alt="Receipt">`:''}
+        <div class="exp-amt">
+          <div class="exp-usd">$${e.amount.toFixed(2)}</div>
+          <div class="exp-inr">₹${Math.round(e.amount*S.expRate).toLocaleString()}</div>
+        </div>
+        <div class="exp-actions">
+          <button class="ib x" data-exp-del="${e.id}" title="Delete">✕</button>
+        </div>
+      </div>`}).join("")}
+  </div>
+
+  <!-- Category Breakdown -->
+  ${S.expenses.length>0?`<div class="card">
+    <div class="card-t">📊 Category Breakdown</div>
+    ${Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{
+      const cat=EXP_CATS.find(c=>c.k===k)||EXP_CATS[7];
+      const pct=totalUSD>0?Math.round(v/totalUSD*100):0;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr)">
+        <span style="font-size:18px">${cat.i}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600">${cat.l}</div>
+          <div style="height:6px;background:var(--s3);border-radius:3px;margin-top:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:3px"></div></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;font-weight:700;color:var(--grn);font-family:var(--mono)">$${v.toFixed(2)}</div>
+          <div style="font-size:10px;color:var(--t3)">${pct}%</div>
+        </div>
+      </div>`}).join("")}
+  </div>`:''}`}
+
+function bExpenses(){
+  // Category chips
+  let expCat="food";
+  document.querySelectorAll("#exp-cat-ch .chip").forEach(c=>c.onclick=()=>{
+    document.querySelectorAll("#exp-cat-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");expCat=c.dataset.v});
+  
+  // Payment chips
+  let expPay="credit";
+  document.querySelectorAll("#exp-pay-ch .chip").forEach(c=>c.onclick=()=>{
+    document.querySelectorAll("#exp-pay-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");expPay=c.dataset.v});
+
+  // Camera / receipt upload
+  let receiptData=null;
+  const fileInput=document.getElementById("exp-receipt");
+  const cameraBtn=document.getElementById("exp-camera-btn");
+  const preview=document.getElementById("exp-receipt-preview");
+  if(cameraBtn)cameraBtn.onclick=()=>fileInput.click();
+  if(fileInput)fileInput.onchange=(e)=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      receiptData=ev.target.result;
+      preview.src=receiptData;
+      preview.style.display="block";
+      cameraBtn.textContent="✅ Receipt captured! Tap to retake";
+      cameraBtn.classList.add("has-img");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Add expense
+  document.getElementById("btn-add-exp").onclick=()=>{
+    const amt=parseFloat(document.getElementById("exp-amt").value);
+    const date=document.getElementById("exp-date").value;
+    const desc=document.getElementById("exp-desc").value.trim();
+    const city=document.getElementById("exp-city").value;
+    const notes=document.getElementById("exp-notes").value.trim();
+    if(!amt||amt<=0||!date)return alert("Enter amount and date.");
+    S.expenses.push({id:genId(),amount:amt,date,desc,cat:expCat,pay:expPay,city,notes,receipt:receiptData,ts:Date.now()});
+    saveExpenses();render()};
+
+  // Filter
+  const filterEl=document.getElementById("exp-filter");
+  if(filterEl)filterEl.onchange=()=>{S.expFilter=filterEl.value;render()};
+
+  // Delete
+  document.querySelectorAll("[data-exp-del]").forEach(b=>b.onclick=()=>{
+    if(confirm("Delete this expense?")){S.expenses=S.expenses.filter(e=>e.id!==b.dataset.expDel);saveExpenses();render()}});
+
+  // Receipt preview
+  document.querySelectorAll("[data-rcpt]").forEach(img=>img.onclick=()=>{
+    const exp=S.expenses.find(e=>e.id===img.dataset.rcpt);
+    if(exp&&exp.receipt){S.receiptPreview=exp.receipt;render()}});
+  const overlay=document.getElementById("rcpt-overlay");
+  if(overlay)overlay.onclick=()=>{S.receiptPreview=null;render()};
+
+  // Currency converter
+  const convUSD=document.getElementById("conv-usd");
+  const convINR=document.getElementById("conv-inr");
+  const convRate=document.getElementById("conv-rate");
+  if(convUSD)convUSD.oninput=()=>{const v=parseFloat(convUSD.value)||0;convINR.value=(v*S.expRate).toFixed(2)};
+  if(convINR)convINR.oninput=()=>{const v=parseFloat(convINR.value)||0;convUSD.value=(v/S.expRate).toFixed(2)};
+  if(convRate)convRate.onchange=()=>{S.expRate=parseFloat(convRate.value)||84.5;render()};
+
+  // Export CSV
+  document.getElementById("btn-exp-csv").onclick=()=>exportExpCSV();
+  document.getElementById("btn-exp-copy").onclick=()=>copyExpenses();
+}
+
+function saveExpenses(){
+  try{localStorage.setItem("tp_expenses",JSON.stringify(S.expenses))}catch(e){}}
+function loadExpenses(){
+  try{const d=localStorage.getItem("tp_expenses");if(d)S.expenses=JSON.parse(d)}catch(e){}}
+
+function exportExpCSV(){
+  let csv="Date,Description,Category,Amount (USD),Amount (INR),Payment Method,City,Notes\n";
+  S.expenses.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(e=>{
+    const cat=EXP_CATS.find(c=>c.k===e.cat)||EXP_CATS[7];
+    const pay=PAY_METHODS.find(p=>p.k===e.pay)||PAY_METHODS[5];
+    csv+=`"${e.date}","${(e.desc||cat.l).replace(/"/g,'""')}","${cat.l}","${e.amount.toFixed(2)}","${(e.amount*S.expRate).toFixed(2)}","${pay.l.replace(/[^\w\s]/g,'')}","${e.city||''}","${(e.notes||'').replace(/"/g,'""')}"\n`});
+  // Add totals row
+  const total=S.expenses.reduce((a,e)=>a+e.amount,0);
+  csv+=`\n"","TOTAL","","${total.toFixed(2)}","${(total*S.expRate).toFixed(2)}","","",""\n`;
+  csv+=`"","Exchange Rate: 1 USD = ${S.expRate} INR","","","","","",""\n`;
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=`TravelPilot_Expenses_${S.trip.name.replace(/\s+/g,"_")}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}
+
+function copyExpenses(){
+  let t=`💰 EXPENSE REPORT — ${S.trip.name}\n${"═".repeat(40)}\n`;
+  const total=S.expenses.reduce((a,e)=>a+e.amount,0);
+  t+=`Total: $${total.toFixed(2)} (₹${Math.round(total*S.expRate).toLocaleString()})\nRate: 1 USD = ${S.expRate} INR\n\n`;
+  S.expenses.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(e=>{
+    const cat=EXP_CATS.find(c=>c.k===e.cat)||EXP_CATS[7];
+    t+=`${fD(e.date)} | ${cat.i} ${e.desc||cat.l} | $${e.amount.toFixed(2)} (₹${Math.round(e.amount*S.expRate)})\n`});
+  navigator.clipboard.writeText(t).then(()=>alert("Expenses copied! Paste in WhatsApp/Email.")).catch(()=>alert("Could not copy."))}
+
+// ─── DOWNLOAD / SHARE ──────────────────────────────────────────
+function generateItinText(){
+  let t=`═══════════════════════════════════════\n  TRAVELPILOT — US TRAVEL ITINERARY\n  ${S.trip.name}\n  ${S.trip.from} → ${S.trip.land}\n  Starting: ${fDL(S.trip.startDate)}\n═══════════════════════════════════════\n\n`;
+  S.stops.forEach((s,i)=>{
+    const n=nights(s.arrive,s.depart);const ap=airport(s.city);
+    t+=`───── STOP ${i+1}: ${s.city.toUpperCase()} ─────\n`;
+    t+=`📅 ${fD(s.arrive)} → ${fD(s.depart)} (${n} nights)\n`;
+    if(s.addr)t+=`📍 Site: ${s.addr}\n`;
+    if(s.notes)t+=`📋 Schedule: ${s.notes}\n`;
+    t+=`✈️ Airports: ${ap.join(", ")}\n`;
+    t+=`🏨 Hotels: Budget $${HOTELS[0].lo*n}-${HOTELS[0].hi*n} · Mid $${HOTELS[1].lo*n}-${HOTELS[1].hi*n} · Business $${HOTELS[2].lo*n}-${HOTELS[2].hi*n}\n`;
+    t+=`🍛 Indian Food: ${indianFood(s.city)}\n`;
+    t+=`🏛️ Visit: ${famousPlaces(s.city)}\n`;
+    const next=S.stops[i+1];
+    if(next){const d=dist(s.city,next.city);const tr=estTransport(s.city,next.city);
+      t+=`\n🚀 → ${next.city} (~${d} mi)\n`;
+      tr.forEach(x=>{const m=TRANSPORT_M[x.mode];t+=`  ${m.i} ${m.l}: ${x.dur} · ${x.cost}${x.rec?' ★ RECOMMENDED':''}\n  ${x.note}\n`})}
+    t+=`\n`});
+  t+=`═══ EMERGENCY ═══\n🚨 Emergency: 911\n🏥 Poison: 1-800-222-1222\n🇮🇳 Indian Embassy DC: +1-202-939-7000\n🇮🇳 Indian Consulate NY: +1-212-774-0600\n`;
+  return t}
+
+function downloadItin(){
+  const text=generateItinText();
+  const blob=new Blob([text],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=`TravelPilot_${S.trip.name.replace(/\s+/g,"_")}_Itinerary.txt`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}
+
+function copyItin(){
+  const text=generateItinText();
+  navigator.clipboard.writeText(text).then(()=>alert("Itinerary copied to clipboard! Paste it in WhatsApp, Email, or Notes.")).catch(()=>{
+    const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);alert("Itinerary copied!")})}
+
+// ─── INIT ──────────────────────────────────────────────────────
+window.onerror=function(msg,url,line,col,err){
+  document.getElementById("app").innerHTML='<div style="padding:40px;text-align:center;color:#ff6b6b"><h2>⚠️ Something went wrong</h2><p style="color:#9499b3;margin:12px 0">Error: '+msg+'</p><p style="color:#9499b3">Line: '+line+'</p><button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:#3d8bfd;color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer">Reload App</button></div>';
+  return true;
+};
+
+function initApp(){
+  try{loadExpenses()}catch(e){}
+  try{
+    var saved=localStorage.getItem("tp_state");
+    if(saved){var p=JSON.parse(saved);if(p&&p.trip){S.trip=p.trip;S.stops=p.stops||[];S.screen="main"}}
+  }catch(e){}
+  try{
+    var rem=localStorage.getItem("tp_reminders");
+    if(rem)S.customReminders=JSON.parse(rem);
+  }catch(e){}
+  try{
+    var fired=localStorage.getItem("tp_fired");
+    if(fired)S.firedNotifs=new Set(fired.split("|||").filter(Boolean));
+  }catch(e){}
+  if(!S.customReminders)S.customReminders=[];
+  if(!S.firedNotifs)S.firedNotifs=new Set();
+  render();
+
+  // Auto-save state on changes
+  var origRender=render;
+  render=function(){
+    origRender();
+    try{if(S.trip)localStorage.setItem("tp_state",JSON.stringify({trip:S.trip,stops:S.stops}))}catch(e){}
+  };
+
+  // Start notification checker if permission granted
+  try{
+    if("Notification" in window && Notification.permission==="granted"){startNotifChecker()}
+  }catch(e){}
+}
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",initApp);
+}else{
+  initApp();
+}
+
+// ─── PWA SERVICE WORKER ────────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    console.log('TravelPilot SW registered');
+  }).catch(function(err){
+    console.log('SW registration skipped:', err);
+  });
+}
+
+// ─── PWA INSTALL PROMPT ────────────────────────────────────────
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredPrompt=e;
+  showInstallBanner();
+});
+
+function showInstallBanner(){
+  if(document.getElementById('pwa-install-bar'))return;
+  var bar=document.createElement('div');
+  bar.id='pwa-install-bar';
+  bar.style.cssText='position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#3d8bfd,#7c5cfc);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:9999;font-family:Outfit,-apple-system,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,.4)';
+  bar.innerHTML='<div style="flex:1"><strong style="font-size:14px">📲 Install TravelPilot</strong><div style="font-size:11px;opacity:.85;margin-top:2px">Add to home screen for app-like experience</div></div><button id="pwa-install-btn" style="padding:8px 18px;background:#fff;color:#3d8bfd;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Install</button><button id="pwa-dismiss-btn" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:4px 8px">✕</button>';
+  document.body.appendChild(bar);
+  document.getElementById('pwa-install-btn').onclick=function(){
+    if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;bar.remove()})}
+  };
+  document.getElementById('pwa-dismiss-btn').onclick=function(){bar.remove()};
+}
+
+// iOS install hint (Safari doesn't fire beforeinstallprompt)
+var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+var isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+if(isIOS&&!isStandalone){
+  setTimeout(function(){
+    if(document.getElementById('pwa-install-bar'))return;
+    var bar=document.createElement('div');
+    bar.id='pwa-install-bar';
+    bar.style.cssText='position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#3d8bfd,#7c5cfc);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;z-index:9999;font-family:Outfit,-apple-system,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,.4)';
+    bar.innerHTML='<div style="flex:1"><strong style="font-size:14px">📲 Install TravelPilot</strong><div style="font-size:11px;opacity:.85;margin-top:2px">Tap <strong>Share ↑</strong> then <strong>"Add to Home Screen"</strong></div></div><button style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:4px 8px" onclick="this.parentElement.remove()">✕</button>';
+    document.body.appendChild(bar);
+  },3000);
+}
+</script>
+</body>
+</html>
