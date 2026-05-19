@@ -1,4 +1,4 @@
-var CACHE_NAME = 'travelpilot-v2';
+var CACHE_NAME = 'travelpilot-v3';
 
 self.addEventListener('install', function(event) {
   self.skipWaiting();

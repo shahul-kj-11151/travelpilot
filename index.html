@@ -20,6 +20,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 25% 15%,rgba(61,139,253,.04) 0%,transparent 55%),radial-gradient(ellipse at 75% 85%,rgba(124,92,252,.03) 0%,transparent 55%);pointer-events:none;z-index:0;-webkit-transform:translateZ(0)}
+body.light{--bg:#f4f6fb;--s1:#ffffff;--s2:#f1f4fd;--s3:#e9eeff;--s4:#dde5ff;--bdr:#c8d4ff;--t1:#111a3a;--t2:#445078;--t3:#6d7697;--accg:rgba(61,139,253,.18);--grng:rgba(0,214,143,.12);--ylwg:rgba(255,179,71,.16);--redg:rgba(255,107,107,.14)}
 .app{max-width:860px;margin:0 auto;padding:12px;position:relative;z-index:1}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
 
@@ -63,6 +64,7 @@ textarea{min-height:48px;resize:vertical}
 .hdr h1{font-size:20px;font-weight:800;letter-spacing:-.4px}
 .hdr h1 em{font-style:normal;background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hdr-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.hdr-actions{display:flex;gap:6px;flex-wrap:wrap}
 
 /* TABS */
 .tabs{display:flex;gap:3px;background:var(--s1);border-radius:var(--r);padding:3px;margin-bottom:14px;border:1px solid var(--bdr);overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -220,6 +222,13 @@ textarea{min-height:48px;resize:vertical}
 .attire-card .att-icon{font-size:42px;margin-bottom:6px}
 .attire-card h4{font-size:12px;font-weight:700;margin-bottom:4px}
 .attire-card p{font-size:10px;color:var(--t3);line-height:1.4}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th,.tbl td{border:1px solid var(--bdr);padding:8px;vertical-align:top}
+.tbl th{background:var(--s2);text-align:left}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accg);color:var(--acc);font-size:10px;font-weight:700}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.tiny{font-size:11px;color:var(--t3)}
+.vault-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)}
 
 /* EMPTY */
 .empty{text-align:center;padding:50px 20px;color:var(--t3)}
@@ -231,6 +240,13 @@ textarea{min-height:48px;resize:vertical}
   .tab{font-size:10px;padding:8px 3px}
   .setup{padding:28px 18px}
   .weather-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media print{
+  :root{color-scheme:light}
+  body,body.light{--bg:#fff;--s1:#fff;--s2:#fff;--s3:#fff;--bdr:#ddd;--t1:#111;--t2:#333;--t3:#555;background:#fff;color:#111;font-family:Georgia,'Times New Roman',serif}
+  body::before,.tabs,.btn,.hdr-actions,#pwa-install-bar{display:none!important}
+  .card,.guide-card{page-break-inside:avoid;border:1px solid #ddd}
+  .connector{page-break-before:always}
 }
 </style>
 </head>
@@ -282,6 +298,8 @@ const HOTEL_DB={
 };
 
 function getHotels(city){
+  const guide=cityGuide(city);
+  if(guide&&guide.hotels&&guide.hotels.length)return guide.hotels;
   const k=city.toLowerCase().trim();
   const m=Object.keys(HOTEL_DB).find(a=>k.includes(a)||a.includes(k));
   return m?HOTEL_DB[m]:null;
@@ -361,14 +379,354 @@ function nearestNeighborRoute(stops){
 const FAMOUS_PLACES={"new york":"Statue of Liberty, Times Square, Central Park, Empire State Building, Brooklyn Bridge, Top of the Rock, 9/11 Memorial, Metropolitan Museum","michigan":"Mackinac Island, Sleeping Bear Dunes, Henry Ford Museum, Pictured Rocks, Great Lakes shoreline, Ann Arbor, Frankenmuth","maine":"Acadia National Park, Portland Old Port, Lighthouse Trail, Bar Harbor, Camden, Kennebunkport, Lobster shacks","detroit":"Detroit Institute of Arts, Motown Museum, Belle Isle, Ford Piquette Plant, Eastern Market","boston":"Freedom Trail, Fenway Park, Harvard Yard, Boston Common, Faneuil Hall","chicago":"Millennium Park, Art Institute, Willis Tower Skydeck, Navy Pier, Magnificent Mile","san francisco":"Golden Gate Bridge, Alcatraz, Fisherman's Wharf, Chinatown, Cable Cars","los angeles":"Hollywood, Santa Monica Pier, Griffith Observatory, Getty Center","washington dc":"National Mall, Smithsonian Museums, Lincoln Memorial, Capitol Building","miami":"South Beach, Wynwood Walls, Everglades, Little Havana","dallas":"Dallas Arboretum, Sixth Floor Museum, Deep Ellum, Perot Museum","seattle":"Pike Place Market, Space Needle, Museum of Pop Culture","denver":"Red Rocks, Rocky Mountain NP, Denver Art Museum","atlanta":"Georgia Aquarium, MLK Jr. Historic Site, Piedmont Park"};
 const INDIAN_FOOD={"new york":"Jackson Heights (Queens) — NYC's Little India. Dozens of Indian restaurants, grocery stores with Indian brands. Also try Curry Hill (Lexington Ave, 27th–30th St). Uber Eats/DoorDash have many Indian options.","michigan":"Troy & Canton have Indian grocery stores (Patel Brothers). Restaurants: Shalimar, Cardamom, Royal Indian Cuisine in Ann Arbor/Detroit area.","maine":"Limited but available: Taste of India (Bangor), Bombay Mahal & Tandoor Restaurant (Portland), Shere Punjab (Brunswick). Carry instant foods as backup.","detroit":"Patel Brothers grocery in Troy. Restaurants in Troy/Novi area. Indian community centered around Troy, MI.","boston":"Cambridge has multiple Indian restaurants. Patel Brothers in Waltham. Large Indian community.","chicago":"Devon Avenue — Chicago's Indian corridor. Dozens of restaurants and Indian grocery stores.","san francisco":"Sunnyvale/Santa Clara for South Indian food. Curry Up Now chain. Large Indian community in Bay Area.","los angeles":"Artesia (Little India) — Indian restaurants, grocery stores. Pioneer Boulevard."};
 
+const TIER1_CITY_GUIDES={
+  "new york":{coords:{lat:40.7128,lon:-74.006},airports:["JFK — John F. Kennedy Intl","LGA — LaGuardia","EWR — Newark Liberty"],officeAreas:["Midtown Manhattan","Hudson Yards","Downtown Financial District","Jersey City"],indian:["Angel Indian Restaurant (East Village)","Semma (Greenwich Village)","Dhamaka (Lower East Side)","Jackson Heights food strip","Curry Hill (Murray Hill)"],landmarks:["Statue of Liberty","Times Square","Central Park","Brooklyn Bridge"],parks:["Bear Mountain State Park (1.5h)","Harriman State Park"],weekend:["Philadelphia day trip","Hudson Valley"],mapArea:"Download Manhattan + Brooklyn + Jersey City",mapSize:"~300MB",outlet:"Woodbury Common Premium Outlets",hotels:[
+    {name:"Hyatt Place New York/Chelsea",rating:"8.3",price:"$220–$360",area:"Chelsea",distance:"1.1 mi to Midtown",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+New+York+Chelsea",geo:"40.7468,-73.995"},
+    {name:"Pod Times Square",rating:"8.1",price:"$140–$240",area:"Times Square",distance:"0.3 mi to Theater District",book:"https://www.booking.com/searchresults.html?ss=Pod+Times+Square",geo:"40.7590,-73.992"},
+    {name:"Courtyard Manhattan/Midtown East",rating:"8.5",price:"$230–$390",area:"Midtown East",distance:"0.9 mi to Bryant Park",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Manhattan+Midtown+East",geo:"40.7526,-73.971"},
+    {name:"Hilton Garden Inn Midtown Park Ave",rating:"8.2",price:"$240–$380",area:"NoMad",distance:"0.8 mi to Empire State",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Midtown+Park+Ave",geo:"40.7446,-73.985"},
+    {name:"Arlo Midtown",rating:"8.6",price:"$260–$420",area:"Hudson Yards",distance:"0.6 mi to Penn Station",book:"https://www.booking.com/searchresults.html?ss=Arlo+Midtown",geo:"40.7545,-73.995"}
+  ]},
+  "los angeles":{coords:{lat:34.0522,lon:-118.2437},airports:["LAX — Los Angeles Intl","BUR — Hollywood Burbank"],officeAreas:["Downtown LA","Santa Monica","El Segundo","Burbank"],indian:["Artesia Little India","Badmaash (DTLA)","Anarkali (Los Feliz)","Mayura (Culver City)"],landmarks:["Hollywood Sign","Santa Monica Pier","Griffith Observatory","Getty Center"],parks:["Joshua Tree National Park","Channel Islands National Park"],weekend:["Santa Barbara","San Diego"],mapArea:"Download Downtown LA + Santa Monica + LAX belt",mapSize:"~320MB",outlet:"Citadel Outlets",hotels:[
+    {name:"Sheraton Grand Los Angeles",rating:"8.1",price:"$190–$320",area:"Downtown",distance:"0.5 mi to Financial District",book:"https://www.booking.com/searchresults.html?ss=Sheraton+Grand+Los+Angeles",geo:"34.0504,-118.259"},
+    {name:"The Westin Bonaventure Hotel & Suites",rating:"8.0",price:"$180–$310",area:"Downtown",distance:"0.4 mi to Bunker Hill",book:"https://www.booking.com/searchresults.html?ss=The+Westin+Bonaventure+Los+Angeles",geo:"34.0538,-118.255"},
+    {name:"Hyatt Place LAX/Century Blvd",rating:"8.4",price:"$170–$260",area:"LAX",distance:"1.0 mi to LAX",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+LAX+Century+Blvd",geo:"33.9453,-118.378"},
+    {name:"Courtyard Santa Monica",rating:"8.2",price:"$230–$360",area:"Santa Monica",distance:"0.5 mi to beach offices",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Santa+Monica",geo:"34.0155,-118.491"},
+    {name:"Hampton Inn & Suites LA/Hollywood",rating:"8.0",price:"$165–$250",area:"Hollywood",distance:"1.2 mi to Hollywood Blvd",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Hollywood+Los+Angeles",geo:"34.1004,-118.327"}
+  ]},
+  "san francisco":{coords:{lat:37.7749,lon:-122.4194},airports:["SFO — San Francisco Intl","OAK — Oakland Intl","SJC — San Jose"],officeAreas:["Financial District","SoMa","Mission Bay","South Bay commuter corridor"],indian:["Rooh (SoMa)","Amber India (Financial District)","Aaha Indian Cuisine (Mission)","Pakwan (Mission)"],landmarks:["Golden Gate Bridge","Alcatraz","Fisherman's Wharf","Lombard Street"],parks:["Muir Woods","Point Reyes"],weekend:["Napa","Monterey"],mapArea:"Download San Francisco + Oakland + Daly City",mapSize:"~280MB",outlet:"San Francisco Premium Outlets (Livermore)",hotels:[
+    {name:"Hyatt Regency San Francisco",rating:"8.5",price:"$260–$410",area:"Embarcadero",distance:"0.2 mi to Financial District",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+San+Francisco",geo:"37.7946,-122.395"},
+    {name:"Hotel VIA",rating:"8.7",price:"$240–$390",area:"SoMa",distance:"0.8 mi to Mission Bay",book:"https://www.booking.com/searchresults.html?ss=Hotel+VIA+San+Francisco",geo:"37.7786,-122.391"},
+    {name:"Canopy by Hilton San Francisco SoMa",rating:"8.6",price:"$250–$400",area:"SoMa",distance:"0.7 mi to Moscone",book:"https://www.booking.com/searchresults.html?ss=Canopy+Hilton+San+Francisco+SoMa",geo:"37.7867,-122.404"},
+    {name:"LUMA Hotel San Francisco",rating:"8.9",price:"$270–$430",area:"Mission Bay",distance:"0.4 mi to biotech hub",book:"https://www.booking.com/searchresults.html?ss=LUMA+Hotel+San+Francisco",geo:"37.7707,-122.389"},
+    {name:"Aloft Santa Clara",rating:"8.2",price:"$180–$300",area:"South Bay",distance:"0.8 mi to Levi's Stadium offices",book:"https://www.booking.com/searchresults.html?ss=Aloft+Santa+Clara",geo:"37.4044,-121.974"}
+  ]},
+  "seattle":{coords:{lat:47.6062,lon:-122.3321},airports:["SEA — Seattle Tacoma Intl","PAE — Paine Field"],officeAreas:["Downtown Seattle","South Lake Union","Redmond (Microsoft)","Bellevue"],indian:["Taste of India (University District)","Annapurna Cafe (Capitol Hill)","Kanishka (Redmond)","Kabab House (Bellevue)"],landmarks:["Space Needle","Pike Place Market","Museum of Pop Culture"],parks:["Mount Rainier NP","Olympic NP"],weekend:["Leavenworth","Snoqualmie Falls"],mapArea:"Download Seattle + Bellevue + Redmond",mapSize:"~260MB",outlet:"Seattle Premium Outlets",hotels:[
+    {name:"Grand Hyatt Seattle",rating:"8.8",price:"$240–$390",area:"Downtown",distance:"0.5 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Grand+Hyatt+Seattle",geo:"47.6113,-122.333"},
+    {name:"Hyatt House Seattle/Downtown",rating:"8.6",price:"$220–$340",area:"South Lake Union",distance:"0.6 mi to Amazon offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+House+Seattle+Downtown",geo:"47.6206,-122.347"},
+    {name:"Seattle Marriott Redmond",rating:"8.4",price:"$210–$330",area:"Redmond",distance:"0.9 mi to Microsoft campus",book:"https://www.booking.com/searchresults.html?ss=Seattle+Marriott+Redmond",geo:"47.6743,-122.121"},
+    {name:"Westin Bellevue",rating:"8.7",price:"$230–$360",area:"Bellevue",distance:"0.5 mi to downtown Bellevue",book:"https://www.booking.com/searchresults.html?ss=Westin+Bellevue",geo:"47.6148,-122.201"},
+    {name:"Courtyard Seattle Downtown/Pioneer Square",rating:"8.1",price:"$180–$290",area:"Pioneer Square",distance:"0.7 mi to waterfront",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Seattle+Pioneer+Square",geo:"47.6009,-122.332"}
+  ]},
+  "chicago":{coords:{lat:41.8781,lon:-87.6298},airports:["ORD — O'Hare Intl","MDW — Midway"],officeAreas:["The Loop","River North","West Loop/Fulton Market"],indian:["Devon Avenue corridor","ROOH Chicago (West Loop)","Vermilion (River North)","Maharaj Indian Grill"],landmarks:["Millennium Park","Navy Pier","Art Institute"],parks:["Indiana Dunes NP"],weekend:["Milwaukee","Lake Geneva"],mapArea:"Download Downtown Chicago + O'Hare corridor",mapSize:"~280MB",outlet:"Fashion Outlets of Chicago",hotels:[
+    {name:"Hyatt Regency Chicago",rating:"8.5",price:"$210–$340",area:"Loop",distance:"0.4 mi to riverwalk",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Chicago",geo:"41.8878,-87.623"},
+    {name:"Hilton Garden Inn Chicago Downtown",rating:"8.2",price:"$170–$290",area:"River North",distance:"0.8 mi to Magnificent Mile",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Chicago+Downtown",geo:"41.8934,-87.629"},
+    {name:"Canopy by Hilton Chicago Central Loop",rating:"8.8",price:"$220–$350",area:"Loop",distance:"0.3 mi to Willis Tower",book:"https://www.booking.com/searchresults.html?ss=Canopy+Hilton+Chicago+Central+Loop",geo:"41.8819,-87.638"},
+    {name:"The Hoxton Chicago",rating:"8.4",price:"$200–$330",area:"West Loop",distance:"0.5 mi to Fulton Market",book:"https://www.booking.com/searchresults.html?ss=The+Hoxton+Chicago",geo:"41.8855,-87.648"},
+    {name:"Hyatt Place Chicago/O'Hare Airport",rating:"8.0",price:"$150–$240",area:"Rosemont",distance:"1.0 mi to O'Hare",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Chicago+Ohare",geo:"41.9828,-87.860"}
+  ]},
+  "boston":{coords:{lat:42.3601,lon:-71.0589},airports:["BOS — Logan Intl"],officeAreas:["Back Bay","Seaport","Cambridge/Kendall Square"],indian:["Punjabi Dhaba (Inman)","Tanjore (Cambridge)","Shanti (Dorchester)","India Quality (Kenmore)"],landmarks:["Freedom Trail","Fenway Park","Boston Common"],parks:["Acadia NP (long weekend)","White Mountain NF"],weekend:["Cape Cod","Salem"],mapArea:"Download Boston + Cambridge + Seaport",mapSize:"~240MB",outlet:"Wrentham Village Premium Outlets",hotels:[
+    {name:"The Westin Copley Place",rating:"8.4",price:"$260–$390",area:"Back Bay",distance:"0.3 mi to Copley",book:"https://www.booking.com/searchresults.html?ss=Westin+Copley+Place",geo:"42.3499,-71.078"},
+    {name:"Hyatt Place Boston/Seaport District",rating:"8.8",price:"$230–$360",area:"Seaport",distance:"0.6 mi to Seaport offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Boston+Seaport",geo:"42.347,-71.039"},
+    {name:"Residence Inn Boston Downtown/Seaport",rating:"8.5",price:"$240–$380",area:"Seaport",distance:"0.7 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Residence+Inn+Boston+Seaport",geo:"42.3517,-71.048"},
+    {name:"Royal Sonesta Boston",rating:"8.2",price:"$220–$350",area:"Cambridge",distance:"0.8 mi to Kendall Square",book:"https://www.booking.com/searchresults.html?ss=Royal+Sonesta+Boston",geo:"42.3672,-71.074"},
+    {name:"Hampton Inn Boston Logan Airport",rating:"8.1",price:"$180–$260",area:"Airport",distance:"1.1 mi to BOS",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Boston+Logan+Airport",geo:"42.3865,-71.016"}
+  ]},
+  "austin":{coords:{lat:30.2672,lon:-97.7431},airports:["AUS — Austin Bergstrom"],officeAreas:["Downtown Austin","The Domain","North Austin tech corridor"],indian:["Asiana Indian Cuisine (Domain)","Sangam Chettinad", "Tarka Indian Kitchen", "Bombay Bistro"],landmarks:["Texas State Capitol","Lady Bird Lake","South Congress"],parks:["Pedernales Falls","Enchanted Rock"],weekend:["San Antonio","Fredericksburg"],mapArea:"Download Downtown + Domain + airport corridor",mapSize:"~220MB",outlet:"San Marcos Premium Outlets",hotels:[
+    {name:"Archer Hotel Austin",rating:"9.0",price:"$220–$340",area:"The Domain",distance:"0.2 mi to Domain offices",book:"https://www.booking.com/searchresults.html?ss=Archer+Hotel+Austin",geo:"30.4002,-97.725"},
+    {name:"Westin Austin Downtown",rating:"8.6",price:"$210–$330",area:"Downtown",distance:"0.4 mi to Congress Ave",book:"https://www.booking.com/searchresults.html?ss=Westin+Austin+Downtown",geo:"30.266,-97.739"},
+    {name:"Aloft Austin at The Domain",rating:"8.3",price:"$190–$290",area:"Domain",distance:"0.3 mi to tech campus",book:"https://www.booking.com/searchresults.html?ss=Aloft+Austin+Domain",geo:"30.4004,-97.724"},
+    {name:"Hyatt Place Austin Downtown",rating:"8.5",price:"$200–$310",area:"Downtown",distance:"0.5 mi to Rainey St",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Austin+Downtown",geo:"30.2648,-97.739"},
+    {name:"Hampton Inn Austin North",rating:"8.0",price:"$140–$220",area:"North Austin",distance:"1.0 mi to office parks",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Austin+North",geo:"30.3558,-97.694"}
+  ]},
+  "dallas":{coords:{lat:32.7767,lon:-96.797},airports:["DFW — Dallas/Fort Worth","DAL — Love Field"],officeAreas:["Downtown Dallas","Las Colinas","Plano/Legacy West"],indian:["Kalachandji's (East Dallas)","Mughlai Fine Indian", "India 101 (Irving)","Desi District (Plano)"],landmarks:["Dealey Plaza","Dallas Arboretum","Klyde Warren Park"],parks:["Dinosaur Valley State Park"],weekend:["Fort Worth","Waco"],mapArea:"Download Dallas + Irving + Plano",mapSize:"~260MB",outlet:"Grapevine Mills + Allen Premium Outlets",hotels:[
+    {name:"Omni Dallas Hotel",rating:"8.7",price:"$220–$340",area:"Downtown",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Omni+Dallas+Hotel",geo:"32.7765,-96.806"},
+    {name:"The Westin Dallas Downtown",rating:"8.4",price:"$210–$320",area:"Downtown",distance:"0.5 mi to Main Street",book:"https://www.booking.com/searchresults.html?ss=Westin+Dallas+Downtown",geo:"32.781,-96.799"},
+    {name:"NYLO Las Colinas Hotel",rating:"8.0",price:"$150–$250",area:"Las Colinas",distance:"0.8 mi to Irving business park",book:"https://www.booking.com/searchresults.html?ss=NYLO+Las+Colinas",geo:"32.8684,-96.937"},
+    {name:"Renaissance Dallas at Plano Legacy West",rating:"8.8",price:"$230–$360",area:"Plano",distance:"0.4 mi to Legacy West",book:"https://www.booking.com/searchresults.html?ss=Renaissance+Dallas+Plano+Legacy+West",geo:"33.0778,-96.823"},
+    {name:"Hyatt Place DFW",rating:"8.1",price:"$160–$240",area:"DFW Airport",distance:"1.0 mi to airport",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+DFW",geo:"32.8925,-97.037"}
+  ]},
+  "houston":{coords:{lat:29.7604,lon:-95.3698},airports:["IAH — George Bush Intercontinental","HOU — Hobby"],officeAreas:["Downtown","Energy Corridor","Galleria"],indian:["Himalaya Restaurant", "Aga's Restaurant", "Pondicheri", "Kiran's"],landmarks:["Space Center Houston","Museum District","Buffalo Bayou"],parks:["Brazos Bend State Park"],weekend:["Galveston","Austin"],mapArea:"Download Downtown + Galleria + Energy Corridor",mapSize:"~250MB",outlet:"Houston Premium Outlets",hotels:[
+    {name:"Marriott Marquis Houston",rating:"8.7",price:"$230–$360",area:"Downtown",distance:"0.4 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Marriott+Marquis+Houston",geo:"29.753,-95.357"},
+    {name:"The Westin Galleria Houston",rating:"8.4",price:"$220–$330",area:"Galleria",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Westin+Galleria+Houston",geo:"29.7388,-95.463"},
+    {name:"Hilton Americas-Houston",rating:"8.5",price:"$210–$340",area:"Downtown",distance:"0.2 mi to Discovery Green",book:"https://www.booking.com/searchresults.html?ss=Hilton+Americas+Houston",geo:"29.7522,-95.357"},
+    {name:"Hyatt Place Houston/Galleria",rating:"8.1",price:"$170–$260",area:"Galleria",distance:"0.6 mi to Galleria offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Houston+Galleria",geo:"29.7426,-95.461"},
+    {name:"Courtyard Houston IAH Airport",rating:"8.0",price:"$150–$230",area:"IAH",distance:"1.0 mi to airport",book:"https://www.booking.com/searchresults.html?ss=Courtyard+Houston+IAH",geo:"29.9503,-95.344"}
+  ]},
+  "atlanta":{coords:{lat:33.749,lon:-84.388},airports:["ATL — Hartsfield Jackson"],officeAreas:["Midtown","Buckhead","Downtown"],indian:["Tabla (Midtown)","Madras Mantra", "Planet Bombay", "Botiwalla"],landmarks:["Georgia Aquarium","Centennial Park","MLK Historic Site"],parks:["Stone Mountain Park","Chattahoochee River NRA"],weekend:["Blue Ridge","Savannah"],mapArea:"Download Downtown + Midtown + Buckhead",mapSize:"~240MB",outlet:"North Georgia Premium Outlets",hotels:[
+    {name:"Atlanta Marriott Marquis",rating:"8.2",price:"$190–$300",area:"Downtown",distance:"0.5 mi to Peachtree Center",book:"https://www.booking.com/searchresults.html?ss=Atlanta+Marriott+Marquis",geo:"33.7614,-84.384"},
+    {name:"Loews Atlanta Hotel",rating:"8.8",price:"$230–$360",area:"Midtown",distance:"0.3 mi to Tech Square",book:"https://www.booking.com/searchresults.html?ss=Loews+Atlanta+Hotel",geo:"33.7835,-84.383"},
+    {name:"Grand Hyatt Atlanta in Buckhead",rating:"8.5",price:"$220–$340",area:"Buckhead",distance:"0.6 mi to Buckhead offices",book:"https://www.booking.com/searchresults.html?ss=Grand+Hyatt+Atlanta+Buckhead",geo:"33.8495,-84.365"},
+    {name:"Hyatt Place Atlanta/Centennial Park",rating:"8.1",price:"$170–$260",area:"Downtown",distance:"0.4 mi to aquarium",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Atlanta+Centennial+Park",geo:"33.7633,-84.394"},
+    {name:"Renaissance Atlanta Airport Gateway",rating:"8.6",price:"$180–$280",area:"Airport",distance:"0.8 mi to ATL SkyTrain",book:"https://www.booking.com/searchresults.html?ss=Renaissance+Atlanta+Airport+Gateway",geo:"33.6391,-84.444"}
+  ]},
+  "detroit":{coords:{lat:42.3314,lon:-83.0458},airports:["DTW — Detroit Metro Wayne County"],officeAreas:["Downtown Detroit","Dearborn Ford HQ","Southfield"],indian:["Neehee's (Canton)","Aroma Indian Cuisine", "Royal Indian Cuisine", "Charminar Biryani"],landmarks:["Detroit Institute of Arts","Motown Museum","Belle Isle"],parks:["Sleeping Bear Dunes (weekend)","Huron-Clinton Metroparks"],weekend:["Ann Arbor","Frankenmuth"],mapArea:"Download Detroit + Dearborn + Ann Arbor corridor",mapSize:"~220MB",outlet:"Great Lakes Crossing Outlets",hotels:[
+    {name:"The Henry, Autograph Collection",rating:"8.6",price:"$190–$300",area:"Dearborn",distance:"0.5 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=The+Henry+Autograph+Collection+Dearborn",geo:"42.3165,-83.222"},
+    {name:"DoubleTree by Hilton Dearborn",rating:"8.1",price:"$140–$220",area:"Dearborn",distance:"1.2 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=DoubleTree+Hilton+Dearborn",geo:"42.3071,-83.236"},
+    {name:"TownePlace Suites Detroit Dearborn",rating:"8.3",price:"$130–$200",area:"Dearborn",distance:"1.3 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=TownePlace+Suites+Dearborn",geo:"42.3045,-83.223"},
+    {name:"Comfort Inn Near Greenfield Village",rating:"7.9",price:"$110–$170",area:"Dearborn",distance:"1.2 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=Comfort+Inn+Greenfield+Village+Dearborn",geo:"42.3021,-83.233"},
+    {name:"Holiday Inn Express & Suites Dearborn",rating:"8.0",price:"$125–$190",area:"Dearborn",distance:"1.5 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Express+Dearborn",geo:"42.2968,-83.215"}
+  ]},
+  "dearborn":{coords:{lat:42.3223,lon:-83.1763},airports:["DTW — Detroit Metro Wayne County"],officeAreas:["Ford World HQ","Fairlane","Southfield"],indian:["Neehee's Dearborn","Biryani Pot","Paradise Biryani Pointe","Aahar India"],landmarks:["Henry Ford Museum","Greenfield Village","Ford Rouge Factory Tour"],parks:["Rouge Park","Hines Drive"],weekend:["Detroit riverfront","Ann Arbor"],mapArea:"Download Dearborn + Detroit metro 20mi radius",mapSize:"~190MB",outlet:"Great Lakes Crossing Outlets",hotels:[
+    {name:"The Henry, Autograph Collection",rating:"8.6",price:"$190–$300",area:"Fairlane",distance:"0.5 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=The+Henry+Autograph+Collection+Dearborn",geo:"42.3165,-83.222"},
+    {name:"DoubleTree by Hilton Dearborn",rating:"8.1",price:"$140–$220",area:"Southfield Fwy",distance:"1.2 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=DoubleTree+Hilton+Dearborn",geo:"42.3071,-83.236"},
+    {name:"TownePlace Suites Detroit Dearborn",rating:"8.3",price:"$130–$200",area:"Ford Rd",distance:"1.3 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=TownePlace+Suites+Dearborn",geo:"42.3045,-83.223"},
+    {name:"Comfort Inn Near Greenfield Village",rating:"7.9",price:"$110–$170",area:"Oakwood Blvd",distance:"1.2 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=Comfort+Inn+Greenfield+Village+Dearborn",geo:"42.3021,-83.233"},
+    {name:"Holiday Inn Express & Suites Dearborn",rating:"8.0",price:"$125–$190",area:"Mercury Dr",distance:"1.5 mi to Ford HQ",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Express+Dearborn",geo:"42.2968,-83.215"}
+  ]},
+  "portland maine":{coords:{lat:43.6591,lon:-70.2568},airports:["PWM — Portland Intl Jetport"],officeAreas:["Old Port","Downtown Portland","South Portland"],indian:["Tandoor Restaurant","Hi Bombay","Benares","Nura"],landmarks:["Portland Head Light","Old Port","Casco Bay"],parks:["Acadia National Park"],weekend:["Bar Harbor","Kennebunkport"],mapArea:"Download Portland ME + South Portland + Cape Elizabeth",mapSize:"~170MB",outlet:"Kittery Premium Outlets",hotels:[
+    {name:"Hyatt Place Portland-Old Port",rating:"8.7",price:"$210–$320",area:"Old Port",distance:"0.2 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Portland+Old+Port+Maine",geo:"43.6563,-70.252"},
+    {name:"Hampton Inn Portland Downtown Waterfront",rating:"8.4",price:"$190–$290",area:"Waterfront",distance:"0.3 mi to Old Port",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Portland+Downtown+Waterfront+Maine",geo:"43.6614,-70.251"},
+    {name:"Holiday Inn Portland-By the Bay",rating:"8.0",price:"$160–$250",area:"Downtown",distance:"0.5 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Holiday+Inn+Portland+By+the+Bay",geo:"43.655,-70.262"},
+    {name:"Aloft Portland, ME",rating:"8.3",price:"$170–$260",area:"Airport",distance:"2.0 mi to PWM",book:"https://www.booking.com/searchresults.html?ss=Aloft+Portland+Maine",geo:"43.6421,-70.323"},
+    {name:"Embassy Suites Portland",rating:"8.2",price:"$180–$280",area:"Airport",distance:"1.2 mi to PWM",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Portland+Maine",geo:"43.643,-70.31"}
+  ]},
+  "portland":{coords:{lat:45.5152,lon:-122.6784},airports:["PDX — Portland Intl"],officeAreas:["Downtown Portland","Pearl District","Beaverton/Nike campus"],indian:["Maruti Indian Restaurant", "Swagat", "Silsila the Flaming Tandoor", "Dwaraka"],landmarks:["Powell's City of Books","Washington Park","Japanese Garden"],parks:["Columbia River Gorge","Mount Hood"],weekend:["Cannon Beach","Hood River"],mapArea:"Download Portland + Beaverton + Vancouver WA",mapSize:"~220MB",outlet:"Woodburn Premium Outlets",hotels:[
+    {name:"The Nines, a Luxury Collection Hotel",rating:"8.7",price:"$240–$380",area:"Downtown",distance:"0.4 mi to Pioneer Square",book:"https://www.booking.com/searchresults.html?ss=The+Nines+Portland",geo:"45.5187,-122.679"},
+    {name:"Hyatt House Portland/Downtown",rating:"8.4",price:"$190–$300",area:"Downtown",distance:"0.7 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+House+Portland+Downtown",geo:"45.5122,-122.667"},
+    {name:"Canopy by Hilton Portland Pearl District",rating:"8.8",price:"$220–$340",area:"Pearl District",distance:"0.3 mi to coworking hubs",book:"https://www.booking.com/searchresults.html?ss=Canopy+Hilton+Portland+Pearl+District",geo:"45.5264,-122.681"},
+    {name:"Embassy Suites by Hilton Portland Downtown",rating:"8.1",price:"$200–$320",area:"Old Town",distance:"0.4 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Portland+Downtown+OR",geo:"45.5237,-122.675"},
+    {name:"AC Hotel Portland Beaverton",rating:"8.5",price:"$170–$260",area:"Beaverton",distance:"0.8 mi to Nike/Intel corridor",book:"https://www.booking.com/searchresults.html?ss=AC+Hotel+Portland+Beaverton",geo:"45.4977,-122.789"}
+  ]},
+  "denver":{coords:{lat:39.7392,lon:-104.9903},airports:["DEN — Denver Intl"],officeAreas:["Downtown Denver","Cherry Creek","Denver Tech Center"],indian:["Little India", "Himchuli", "Bawarchi Biryani", "Spice Room"],landmarks:["Union Station","Red Rocks","16th Street"],parks:["Rocky Mountain NP"],weekend:["Boulder","Colorado Springs"],mapArea:"Download Denver + Tech Center + Aurora",mapSize:"~230MB",outlet:"Outlets at Castle Rock",hotels:[
+    {name:"Hyatt Regency Denver at Colorado Convention Center",rating:"8.5",price:"$210–$330",area:"Downtown",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Denver+Convention+Center",geo:"39.7441,-104.996"},
+    {name:"The Westin Denver Downtown",rating:"8.3",price:"$220–$340",area:"Downtown",distance:"0.4 mi to LoDo",book:"https://www.booking.com/searchresults.html?ss=Westin+Denver+Downtown",geo:"39.7485,-104.998"},
+    {name:"Hyatt Place Denver/Cherry Creek",rating:"8.2",price:"$180–$270",area:"Cherry Creek",distance:"0.8 mi to business district",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Denver+Cherry+Creek",geo:"39.7115,-104.946"},
+    {name:"Denver Marriott Tech Center",rating:"8.0",price:"$170–$260",area:"DTC",distance:"0.5 mi to office parks",book:"https://www.booking.com/searchresults.html?ss=Denver+Marriott+Tech+Center",geo:"39.6308,-104.9"},
+    {name:"Embassy Suites by Hilton Denver Downtown",rating:"8.4",price:"$210–$320",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Denver+Downtown",geo:"39.7435,-104.995"}
+  ]},
+  "phoenix":{coords:{lat:33.4484,lon:-112.074},airports:["PHX — Sky Harbor"],officeAreas:["Downtown Phoenix","Tempe","Scottsdale"],indian:["The Dhaba", "City of Spice", "Marigold Maison", "Biryani Pot"],landmarks:["Desert Botanical Garden","Camelback Mountain","Old Town Scottsdale"],parks:["Saguaro NP (Tucson)","Grand Canyon (long trip)"],weekend:["Sedona","Flagstaff"],mapArea:"Download Phoenix + Tempe + Scottsdale",mapSize:"~240MB",outlet:"Phoenix Premium Outlets",hotels:[
+    {name:"Hyatt Regency Phoenix",rating:"8.4",price:"$180–$290",area:"Downtown",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Phoenix",geo:"33.4507,-112.072"},
+    {name:"Kimpton Hotel Palomar Phoenix",rating:"8.6",price:"$200–$320",area:"Downtown",distance:"0.2 mi to office district",book:"https://www.booking.com/searchresults.html?ss=Kimpton+Palomar+Phoenix",geo:"33.4492,-112.074"},
+    {name:"The Westin Tempe",rating:"8.7",price:"$210–$330",area:"Tempe",distance:"0.4 mi to ASU/tech corridor",book:"https://www.booking.com/searchresults.html?ss=The+Westin+Tempe",geo:"33.4259,-111.94"},
+    {name:"Aloft Scottsdale",rating:"8.2",price:"$170–$260",area:"Scottsdale",distance:"0.6 mi to old town offices",book:"https://www.booking.com/searchresults.html?ss=Aloft+Scottsdale",geo:"33.5034,-111.927"},
+    {name:"Hilton Garden Inn Phoenix Airport",rating:"8.1",price:"$160–$240",area:"Airport",distance:"1.0 mi to PHX",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Phoenix+Airport",geo:"33.4316,-112.013"}
+  ]},
+  "san diego":{coords:{lat:32.7157,lon:-117.1611},airports:["SAN — San Diego Intl"],officeAreas:["Downtown/Gaslamp","La Jolla","Sorrento Valley"],indian:["Charminar Indian Restaurant", "Curryosity", "Taste of the Himalayas", "Punjabi Tandoor"],landmarks:["Balboa Park","USS Midway","La Jolla Cove"],parks:["Torrey Pines","Anza-Borrego"],weekend:["Temecula","Palm Springs"],mapArea:"Download Downtown + La Jolla + Sorrento Valley",mapSize:"~240MB",outlet:"Las Americas Premium Outlets",hotels:[
+    {name:"Manchester Grand Hyatt San Diego",rating:"8.7",price:"$240–$390",area:"Waterfront",distance:"0.4 mi to downtown offices",book:"https://www.booking.com/searchresults.html?ss=Manchester+Grand+Hyatt+San+Diego",geo:"32.7139,-117.169"},
+    {name:"Hilton San Diego Gaslamp Quarter",rating:"8.3",price:"$220–$350",area:"Gaslamp",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hilton+San+Diego+Gaslamp+Quarter",geo:"32.7061,-117.159"},
+    {name:"Hyatt Regency La Jolla",rating:"8.1",price:"$190–$300",area:"La Jolla",distance:"0.8 mi to biotech offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+La+Jolla",geo:"32.8758,-117.213"},
+    {name:"Embassy Suites by Hilton La Jolla",rating:"8.2",price:"$200–$310",area:"UTC",distance:"0.7 mi to UCSD corridor",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+La+Jolla",geo:"32.8747,-117.205"},
+    {name:"Courtyard San Diego Sorrento Valley",rating:"8.0",price:"$170–$260",area:"Sorrento Valley",distance:"0.5 mi to tech parks",book:"https://www.booking.com/searchresults.html?ss=Courtyard+San+Diego+Sorrento+Valley",geo:"32.9015,-117.21"}
+  ]},
+  "san jose":{coords:{lat:37.3382,lon:-121.8863},airports:["SJC — Norman Y Mineta","SFO — San Francisco Intl"],officeAreas:["Downtown San Jose","North San Jose","Santa Clara"],indian:["A2B Santa Clara", "Ulavacharu Tiffins", "Anjappar", "Paradise Biryani Pointe"],landmarks:["Santana Row","Winchester Mystery House","SAP Center"],parks:["Big Basin Redwoods","Castle Rock State Park"],weekend:["Santa Cruz","Monterey"],mapArea:"Download San Jose + Santa Clara + Sunnyvale",mapSize:"~260MB",outlet:"Great Mall + Gilroy Premium Outlets",hotels:[
+    {name:"Hyatt Place San Jose/Downtown",rating:"8.3",price:"$210–$330",area:"Downtown",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+San+Jose+Downtown",geo:"37.3356,-121.889"},
+    {name:"The Westin San Jose",rating:"8.2",price:"$220–$340",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=The+Westin+San+Jose",geo:"37.3299,-121.889"},
+    {name:"Hilton San Jose",rating:"8.1",price:"$210–$320",area:"Downtown",distance:"0.3 mi to SAP center",book:"https://www.booking.com/searchresults.html?ss=Hilton+San+Jose",geo:"37.3296,-121.889"},
+    {name:"Aloft Santa Clara",rating:"8.2",price:"$180–$300",area:"Santa Clara",distance:"0.8 mi to North San Jose",book:"https://www.booking.com/searchresults.html?ss=Aloft+Santa+Clara",geo:"37.4044,-121.974"},
+    {name:"Sonesta Silicon Valley",rating:"8.0",price:"$170–$280",area:"Milpitas",distance:"1.0 mi to business parks",book:"https://www.booking.com/searchresults.html?ss=Sonesta+Silicon+Valley",geo:"37.4067,-121.894"}
+  ]},
+  "charlotte":{coords:{lat:35.2271,lon:-80.8431},airports:["CLT — Charlotte Douglas"],officeAreas:["Uptown","South End","University City"],indian:["Copper Modern Indian Cuisine", "Botiwalla", "Blue Taj", "Sangam Indian Cuisine"],landmarks:["NASCAR Hall of Fame","Freedom Park","Romare Bearden Park"],parks:["Crowders Mountain","Lake Norman"],weekend:["Asheville","Greenville"],mapArea:"Download Uptown + South End + airport",mapSize:"~200MB",outlet:"Charlotte Premium Outlets",hotels:[
+    {name:"The Westin Charlotte",rating:"8.4",price:"$190–$300",area:"Uptown",distance:"0.5 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=The+Westin+Charlotte",geo:"35.2236,-80.845"},
+    {name:"Hyatt Place Charlotte Downtown",rating:"8.2",price:"$170–$270",area:"Uptown",distance:"0.4 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Charlotte+Downtown",geo:"35.2249,-80.839"},
+    {name:"JW Marriott Charlotte",rating:"9.0",price:"$240–$360",area:"Uptown",distance:"0.3 mi to office towers",book:"https://www.booking.com/searchresults.html?ss=JW+Marriott+Charlotte",geo:"35.223,-80.847"},
+    {name:"Hilton Charlotte Uptown",rating:"8.3",price:"$180–$290",area:"Uptown",distance:"0.2 mi to Spectrum Center",book:"https://www.booking.com/searchresults.html?ss=Hilton+Charlotte+Uptown",geo:"35.2262,-80.843"},
+    {name:"Hampton Inn Charlotte-Airport",rating:"8.0",price:"$150–$230",area:"Airport",distance:"1.2 mi to CLT",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Charlotte+Airport",geo:"35.2099,-80.939"}
+  ]},
+  "minneapolis":{coords:{lat:44.9778,lon:-93.265},airports:["MSP — Minneapolis-Saint Paul"],officeAreas:["Downtown Minneapolis","North Loop","Bloomington"],indian:["Gorkha Palace", "Hyderabad Indian Grill", "India Palace", "Kadai Indian Kitchen"],landmarks:["Mall of America","Chain of Lakes","Minnehaha Falls"],parks:["Itasca State Park"],weekend:["Stillwater","Duluth"],mapArea:"Download Minneapolis + St Paul + Bloomington",mapSize:"~210MB",outlet:"Twin Cities Premium Outlets",hotels:[
+    {name:"Hyatt Centric Downtown Minneapolis",rating:"8.4",price:"$190–$300",area:"Downtown",distance:"0.3 mi to Nicollet Mall",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Centric+Downtown+Minneapolis",geo:"44.9766,-93.271"},
+    {name:"The Westin Minneapolis",rating:"8.2",price:"$180–$290",area:"Downtown",distance:"0.4 mi to offices",book:"https://www.booking.com/searchresults.html?ss=The+Westin+Minneapolis",geo:"44.9803,-93.268"},
+    {name:"Canopy by Hilton Minneapolis Mill District",rating:"8.8",price:"$210–$330",area:"Mill District",distance:"0.6 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Canopy+Hilton+Minneapolis",geo:"44.9787,-93.257"},
+    {name:"Hilton Minneapolis",rating:"8.1",price:"$180–$290",area:"Downtown",distance:"0.5 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hilton+Minneapolis",geo:"44.9721,-93.276"},
+    {name:"Hyatt Place Minneapolis Airport-South",rating:"8.0",price:"$150–$240",area:"Bloomington",distance:"1.1 mi to MSP",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Minneapolis+Airport+South",geo:"44.8589,-93.241"}
+  ]},
+  "raleigh":{coords:{lat:35.7796,lon:-78.6382},airports:["RDU — Raleigh Durham Intl"],officeAreas:["Downtown Raleigh","Research Triangle Park","Cary"],indian:["Lime & Lemon", "Cilantro Indian Cafe", "Biryani Xprx", "Kadhai"],landmarks:["North Carolina Museum of Art","Pullen Park","State Capitol"],parks:["Umstead State Park"],weekend:["Durham","Chapel Hill"],mapArea:"Download Raleigh + Durham + Cary + RTP",mapSize:"~210MB",outlet:"Carolina Premium Outlets",hotels:[
+    {name:"Raleigh Marriott City Center",rating:"8.5",price:"$190–$290",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Raleigh+Marriott+City+Center",geo:"35.7738,-78.639"},
+    {name:"Hyatt House Raleigh Downtown",rating:"8.4",price:"$180–$280",area:"Downtown",distance:"0.5 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+House+Raleigh+Downtown",geo:"35.7845,-78.643"},
+    {name:"Aloft Raleigh",rating:"8.1",price:"$170–$260",area:"NC State",distance:"0.8 mi to university tech hub",book:"https://www.booking.com/searchresults.html?ss=Aloft+Raleigh",geo:"35.7885,-78.667"},
+    {name:"Embassy Suites by Hilton Raleigh Durham RTP",rating:"8.3",price:"$170–$260",area:"RTP",distance:"0.6 mi to Research Triangle Park",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Raleigh+Durham+RTP",geo:"35.8795,-78.794"},
+    {name:"Hyatt Place Raleigh-Durham Airport",rating:"8.0",price:"$150–$230",area:"Airport",distance:"1.0 mi to RDU",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Raleigh+Durham+Airport",geo:"35.8758,-78.787"}
+  ]},
+  "nashville":{coords:{lat:36.1627,lon:-86.7816},airports:["BNA — Nashville Intl"],officeAreas:["Downtown","The Gulch","Midtown"],indian:["Sindoore", "615 Chutney", "Bombay Palace", "Amaravati"],landmarks:["Broadway","Country Music Hall of Fame","Parthenon"],parks:["Radnor Lake","Great Smoky Mountains (long weekend)"],weekend:["Chattanooga","Mammoth Cave"],mapArea:"Download Nashville + airport + Brentwood",mapSize:"~200MB",outlet:"Opry Mills / Lebanon Outlets",hotels:[
+    {name:"Omni Nashville Hotel",rating:"8.9",price:"$220–$350",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Omni+Nashville+Hotel",geo:"36.1587,-86.776"},
+    {name:"Hyatt Place Nashville Downtown",rating:"8.4",price:"$190–$300",area:"SoBro",distance:"0.4 mi to Broadway",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Nashville+Downtown",geo:"36.1583,-86.777"},
+    {name:"Thompson Nashville",rating:"8.7",price:"$240–$380",area:"The Gulch",distance:"0.3 mi to office cluster",book:"https://www.booking.com/searchresults.html?ss=Thompson+Nashville",geo:"36.1524,-86.783"},
+    {name:"Hilton Garden Inn Nashville Downtown",rating:"8.1",price:"$180–$280",area:"Downtown",distance:"0.5 mi to Broadway",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Nashville+Downtown",geo:"36.161,-86.775"},
+    {name:"Hampton Inn & Suites Nashville Airport",rating:"8.0",price:"$160–$240",area:"Airport",distance:"1.1 mi to BNA",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Nashville+Airport",geo:"36.1276,-86.691"}
+  ]},
+  "columbus":{coords:{lat:39.9612,lon:-82.9988},airports:["CMH — John Glenn Columbus Intl"],officeAreas:["Downtown Columbus","Short North","Dublin"],indian:["Aab India", "Amul India", "Bawarchi Biryanis", "Dosa Corner"],landmarks:["German Village","Scioto Mile","Columbus Zoo"],parks:["Hocking Hills"],weekend:["Cincinnati","Cleveland"],mapArea:"Download Columbus + Dublin + Easton",mapSize:"~200MB",outlet:"Tanger Outlets Columbus",hotels:[
+    {name:"Hilton Columbus Downtown",rating:"8.8",price:"$210–$320",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hilton+Columbus+Downtown",geo:"39.9688,-83.003"},
+    {name:"Hyatt Regency Columbus",rating:"8.4",price:"$190–$300",area:"Downtown",distance:"0.2 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Columbus",geo:"39.9694,-83.001"},
+    {name:"Le Méridien Columbus, The Joseph",rating:"8.6",price:"$220–$340",area:"Short North",distance:"0.4 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Le+Meridien+Columbus+The+Joseph",geo:"39.9837,-83.004"},
+    {name:"Embassy Suites by Hilton Columbus",rating:"8.1",price:"$170–$260",area:"Airport area",distance:"2.0 mi to CMH",book:"https://www.booking.com/searchresults.html?ss=Embassy+Suites+Columbus+Airport",geo:"39.9982,-82.911"},
+    {name:"Residence Inn Columbus Dublin",rating:"8.2",price:"$170–$260",area:"Dublin",distance:"0.7 mi to business parks",book:"https://www.booking.com/searchresults.html?ss=Residence+Inn+Columbus+Dublin",geo:"40.0934,-83.112"}
+  ]},
+  "pittsburgh":{coords:{lat:40.4406,lon:-79.9959},airports:["PIT — Pittsburgh Intl"],officeAreas:["Downtown","Oakland","Strip District"],indian:["Udipi Cafe", "People's Indian", "Chutney's", "Tamarind"],landmarks:["Point State Park","Duquesne Incline","PNC Park"],parks:["Ohiopyle State Park"],weekend:["Fallingwater","Cleveland"],mapArea:"Download Pittsburgh + Oakland + airport corridor",mapSize:"~200MB",outlet:"Grove City Premium Outlets",hotels:[
+    {name:"Fairmont Pittsburgh",rating:"8.6",price:"$220–$340",area:"Downtown",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Fairmont+Pittsburgh",geo:"40.4408,-80.003"},
+    {name:"Wyndham Grand Pittsburgh Downtown",rating:"8.0",price:"$180–$280",area:"Downtown",distance:"0.2 mi to Point State Park",book:"https://www.booking.com/searchresults.html?ss=Wyndham+Grand+Pittsburgh+Downtown",geo:"40.4417,-80.01"},
+    {name:"Hyatt House Pittsburgh-South Side",rating:"8.3",price:"$170–$270",area:"South Side",distance:"0.8 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Hyatt+House+Pittsburgh+South+Side",geo:"40.4283,-79.967"},
+    {name:"Hilton Garden Inn Pittsburgh Downtown",rating:"8.2",price:"$180–$280",area:"Downtown",distance:"0.4 mi to Market Square",book:"https://www.booking.com/searchresults.html?ss=Hilton+Garden+Inn+Pittsburgh+Downtown",geo:"40.4401,-80.001"},
+    {name:"Hampton Inn Pittsburgh Airport",rating:"8.0",price:"$150–$230",area:"Airport",distance:"1.0 mi to PIT",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Pittsburgh+Airport",geo:"40.4964,-80.222"}
+  ]},
+  "indianapolis":{coords:{lat:39.7684,lon:-86.1581},airports:["IND — Indianapolis Intl"],officeAreas:["Downtown","Keystone Crossing","Carmel"],indian:["India Garden", "Hyderabad House", "Bombay Bazaar", "The Monk's"],landmarks:["Monument Circle","Canal Walk","Indianapolis Motor Speedway"],parks:["Brown County State Park"],weekend:["Bloomington","Cincinnati"],mapArea:"Download Indianapolis + Carmel + airport",mapSize:"~190MB",outlet:"Edinburgh Premium Outlets",hotels:[
+    {name:"JW Marriott Indianapolis",rating:"8.8",price:"$210–$330",area:"Downtown",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=JW+Marriott+Indianapolis",geo:"39.7653,-86.165"},
+    {name:"Hyatt Regency Indianapolis",rating:"8.4",price:"$190–$300",area:"Downtown",distance:"0.2 mi to Monument Circle",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Indianapolis",geo:"39.7684,-86.159"},
+    {name:"The Westin Indianapolis",rating:"8.2",price:"$190–$290",area:"Downtown",distance:"0.2 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Westin+Indianapolis",geo:"39.7658,-86.161"},
+    {name:"Hampton Inn Indianapolis Downtown",rating:"8.1",price:"$170–$260",area:"Downtown",distance:"0.5 mi to business district",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Indianapolis+Downtown",geo:"39.7704,-86.155"},
+    {name:"Hyatt Place Indianapolis Airport",rating:"8.0",price:"$150–$230",area:"Airport",distance:"1.1 mi to IND",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Indianapolis+Airport",geo:"39.7157,-86.292"}
+  ]},
+  "tampa":{coords:{lat:27.9506,lon:-82.4572},airports:["TPA — Tampa Intl"],officeAreas:["Downtown Tampa","Westshore","Ybor"],indian:["Curry Leaves", "Deccan Spice", "Rasoi", "Tandoori Flames"],landmarks:["Tampa Riverwalk","Busch Gardens","Ybor City"],parks:["Hillsborough River SP"],weekend:["Clearwater Beach","Orlando"],mapArea:"Download Tampa + Westshore + St Pete",mapSize:"~220MB",outlet:"Tampa Premium Outlets",hotels:[
+    {name:"JW Marriott Tampa Water Street",rating:"9.0",price:"$260–$390",area:"Downtown",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=JW+Marriott+Tampa+Water+Street",geo:"27.9415,-82.457"},
+    {name:"Tampa Marriott Water Street",rating:"8.7",price:"$230–$360",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Tampa+Marriott+Water+Street",geo:"27.9411,-82.457"},
+    {name:"Hyatt Place Tampa Downtown",rating:"8.6",price:"$200–$300",area:"Downtown",distance:"0.5 mi to riverwalk",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Tampa+Downtown",geo:"27.9509,-82.462"},
+    {name:"Aloft Tampa Midtown",rating:"8.4",price:"$180–$280",area:"Midtown",distance:"0.8 mi to Westshore",book:"https://www.booking.com/searchresults.html?ss=Aloft+Tampa+Midtown",geo:"27.9665,-82.507"},
+    {name:"Hampton Inn Tampa Airport",rating:"8.1",price:"$160–$240",area:"Airport",distance:"1.0 mi to TPA",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Tampa+Airport",geo:"27.9754,-82.536"}
+  ]},
+  "orlando":{coords:{lat:28.5383,lon:-81.3792},airports:["MCO — Orlando Intl"],officeAreas:["Downtown Orlando","Lake Nona","International Drive"],indian:["Aashirwad", "Woodlands", "Bombay Street Kitchen", "Tabla"],landmarks:["Universal Orlando","Disney Springs","ICON Park"],parks:["Wekiwa Springs"],weekend:["Tampa","Kennedy Space Center"],mapArea:"Download Orlando + Lake Nona + attractions belt",mapSize:"~260MB",outlet:"Orlando International Premium Outlets",hotels:[
+    {name:"Hyatt Regency Orlando",rating:"8.8",price:"$220–$340",area:"International Drive",distance:"0.3 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Orlando",geo:"28.423,-81.467"},
+    {name:"Rosen Shingle Creek",rating:"8.6",price:"$180–$300",area:"I-Drive",distance:"0.9 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Rosen+Shingle+Creek",geo:"28.4254,-81.451"},
+    {name:"Hilton Orlando",rating:"8.5",price:"$200–$320",area:"I-Drive",distance:"0.4 mi to OCCC",book:"https://www.booking.com/searchresults.html?ss=Hilton+Orlando",geo:"28.4251,-81.466"},
+    {name:"Grand Bohemian Orlando",rating:"8.4",price:"$230–$350",area:"Downtown",distance:"0.4 mi to downtown offices",book:"https://www.booking.com/searchresults.html?ss=Grand+Bohemian+Orlando",geo:"28.5409,-81.378"},
+    {name:"Hyatt Place Orlando Airport",rating:"8.2",price:"$160–$240",area:"Airport",distance:"1.1 mi to MCO",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Orlando+Airport",geo:"28.4554,-81.308"}
+  ]},
+  "miami":{coords:{lat:25.7617,lon:-80.1918},airports:["MIA — Miami Intl","FLL — Fort Lauderdale"],officeAreas:["Downtown Miami","Brickell","Doral"],indian:["Bombay Darbar", "Ghee Indian Kitchen", "Ashoka", "Bawarchi"],landmarks:["South Beach","Little Havana","Wynwood Walls"],parks:["Everglades NP","Biscayne NP"],weekend:["Key West","Fort Lauderdale"],mapArea:"Download Miami + Brickell + Miami Beach",mapSize:"~260MB",outlet:"Sawgrass Mills / Dolphin Mall",hotels:[
+    {name:"EAST Miami",rating:"8.7",price:"$260–$420",area:"Brickell",distance:"0.2 mi to offices",book:"https://www.booking.com/searchresults.html?ss=EAST+Miami",geo:"25.7668,-80.193"},
+    {name:"JW Marriott Marquis Miami",rating:"8.6",price:"$280–$430",area:"Downtown",distance:"0.4 mi to financial district",book:"https://www.booking.com/searchresults.html?ss=JW+Marriott+Marquis+Miami",geo:"25.7712,-80.189"},
+    {name:"Hyatt Centric Brickell Miami",rating:"8.5",price:"$230–$370",area:"Brickell",distance:"0.5 mi to office towers",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Centric+Brickell+Miami",geo:"25.7601,-80.194"},
+    {name:"InterContinental Miami",rating:"8.7",price:"$260–$400",area:"Downtown",distance:"0.2 mi to Bayfront",book:"https://www.booking.com/searchresults.html?ss=InterContinental+Miami",geo:"25.7734,-80.186"},
+    {name:"Hampton Inn Miami Airport East",rating:"8.1",price:"$170–$250",area:"Airport",distance:"1.0 mi to MIA",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Miami+Airport+East",geo:"25.7954,-80.265"}
+  ]},
+  "philadelphia":{coords:{lat:39.9526,lon:-75.1652},airports:["PHL — Philadelphia Intl"],officeAreas:["Center City","University City","Navy Yard"],indian:["Amma's South Indian", "Saffron Patch", "Ekta", "Thanal"],landmarks:["Liberty Bell","Reading Terminal Market","Museum of Art"],parks:["Valley Forge"],weekend:["New York day trip","Baltimore"],mapArea:"Download Center City + University City + airport",mapSize:"~220MB",outlet:"Philadelphia Premium Outlets",hotels:[
+    {name:"Loews Philadelphia Hotel",rating:"8.5",price:"$210–$330",area:"Center City",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Loews+Philadelphia+Hotel",geo:"39.9528,-75.163"},
+    {name:"The Notary Hotel Philadelphia",rating:"8.8",price:"$220–$350",area:"Center City",distance:"0.4 mi to City Hall",book:"https://www.booking.com/searchresults.html?ss=The+Notary+Hotel+Philadelphia",geo:"39.9538,-75.165"},
+    {name:"Hyatt Centric Center City Philadelphia",rating:"8.6",price:"$220–$340",area:"Rittenhouse",distance:"0.5 mi to downtown",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Centric+Center+City+Philadelphia",geo:"39.9496,-75.168"},
+    {name:"Hilton Philadelphia at Penn's Landing",rating:"8.2",price:"$190–$300",area:"Waterfront",distance:"0.8 mi to old city",book:"https://www.booking.com/searchresults.html?ss=Hilton+Philadelphia+Penns+Landing",geo:"39.9453,-75.142"},
+    {name:"Hampton Inn Philadelphia Airport",rating:"8.0",price:"$150–$230",area:"Airport",distance:"1.0 mi to PHL",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Philadelphia+Airport",geo:"39.8797,-75.241"}
+  ]},
+  "washington dc":{coords:{lat:38.9072,lon:-77.0369},airports:["IAD — Dulles","DCA — Reagan National","BWI — Baltimore/Washington"],officeAreas:["Downtown DC","K Street","Arlington/Rosslyn","Tysons"],indian:["Rasika", "Bindaas", "Bombay Club", "Indique"],landmarks:["National Mall","Smithsonian","Lincoln Memorial"],parks:["Shenandoah NP"],weekend:["Baltimore","Annapolis"],mapArea:"Download DC + Arlington + Alexandria",mapSize:"~240MB",outlet:"Leesburg Premium Outlets",hotels:[
+    {name:"Grand Hyatt Washington",rating:"8.5",price:"$240–$370",area:"Downtown",distance:"0.4 mi to Metro Center",book:"https://www.booking.com/searchresults.html?ss=Grand+Hyatt+Washington",geo:"38.8986,-77.028"},
+    {name:"Washington Marriott at Metro Center",rating:"8.3",price:"$230–$350",area:"Downtown",distance:"0.3 mi to K Street",book:"https://www.booking.com/searchresults.html?ss=Washington+Marriott+Metro+Center",geo:"38.9006,-77.03"},
+    {name:"Hyatt Place Washington DC/White House",rating:"8.2",price:"$220–$330",area:"Downtown",distance:"0.6 mi to White House",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Place+Washington+DC+White+House",geo:"38.9014,-77.034"},
+    {name:"Le Méridien Arlington",rating:"8.1",price:"$200–$310",area:"Arlington",distance:"0.5 mi to Rosslyn offices",book:"https://www.booking.com/searchresults.html?ss=Le+Meridien+Arlington",geo:"38.8955,-77.073"},
+    {name:"Westin Washington Dulles Airport",rating:"8.0",price:"$160–$250",area:"Dulles",distance:"1.0 mi to IAD",book:"https://www.booking.com/searchresults.html?ss=Westin+Washington+Dulles+Airport",geo:"38.9486,-77.444"}
+  ]},
+  "salt lake city":{coords:{lat:40.7608,lon:-111.891},airports:["SLC — Salt Lake City Intl"],officeAreas:["Downtown","Sugar House","Lehi/Silicon Slopes"],indian:["Saffron Valley", "Bombay House", "Curry in a Hurry", "Ganesh Indian"],landmarks:["Temple Square","Capitol Hill","Great Salt Lake"],parks:["Antelope Island","Big Cottonwood Canyon"],weekend:["Park City","Moab"],mapArea:"Download Salt Lake City + Lehi + airport",mapSize:"~190MB",outlet:"Outlets at Traverse Mountain",hotels:[
+    {name:"Hyatt Regency Salt Lake City",rating:"9.0",price:"$230–$350",area:"Downtown",distance:"0.2 mi to convention center",book:"https://www.booking.com/searchresults.html?ss=Hyatt+Regency+Salt+Lake+City",geo:"40.7606,-111.897"},
+    {name:"Salt Lake Marriott Downtown at City Creek",rating:"8.5",price:"$210–$320",area:"Downtown",distance:"0.4 mi to business district",book:"https://www.booking.com/searchresults.html?ss=Salt+Lake+Marriott+Downtown+City+Creek",geo:"40.7687,-111.89"},
+    {name:"Hilton Salt Lake City Center",rating:"8.2",price:"$190–$300",area:"Downtown",distance:"0.3 mi to offices",book:"https://www.booking.com/searchresults.html?ss=Hilton+Salt+Lake+City+Center",geo:"40.7601,-111.891"},
+    {name:"Hyatt House Salt Lake City/Downtown",rating:"8.4",price:"$180–$280",area:"Downtown",distance:"0.5 mi to Temple Square",book:"https://www.booking.com/searchresults.html?ss=Hyatt+House+Salt+Lake+City+Downtown",geo:"40.7696,-111.898"},
+    {name:"Hampton Inn Salt Lake City Airport",rating:"8.1",price:"$150–$220",area:"Airport",distance:"1.0 mi to SLC",book:"https://www.booking.com/searchresults.html?ss=Hampton+Inn+Salt+Lake+City+Airport",geo:"40.7796,-111.968"}
+  ]}
+};
+
+const TIER2_CITY_AIRPORTS={
+"albany":"ALB","annapolis":"BWI","atlanta":"ATL","augusta":"AUG","austin":"AUS","baltimore":"BWI","baton rouge":"BTR","bismarck":"BIS","boise":"BOI","boston":"BOS","carson city":"RNO","charleston":"CHS","charleston wv":"CRW","charlotte":"CLT","cheyenne":"CYS","chicago":"ORD","cincinnati":"CVG","cleveland":"CLE","columbia":"CAE","columbus":"CMH","concord":"MHT","dallas":"DFW","denver":"DEN","des moines":"DSM","detroit":"DTW","dover":"PHL","frankfort":"LEX","harrisburg":"MDT","hartford":"BDL","helena":"HLN","honolulu":"HNL","houston":"IAH","indianapolis":"IND","jackson":"JAN","jacksonville":"JAX","jefferson city":"STL","juneau":"JNU","kansas city":"MCI","lansing":"LAN","las vegas":"LAS","lincoln":"LNK","little rock":"LIT","los angeles":"LAX","louisville":"SDF","madison":"MSN","memphis":"MEM","miami":"MIA","milwaukee":"MKE","minneapolis":"MSP","montgomery":"MGM","nashville":"BNA","new orleans":"MSY","new york":"JFK","newark":"EWR","oklahoma city":"OKC","omaha":"OMA","orlando":"MCO","philadelphia":"PHL","phoenix":"PHX","pierre":"PIR","pittsburgh":"PIT","portland":"PDX","portland maine":"PWM","providence":"PVD","raleigh":"RDU","richmond":"RIC","sacramento":"SMF","salt lake city":"SLC","san antonio":"SAT","san diego":"SAN","san francisco":"SFO","san jose":"SJC","santa fe":"ABQ","seattle":"SEA","springfield il":"SPI","st louis":"STL","st paul":"MSP","tallahassee":"TLH","tampa":"TPA","topeka":"MCI","trenton":"EWR","washington":"DCA","wichita":"ICT","wilmington":"ILM"};
+
+const ALL_50_STATES={
+  "alabama":{tax:"4% + local",alcohol:"Dry counties exist; liquor stores closed Sunday in many counties",driving:"Hands-free law enforced; move-over required",tolls:"Montgomery Expressway, Beach Express",weather:"Humid subtropical; hot summers, mild winters"},
+  "alaska":{tax:"0% state (local may apply)",alcohol:"Local option dry communities",driving:"Studded tire rules seasonal",tolls:"No major toll roads",weather:"Subarctic to arctic; long winters"},
+  "arizona":{tax:"5.6% + local",alcohol:"Sales 6am-2am statewide",driving:"Hands-free texting ban",tolls:"Loop 202 South Mountain has toll segments",weather:"Desert heat; mild winters"},
+  "arkansas":{tax:"6.5% + local",alcohol:"Many dry counties",driving:"Move-over and child-seat laws strict",tolls:"No major toll highways",weather:"Hot humid summers; storm-prone springs"},
+  "california":{tax:"7.25% + local",alcohol:"Sales 6am-2am",driving:"Hands-free only, HOV and lane-split awareness",tolls:"FasTrak bridges/express lanes",weather:"Mediterranean coast, desert inland"},
+  "colorado":{tax:"2.9% + local",alcohol:"Liquor broad retail sales",driving:"Traction law in mountain corridors",tolls:"E-470, Northwest Parkway",weather:"High altitude; snowy winters"},
+  "connecticut":{tax:"6.35%",alcohol:"Package stores regulated hours",driving:"Hands-free + school bus stop strict",tolls:"No traditional toll booths, some truck tolling",weather:"Cold winters, humid summers"},
+  "delaware":{tax:"0%",alcohol:"State-run wholesale controls",driving:"No handheld phone use",tolls:"I-95, SR-1 tolls",weather:"Mid-Atlantic four seasons"},
+  "florida":{tax:"6% + local",alcohol:"Hours vary by county",driving:"Move-over law and toll-by-plate common",tolls:"SunPass network statewide",weather:"Humid/tropical; hurricane season Jun-Nov"},
+  "georgia":{tax:"4% + local",alcohol:"Sunday sales allowed with local approval",driving:"Hands-free law statewide",tolls:"Peach Pass express lanes",weather:"Hot humid summers"},
+  "hawaii":{tax:"4% GET",alcohol:"Strict open-container enforcement",driving:"Aloha spirit but strict seatbelt",tolls:"No toll roads",weather:"Tropical year-round"},
+  "idaho":{tax:"6% + local",alcohol:"State liquor stores",driving:"No handheld while driving",tolls:"No toll roads",weather:"Dry summers, snowy winters"},
+  "illinois":{tax:"6.25% + local",alcohol:"Sales generally until 2am in cities",driving:"Move-over and work-zone cameras",tolls:"I-PASS (Illinois Tollway)",weather:"Cold windy winters"},
+  "indiana":{tax:"7%",alcohol:"Sunday package sales limited hours",driving:"Hands-free law",tolls:"Indiana Toll Road",weather:"Four-season Midwest"},
+  "iowa":{tax:"6% + local",alcohol:"State regulation with county options",driving:"Texting while driving banned",tolls:"No major toll roads",weather:"Cold winters, severe storms"},
+  "kansas":{tax:"6.5% + local",alcohol:"Rules vary by county",driving:"Hands-free in school/work zones",tolls:"Kansas Turnpike",weather:"Windy plains; tornado risk spring"},
+  "kentucky":{tax:"6%",alcohol:"Many wet/dry precincts",driving:"Seatbelt + booster enforcement",tolls:"RiverLink bridges (Louisville)",weather:"Humid continental/subtropical"},
+  "louisiana":{tax:"4.45% + local",alcohol:"Drive-thru daiquiri allowed if sealed",driving:"Strict DUI, flood-weather caution",tolls:"LA-1, Crescent City Connection",weather:"Hot humid; hurricane/flood risk"},
+  "maine":{tax:"5.5%",alcohol:"Sales to 1am; strict ID checks",driving:"Winter tire/snow readiness",tolls:"Maine Turnpike (I-95)",weather:"Cold snowy winters"},
+  "maryland":{tax:"6%",alcohol:"County-controlled retail in some areas",driving:"Hands-free; speed cameras common",tolls:"E-ZPass roads/bridges",weather:"Humid summers, mild winters"},
+  "massachusetts":{tax:"6.25%",alcohol:"No happy-hour discounts",driving:"Right on red unless prohibited",tolls:"Mass Pike E-ZPass",weather:"Snowy winters"},
+  "michigan":{tax:"6%",alcohol:"Sales 7am-2am",driving:"No-fault insurance; winter driving caution",tolls:"Mackinac Bridge toll",weather:"Lake-effect snow winters"},
+  "minnesota":{tax:"6.875% + local",alcohol:"Sunday liquor sales allowed",driving:"Headlights required in rain/snow",tolls:"MnPASS express lanes",weather:"Very cold winters"},
+  "mississippi":{tax:"7%",alcohol:"Dry counties still exist",driving:"Hands-free texting ban",tolls:"No major toll roads",weather:"Hot humid, storm risk"},
+  "missouri":{tax:"4.225% + local",alcohol:"Relatively permissive retail hours",driving:"Hands-free restrictions in effect",tolls:"No large toll network",weather:"Hot summers, cold winters"},
+  "montana":{tax:"0%",alcohol:"County variance, bars close 2am",driving:"Rural roads and wildlife caution",tolls:"No toll roads",weather:"Mountain climate, long winters"},
+  "nebraska":{tax:"5.5% + local",alcohol:"Sales hours local",driving:"Hands-free restrictions",tolls:"No toll highways",weather:"Windy, seasonal extremes"},
+  "nevada":{tax:"6.85% + local",alcohol:"24/7 sales in many counties",driving:"DUI strict, desert heat prep",tolls:"No major toll roads",weather:"Desert/arid"},
+  "new hampshire":{tax:"0% state sales tax",alcohol:"State liquor outlets",driving:"Hands-free law",tolls:"E-ZPass Turnpike",weather:"Cold winters"},
+  "new jersey":{tax:"6.625%",alcohol:"Blue laws in some counties",driving:"No self-serve gas",tolls:"NJ Turnpike, Garden State Parkway",weather:"Four seasons"},
+  "new mexico":{tax:"~5.125% GRT + local",alcohol:"Sunday restrictions eased",driving:"Rural night driving caution",tolls:"No major toll network",weather:"High-desert climate"},
+  "new york":{tax:"4% + local",alcohol:"No sales after 4am in NYC bars",driving:"No right turn on red in NYC unless signed",tolls:"E-ZPass bridges/tunnels/thruway",weather:"Cold winters, humid summers"},
+  "north carolina":{tax:"4.75% + local",alcohol:"ABC store system for liquor",driving:"Move-over law",tolls:"NC Quick Pass expressways",weather:"Mild winters, hurricane coast"},
+  "north dakota":{tax:"5% + local",alcohol:"Sales hours limited by city",driving:"Snow/ice and wind caution",tolls:"No toll roads",weather:"Very cold winters"},
+  "ohio":{tax:"5.75% + local",alcohol:"State-controlled distribution",driving:"Hands-free law 2023+",tolls:"Ohio Turnpike",weather:"Four seasons"},
+  "oklahoma":{tax:"4.5% + local",alcohol:"Retail modernization but county variation",driving:"Tornado shelter awareness",tolls:"Turner and Kilpatrick turnpikes",weather:"Severe storm/tornado zone"},
+  "oregon":{tax:"0%",alcohol:"OLCC regulated",driving:"No self-serve gas restrictions mostly lifted except some counties",tolls:"Very limited tolling",weather:"Wet west, dry east"},
+  "pennsylvania":{tax:"6% + local",alcohol:"State store system",driving:"Hands-free and school-bus stop strict",tolls:"PA Turnpike E-ZPass",weather:"Cold winters"},
+  "rhode island":{tax:"7%",alcohol:"Retail hours regulated",driving:"Hands-free law",tolls:"Truck-only toll gantries",weather:"Coastal New England"},
+  "south carolina":{tax:"6% + local",alcohol:"Mini-bottle law repealed, county variation",driving:"Hands-free law progressing",tolls:"No major toll network",weather:"Hot humid summers"},
+  "south dakota":{tax:"4.2% + local",alcohol:"Retail sales regulated by locality",driving:"Winter storm caution",tolls:"No toll roads",weather:"Cold winters, windy"},
+  "tennessee":{tax:"7% + local",alcohol:"Liquor hours vary",driving:"Hands-free law",tolls:"No statewide toll roads",weather:"Humid subtropical"},
+  "texas":{tax:"6.25% + local",alcohol:"Blue laws in some counties",driving:"Right on red allowed unless posted",tolls:"TxTag/North Texas Tollway",weather:"Hot summers, flood/tornado pockets"},
+  "utah":{tax:"6.1% + local",alcohol:"State liquor stores, strict bar rules",driving:"Lower DUI limit 0.05 BAC",tolls:"No major toll roads",weather:"Dry climate, snowy mountains"},
+  "vermont":{tax:"6%",alcohol:"Agency liquor stores",driving:"Winter tire/chains recommended",tolls:"No toll roads",weather:"Cold snowy winters"},
+  "virginia":{tax:"5.3% + local",alcohol:"ABC state stores",driving:"Hands-free law",tolls:"E-ZPass express lanes, Dulles Toll Road",weather:"Humid subtropical to mountain"},
+  "washington":{tax:"6.5% + local",alcohol:"Private retail, high taxes",driving:"Hands-free + chain requirements in passes",tolls:"Good To Go! bridges/express lanes",weather:"Rainy west, dry east"},
+  "west virginia":{tax:"6%",alcohol:"County variation",driving:"Mountain road caution",tolls:"West Virginia Turnpike",weather:"Mountain climate"},
+  "wisconsin":{tax:"5% + local",alcohol:"Tavern culture, strict DUI",driving:"Snow/ice caution",tolls:"No major toll roads",weather:"Cold snowy winters"},
+  "wyoming":{tax:"4% + local",alcohol:"Limited sales hours in some towns",driving:"High-wind advisories common",tolls:"No toll roads",weather:"High plains, harsh winters"}
+};
+
+const MEDICINE_MAPPER=[
+["Crocin","Tylenol (Acetaminophen)"],["Dolo 650","Tylenol Extra Strength"],["Combiflam","Advil + Tylenol combination"],["Brufen","Motrin/Advil (Ibuprofen)"],["Disprin","Bayer Aspirin"],["Saridon","Excedrin"],["Zintac","Zantac/Famotidine"],["Digene","Tums / Mylanta"],["Gelusil","Maalox"],["Eno","Alka-Seltzer"],["Imodium","Imodium A-D"],["ORS","Pedialyte"],["Allegra","Allegra"],["Cetirizine","Zyrtec"],["Benadryl India","Benadryl US (different formula)"],["Vicks VapoRub","Vicks VapoRub"],["Strepsils","Halls / Cepacol"],["Betadine","Betadine"],["Band-Aid","Band-Aid"],["Moov","Bengay / IcyHot"],["Volini","Bengay / IcyHot"],["Burnol","Neosporin + burn gel"],["Savlon","Bactine / antiseptic"],["Parachute oil","Coconut oil (CVS/Walmart)"],["Calpol","Tylenol"],["Azee 500","Azithromycin (Rx required)"],["Augmentin","Augmentin (Rx required)"],["Pantocid","Pantoprazole (Rx/OTC variants)"],["Pan-D","Pantoprazole + Domperidone (ask doctor)"],["Rantac","Famotidine"],["Dulcolax","Dulcolax"],["Electral","Pedialyte / DripDrop"],["Voveran","Diclofenac gel/tablet"],["Meftal Spas","Ibuprofen + antispasmodic (consult pharmacist)"],["Domstal","Dramamine / anti-nausea"],["Sinarest","DayQuil/NyQuil equivalents"],["Cofsils","Halls"],["Honitus","Cough syrups (Delsym/Mucinex)"],["Relispray","IcyHot spray"],["Becosules","B-complex vitamins"],["Shelcal","Calcium + D3 supplements"],["Revital","Multivitamin equivalents"],["Soframycin","Neosporin / Bacitracin"],["Dermicool","Gold Bond powder"],["Lacto Calamine","Calamine lotion"],["Avil","Chlorpheniramine (sedating antihistamine)"],["Digene gel","Mylanta"],["Combiflam suspension","Children's ibuprofen + acetaminophen"],["Nicip Plus","Acetaminophen + anti-inflammatory (consult doc)"],["Liv 52","No direct US equivalent; ask pharmacist"],["Baidyanath Janma ghunti","No direct equivalent"],["Honitus lozenges","Halls"],["Cetrizine","Zyrtec"],["Pudin Hara","Peppermint antacid drops"],["BoroPlus","Moisturizer + antiseptic cream"],["Iodex","Bengay"],["Odomos","OFF! mosquito repellent"],["Mortein cream","Hydrocortisone itch cream"],["Amrutanjan","Menthol pain balm"]
+];
+
+const FOREX_OPTIONS=[
+{name:"Niyo Global",fees:"Zero markup on weekdays; ATM withdrawal fee after free quota",best:"Frequent card swipes",notes:"Partner bank backend; check annual card fee"},
+{name:"BookMyForex Card",fees:"Load/reload markup + ATM charges",best:"Planned trips with fixed budget",notes:"Good branch support and doorstep forex"},
+{name:"HDFC ForexPlus",fees:"Issuance + reload + ATM fee",best:"Corporate travelers preferring major bank",notes:"Multi-currency wallet"},
+{name:"Wise",fees:"Low FX conversion fee; transparent mid-market",best:"Bank transfers and variable spend",notes:"Great for online payments and account-to-account"}
+];
+
+const MUST_HAVE_APPS=[
+{cat:"Transport",apps:[{"n":"Uber","i":"https://apps.apple.com/app/uber/id368677368","a":"https://play.google.com/store/apps/details?id=com.ubercab"},{"n":"Lyft","i":"https://apps.apple.com/app/lyft/id529379082","a":"https://play.google.com/store/apps/details?id=me.lyft.android"},{"n":"Google Maps","i":"https://apps.apple.com/app/google-maps/id585027354","a":"https://play.google.com/store/apps/details?id=com.google.android.apps.maps"},{"n":"Waze","i":"https://apps.apple.com/app/waze-navigation-live-traffic/id323229106","a":"https://play.google.com/store/apps/details?id=com.waze"}]},
+{cat:"Food",apps:[{"n":"DoorDash","i":"https://apps.apple.com/app/doordash-food-delivery/id719972451","a":"https://play.google.com/store/apps/details?id=com.dd.doordash"},{"n":"Uber Eats","i":"https://apps.apple.com/app/uber-eats-food-delivery/id1058959277","a":"https://play.google.com/store/apps/details?id=com.ubercab.eats"},{"n":"Grubhub","i":"https://apps.apple.com/app/grubhub-local-food-delivery/id302920553","a":"https://play.google.com/store/apps/details?id=com.grubhub.android"},{"n":"Yelp","i":"https://apps.apple.com/app/yelp-food-services-reviews/id284910350","a":"https://play.google.com/store/apps/details?id=com.yelp.android"}]},
+{cat:"Payments",apps:[{"n":"Venmo","i":"https://apps.apple.com/app/venmo/id351727428","a":"https://play.google.com/store/apps/details?id=com.venmo"},{"n":"Zelle (bank apps)","i":"https://www.zellepay.com/","a":"https://www.zellepay.com/"},{"n":"Apple Pay setup","i":"https://support.apple.com/apple-pay","a":"https://support.apple.com/apple-pay"}]},
+{cat:"Shopping",apps:[{"n":"Amazon","i":"https://apps.apple.com/app/amazon-shopping/id297606951","a":"https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping"},{"n":"Walmart","i":"https://apps.apple.com/app/walmart-shopping-grocery/id338137227","a":"https://play.google.com/store/apps/details?id=com.walmart.android"},{"n":"Target","i":"https://apps.apple.com/app/target/id297430070","a":"https://play.google.com/store/apps/details?id=com.target.ui"}]},
+{cat:"Travel/Utility",apps:[{"n":"Google Flights","i":"https://www.google.com/travel/flights","a":"https://www.google.com/travel/flights"},{"n":"Hopper","i":"https://apps.apple.com/app/hopper-flights-hotels-cars/id904052407","a":"https://play.google.com/store/apps/details?id=com.hopper.mountainview.play"},{"n":"Booking.com","i":"https://apps.apple.com/app/booking-com-travel-deals/id367003839","a":"https://play.google.com/store/apps/details?id=com.booking"},{"n":"Airalo","i":"https://apps.apple.com/app/airalo-esim-store/id1475911720","a":"https://play.google.com/store/apps/details?id=com.mobillium.airalo"},{"n":"WiFi Map","i":"https://apps.apple.com/app/wifi-map-esim-internet-vpn/id548925969","a":"https://play.google.com/store/apps/details?id=io.wifimap.wifimap"}]}
+];
+
+const ESIM_COMPARISON=[
+{name:"T-Mobile Prepaid",data:"10–50GB",price:"$40–$70/mo",coverage:"Excellent urban",best:"Heavy usage"},
+{name:"AT&T Prepaid",data:"8–40GB",price:"$35–$65/mo",coverage:"Strong nationwide",best:"Road trips"},
+{name:"Airalo",data:"1–20GB",price:"$4.5–$42",coverage:"Easy activation",best:"Backup data"},
+{name:"Holafly",data:"Unlimited plans",price:"$19–$99",coverage:"Simple unlimited",best:"Short high-usage trip"},
+{name:"Company eSIM",data:"Varies",price:"Usually reimbursed",coverage:"Depends on provider",best:"Corporate travel"}
+];
+
+const SLANG_100=[
+["restroom","washroom"],["check","bill"],["takeout","parcel"],["apartment","flat"],["elevator","lift"],["trunk","dickey"],["hood","bonnet"],["gas","petrol"],["sidewalk","footpath"],["crosswalk","zebra crossing"],["cell phone","mobile"],["line","queue"],["vacation","holiday"],["zip code","pin code"],["soccer","football"],["fries","chips"],["chips","crisps"],["cookie","biscuit"],["candy","toffee"],["diaper","nappy"],["stroller","pram"],["sweater","jumper"],["sneakers","sports shoes"],["faucet","tap"],["trash","garbage"],["garbage can","dustbin"],["store","shop"],["drugstore","chemist"],["pharmacy","medical shop"],["interstate","highway"],["vacuum","hoover"],["math","maths"],["eraser","rubber"],["semester","term"],["principal","headmaster"],["grade","marks"],["movie theater","cinema"],["parking lot","car park"],["cart","trolley"],["to-go","parcel"],["server","waiter"],["full stop","period"],["round trip","return ticket"],["one-way","single"],["carry-on","cabin bag"],["checked bag","check-in bag"],["carton","tetra pack"],["ground floor","first floor (US)"],["first floor","second floor (India)"],["resume","CV"],["fanny pack","waist pouch"],["couch","sofa"],["realtor","property broker"],["soda","soft drink"],["subway","metro"],["yard","garden"],["bachelor's","undergrad"],["major","specialization"],["minor","elective focus"],["gas station","petrol bunk"],["windshield","windscreen"],["flashlight","torch"],["traffic circle","roundabout"],["resume call","circle back"],["ASAP","as soon as possible"],["FYI","for your information"],["OOO","out of office"],["ETA","expected time of arrival"],["PTO","paid time off"],["green card","permanent residence"],["zip","fasten"],["backpack","rucksack"],["closet","wardrobe"],["laundromat","dhobi/laundry"],["mailbox","letter box"],["package","courier"],["sales tax","GST-like tax at checkout"],["ID","proof"],["driver's license","driving licence"],["clerk","counter person"],["coupon","discount voucher"],["receipt","bill"],["debit","debit card"],["checking account","current/savings account"],["toilet paper","tissue roll"],["napkin","tissue"],["fridge","refrigerator"],["trash pickup","garbage collection"],["high school","secondary school"],["college","university"],["shopping cart return","return trolley"],["rain check","do later"],["hit me up","message me"],["my bad","my mistake"],["hang out","spend time"],["no worries","it's okay"],["gotcha","understood"],["bucks","dollars"],["quarter","25 cents"],["rest stop","highway service area"],["tailgating","pre-game parking lot party"]
+];
+
+function citySlug(s){return (s||"").toLowerCase().trim()}
+function cityGuide(city){
+  const k=citySlug(city);
+  if(TIER1_CITY_GUIDES[k])return {tier:1,...TIER1_CITY_GUIDES[k]};
+  const exact=Object.keys(TIER1_CITY_GUIDES).find(c=>k.includes(c)||c.includes(k));
+  if(exact)return {tier:1,...TIER1_CITY_GUIDES[exact]};
+  const code=TIER2_CITY_AIRPORTS[k];
+  if(code){
+    return {tier:2,airports:[`${code} — Nearest commercial airport for ${city}`],hotels:[],indian:[`Use Google Maps search for Indian restaurants near ${city}`],landmarks:[`Top things to do in ${city}`],officeAreas:[`${city} downtown business district`],parks:[`Nearest state/national park to ${city}`],weekend:[`Weekend drive from ${city}`],mapArea:`Download ${city} metro area`,mapSize:"~140–220MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+  }
+  return {tier:3,airports:[`Search nearest airport for ${city}`],hotels:[],indian:[`Search Indian food near ${city}`],landmarks:[`Search things to do in ${city}`],officeAreas:[`${city} downtown`],parks:[`Nearest parks around ${city}`],weekend:[`Weekend options from ${city}`],mapArea:`Download ${city} + 20 mi radius`,mapSize:"~120–200MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+}
+
+
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
 function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function getC(c){return COORDS[c.toLowerCase().trim()]||{lat:40.7,lon:-74.0}}
+function getC(c){
+  const g=cityGuide(c);
+  if(g&&g.coords)return g.coords;
+  return COORDS[c.toLowerCase().trim()]||{lat:40.7,lon:-74.0}
+}
 function dist(a,b){const f=getC(a),t=getC(b),R=3959,dLat=(t.lat-f.lat)*Math.PI/180,dLon=(t.lon-f.lon)*Math.PI/180,x=Math.sin(dLat/2)**2+Math.cos(f.lat*Math.PI/180)*Math.cos(t.lat*Math.PI/180)*Math.sin(dLon/2)**2;return Math.round(R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)))}
-function airport(c){const k=c.toLowerCase().trim(),m=Object.keys(AIRPORTS).find(a=>k.includes(a)||a.includes(k));return m?AIRPORTS[m]:["Search Google Flights for nearest airport"]}
+function airport(c){
+  const g=cityGuide(c);
+  if(g&&g.airports&&g.airports.length)return g.airports;
+  const k=c.toLowerCase().trim(),m=Object.keys(AIRPORTS).find(a=>k.includes(a)||a.includes(k));
+  return m?AIRPORTS[m]:[`Nearest airport for ${c}`,`Google Flights: https://www.google.com/travel/flights?q=${encodeURIComponent(c)}`]
+}
 function isAmtrak(a,b){const c=["new york","boston","philadelphia","washington dc","chicago","detroit"];const f=a.toLowerCase(),t=b.toLowerCase();return c.some(x=>f.includes(x))&&c.some(x=>t.includes(x))}
-function famousPlaces(c){const k=c.toLowerCase().trim();const m=Object.keys(FAMOUS_PLACES).find(a=>k.includes(a)||a.includes(k));return m?FAMOUS_PLACES[m]:"Search Google for 'things to do in "+c+"'"}
-function indianFood(c){const k=c.toLowerCase().trim();const m=Object.keys(INDIAN_FOOD).find(a=>k.includes(a)||a.includes(k));return m?INDIAN_FOOD[m]:"Search Google Maps for 'Indian restaurant near "+c+"'. Carry instant noodles, MTR ready meals, and spice packs as backup."}
+function famousPlaces(c){
+  const g=cityGuide(c);
+  if(g&&g.landmarks&&g.landmarks.length)return g.landmarks.join(", ");
+  const k=c.toLowerCase().trim();const m=Object.keys(FAMOUS_PLACES).find(a=>k.includes(a)||a.includes(k));
+  return m?FAMOUS_PLACES[m]:"Search Google for 'things to do in "+c+"'"
+}
+function indianFood(c){
+  const g=cityGuide(c);
+  if(g&&g.indian&&g.indian.length)return g.indian.join(" · ");
+  const k=c.toLowerCase().trim();const m=Object.keys(INDIAN_FOOD).find(a=>k.includes(a)||a.includes(k));
+  return m?INDIAN_FOOD[m]:"Search Google Maps for 'Indian restaurant near "+c+"'. Carry instant noodles, MTR ready meals, and spice packs as backup."
+}
 function fD(d){return new Date(d+"T00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
 function fDL(d){return new Date(d+"T00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}
 function nights(a,d){return Math.max(1,Math.ceil((new Date(d)-new Date(a))/864e5))}
@@ -385,7 +743,7 @@ function estTransport(from,to){const d=dist(from,to);const r=[];
 // ═══════════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════════
-let S={screen:"setup",trip:null,stops:[],tab:"guide",dismissed:new Set(),checked:new Set(),expenses:[],expRate:84.5,expFilter:"all",receiptPreview:null};
+let S={screen:"setup",trip:null,stops:[],tab:"guide",dismissed:new Set(),checked:new Set(),expenses:[],expRate:84.5,expFilter:"all",receiptPreview:null,theme:"dark",tip:{bill:"",split:1,round:false},customsInr:"",tzInput:"09:00",tzZone:"EST",baggageItems:[],baggageWeight:"",vaultUnlocked:false,vaultPass:"",vaultDocs:[],schedules:{}};
 
 // ═══════════════════════════════════════════════════════════════
 // RENDER
@@ -415,15 +773,30 @@ function bSetup(){let dur="1week";
     S.trip={name:n,startDate:d,from,land,duration:dur};S.screen="main";render()}}
 
 function rMain(){
-  const tabs=[{k:"guide",l:"📖 Guide"},{k:"plan",l:"📍 Stops"},{k:"itin",l:"🗺️ Itinerary"},{k:"expenses",l:"💰 Expenses"},{k:"alerts",l:"🔔 Alerts"},{k:"check",l:"✅ Checklist"}];
+  const tabs=[
+    {k:"guide",l:"📖 Guide"},{k:"plan",l:"📍 Stops"},{k:"itin",l:"🗺️ Itinerary"},
+    {k:"money",l:"💰 Money"},{k:"apps",l:"📱 Apps & Maps"},{k:"transport",l:"🚗 Transport"},
+    {k:"health",l:"💊 Health"},{k:"culture",l:"🏢 Culture"},{k:"shopping",l:"🛒 Shopping"},
+    {k:"weather",l:"🌡️ Weather"},{k:"explore",l:"🎉 Explore"},{k:"flights",l:"✈️ Flights"},
+    {k:"alerts",l:"🔔 Alerts & Calendar"},{k:"check",l:"✅ Checklist"},{k:"vault",l:"🔒 Vault"}
+  ];
   let content="";
   if(S.tab==="guide")content=rGuide();
   else if(S.tab==="plan")content=rPlan();
   else if(S.tab==="itin")content=rItin();
-  else if(S.tab==="expenses")content=rExpenses();
+  else if(S.tab==="money")content=rMoney();
+  else if(S.tab==="apps")content=rAppsMaps();
+  else if(S.tab==="transport")content=rTransport();
+  else if(S.tab==="health")content=rHealth();
+  else if(S.tab==="culture")content=rCulture();
+  else if(S.tab==="shopping")content=rShopping();
+  else if(S.tab==="weather")content=rWeather();
+  else if(S.tab==="explore")content=rExplore();
+  else if(S.tab==="flights")content=rFlights();
   else if(S.tab==="alerts")content=rAlerts();
   else if(S.tab==="check")content=rChecklist();
-  return `<div class="hdr"><div><h1>🛫 <em>TravelPilot</em></h1><p class="hdr-sub">${esc(S.trip.name)} · ${S.stops.length} stop${S.stops.length!==1?'s':''} · ${S.trip.from} → ${S.trip.land}</p></div></div>
+  else if(S.tab==="vault")content=rVault();
+  return `<div class="hdr"><div><h1>🛫 <em>TravelPilot</em></h1><p class="hdr-sub">${esc(S.trip.name)} · ${S.stops.length} stop${S.stops.length!==1?'s':''} · ${S.trip.from} → ${S.trip.land}</p></div><div class="hdr-actions"><button class="btn btn-g btn-s" id="btn-theme">${S.theme==="light"?"🌙 Dark":"☀️ Light"}</button><button class="btn btn-g btn-s" id="btn-print">🖨️ Print</button></div></div>
   <div class="tabs">${tabs.map(t=>`<button class="tab ${S.tab===t.k?'on':''}" data-tab="${t.k}">${t.l}</button>`).join("")}</div>${content}`}
 
 // ─── GUIDE TAB ─────────────────────────────────────────────────
@@ -615,11 +988,12 @@ function rItin(){
             return dbHotels.map(h=>`<div class="hotel-card">
               <div style="display:flex;justify-content:space-between;align-items:flex-start">
                 <div><div class="hotel-name">${h.name}</div>
-                  <div class="hotel-meta">⭐ ${h.rating}/10 · ${h.area} · Deposit: ${h.dep}</div>
+                  <div class="hotel-meta">⭐ ${h.rating}/10 · ${h.area} · ${h.distance||('Deposit: '+(h.dep||'Varies'))}</div>
                   <div class="hotel-meta">${h.features}</div></div>
                 <div class="hotel-price">${h.price}</div>
               </div>
               <a href="${h.book}" target="_blank" class="hotel-link">🔗 Check Availability</a>
+              ${h.geo?`<a href="geo:${h.geo}" class="hotel-link" style="margin-left:4px">📍 geo</a>`:""}
               <a href="${hotelBookingLink(s.city,s.arrive,s.depart)}" target="_blank" class="hotel-link" style="margin-left:4px">📅 Book for ${fD(s.arrive)}</a>
             </div>`).join('');
           } else {
@@ -629,15 +1003,26 @@ function rItin(){
         <div class="h-tip">💡 <a href="${hotelBookingLink(s.city,s.arrive,s.depart)}" target="_blank" style="color:var(--ylw)">Search all hotels in ${esc(s.city)} on Booking.com →</a> Filter by proximity to: ${esc(s.addr||s.city)}</div></div>
       <div class="section"><div class="section-t">🍛 Indian Food Near ${esc(s.city)}</div><div class="detail">${indianFood(s.city)}</div></div>
       <div class="section"><div class="section-t">🏛️ Places to Visit (After Work)</div><div class="detail">${famousPlaces(s.city)}</div></div>
+      ${(()=>{const g=cityGuide(s.city);return `<div class="section"><div class="section-t">🏢 Office/Tech Areas</div><div class="detail">${(g.officeAreas||[]).join(" · ")||"Downtown business district"}</div></div><div class="section"><div class="section-t">🌲 Parks & Weekend</div><div class="detail"><strong>Parks:</strong> ${(g.parks||[]).join(", ")}<br><strong>Weekend trips:</strong> ${(g.weekend||[]).join(", ")}<br><strong>Offline map area:</strong> ${g.mapArea||("Download "+s.city)} (${g.mapSize||"~100-300MB"})</div></div>`})()}
       ${tHTML}</div>${next?'<div class="connector">⬇︎</div>':''}`
   }).join("");
 
   const tN=S.stops.reduce((a,s)=>a+nights(s.arrive,s.depart),0);
   const tM=S.stops.slice(0,-1).reduce((a,s,i)=>a+dist(s.city,S.stops[i+1].city),0);
+  const scheduleHTML=S.stops.map((s,i)=>{
+    const key=s.id;
+    const events=(S.schedules[key]&&S.schedules[key].length)?S.schedules[key]:[
+      {time:"08:00",title:"Hotel checkout prep"},
+      {time:"09:00",title:nextStopTitle(i)},
+      {time:"15:00",title:"Hotel check-in window starts"}
+    ];
+    return `<div class="section"><div class="section-t">📅 ${esc(s.city)} Daily Schedule</div>${events.map((e,idx)=>`<div class="sl"><div class="sl-l"><div style="font-family:var(--mono);font-size:11px;min-width:44px">${esc(e.time)}</div><div class="sl-d" style="margin-top:0">${esc(e.title)}</div></div><div class="sl-a"><button class="ib x" data-sdel="${s.id}|${idx}">✕</button></div></div>`).join("")}<div class="fr" style="margin-top:8px"><div><input id="st-time-${s.id}" type="time" value="10:00"></div><div><input id="st-title-${s.id}" placeholder="Add event"></div><div><button class="btn btn-g btn-s" data-sadd="${s.id}">+ Add</button></div></div></div>`;
+  }).join("");
 
   return `<div class="itin-h"><h2>📋 Complete Travel Itinerary</h2><p class="hdr-sub">Transport · Hotels · Food · Sightseeing · Costs</p>
-    <div class="dl-bar" style="justify-content:center;margin-top:10px"><button class="btn btn-g btn-s" id="btn-dl">📥 Download as Text</button><button class="btn btn-g btn-s" id="btn-share">📤 Share / Copy</button></div></div>
+    <div class="dl-bar" style="justify-content:center;margin-top:10px"><button class="btn btn-g btn-s" id="btn-dl">📥 Download as Text</button><button class="btn btn-g btn-s" id="btn-share">📤 Share / Copy</button><button class="btn btn-g btn-s" id="btn-qr">🔳 Share via QR</button></div></div>
     ${html}
+    <div class="card"><div class="card-t">🕒 Daily Schedule Planner</div>${scheduleHTML}</div>
     <div class="card"><div class="card-t">📊 Trip Summary</div>
     <div class="sg">
       <div class="si"><div class="si-v">${S.stops.length}</div><div class="si-l">Cities</div></div>
@@ -652,7 +1037,239 @@ function rItin(){
       <li>Buy groceries at Walmart/Aldi — cheaper than eating out daily</li>
       <li>Gas station food + Subway/Chipotle for quick cheap meals ($8–12)</li>
       <li>Use Google Flights' price tracking to find cheapest flights</li>
-    </ul></div></div>`}
+    </ul></div></div>
+    <div class="card"><div class="card-t">🔁 Return Trip Essentials</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Cancel temporary subscriptions and close travel eSIM auto-renew if needed.</li><li>Return rental car full tank; keep proof.</li><li>Keep boarding pass + invoices for reimbursements and tax records.</li><li>Declare purchases above exemption at Indian customs red channel.</li></ul></div>`}
+
+function nextStopTitle(i){
+  const n=S.stops[i+1];
+  return n?`Travel to ${n.city}`:"Office / local commute";
+}
+
+// ─── MONEY TAB ─────────────────────────────────────────────────
+function calcTipRows(){
+  const bill=parseFloat(S.tip.bill)||0,split=Math.max(1,parseInt(S.tip.split)||1),round=S.tip.round;
+  return [15,18,20,25].map(p=>{
+    let tip=bill*(p/100),total=bill+tip;
+    if(round){total=Math.ceil(total);tip=total-bill}
+    return {p,tip,total,per:total/split};
+  });
+}
+
+function rMoney(){
+  const rows=calcTipRows();
+  const q=(S.stateSearch||"").toLowerCase();
+  const states=Object.entries(ALL_50_STATES).filter(([k])=>!q||k.includes(q));
+  const customs=parseFloat(S.customsInr)||0;
+  const dutiable=Math.max(0,customs-50000);
+  const duty=Math.round(dutiable*0.18);
+  return `<div class="card fade-in"><div class="card-t">💰 Smart Money Guide</div>
+    <div class="grid-2">
+      <div class="converter-box"><div class="section-t">🧮 Tipping Calculator</div>
+        <div class="fr"><div><label>Bill (USD)</label><input id="tip-bill" type="number" step="0.01" value="${esc(String(S.tip.bill||""))}" placeholder="e.g. 48.75"></div><div><label>Split by people</label><input id="tip-split" type="number" min="1" value="${S.tip.split||1}"></div></div>
+        <label class="ci" style="padding-top:0"><input type="checkbox" id="tip-round" ${S.tip.round?'checked':''}><span>Round up grand total</span></label>
+        <table class="tbl" style="margin-top:8px"><thead><tr><th>Tip</th><th>Tip $</th><th>Total $</th><th>Per person</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.p}%</td><td>$${r.tip.toFixed(2)}</td><td>$${r.total.toFixed(2)}</td><td>$${r.per.toFixed(2)}</td></tr>`).join("")}</tbody></table>
+      </div>
+      <div class="converter-box"><div class="section-t">🛃 India Customs Duty Calculator</div>
+        <div class="tiny">Personal exemption on return: <strong>₹50,000</strong> (excluding used personal effects).</div>
+        <div class="fr" style="margin-top:8px"><div><label>Total declared purchase value (₹)</label><input id="customs-inr" type="number" value="${esc(String(S.customsInr||""))}" placeholder="e.g. 125000"></div></div>
+        <div class="detail"><strong>Dutiable value:</strong> ₹${dutiable.toLocaleString()}<br><strong>Approx duty @18%:</strong> ₹${duty.toLocaleString()}<br><strong>Channel:</strong> ${dutiable>0?'Red channel recommended':'Green channel likely okay'}</div>
+      </div>
+    </div>
+    <div class="section"><div class="section-t">💳 Forex Card Comparison</div>
+      <table class="tbl"><thead><tr><th>Provider</th><th>Typical Fees</th><th>Best for</th><th>Notes</th></tr></thead><tbody>${FOREX_OPTIONS.map(f=>`<tr><td>${f.name}</td><td>${f.fees}</td><td>${f.best}</td><td>${f.notes}</td></tr>`).join("")}</tbody></table>
+      <div class="tiny" style="margin-top:8px">ATM tip: prioritize <strong>Allpoint fee-free</strong> network locations inside CVS/Walgreens/Target and always decline dynamic currency conversion.</div>
+    </div>
+    <div class="section"><div class="section-t">🏦 Split Bills / Venmo / Zelle</div>
+      <ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Ask upfront: “Can we split evenly?”</li><li>If one person pays by card, collect via Venmo/Zelle immediately.</li><li>Zelle usually needs US bank account; Venmo needs US phone + bank/card.</li><li>Keep screenshots for reimbursement.</li></ul>
+    </div>
+  </div>
+  <div class="card fade-in"><div class="card-t">🧾 Sales Tax by State (all 50)</div>
+    <input id="state-search" placeholder="Search state..." value="${esc(S.stateSearch||"")}">
+    <div style="max-height:300px;overflow:auto;margin-top:10px"><table class="tbl"><thead><tr><th>State</th><th>Tax</th><th>Alcohol</th><th>Driving</th><th>Tolls/Weather</th></tr></thead><tbody>${states.map(([name,v])=>`<tr><td style="text-transform:capitalize">${name}</td><td>${v.tax}</td><td>${v.alcohol}</td><td>${v.driving}</td><td>${v.tolls}<br><span class="tiny">${v.weather}</span></td></tr>`).join("")}</tbody></table></div>
+  </div>
+  ${rExpenses()}`;
+}
+
+function bMoney(){
+  bExpenses();
+  const upd=()=>{S.tip.bill=document.getElementById("tip-bill").value;S.tip.split=document.getElementById("tip-split").value;S.tip.round=document.getElementById("tip-round").checked;S.customsInr=document.getElementById("customs-inr").value;render()};
+  ["tip-bill","tip-split","customs-inr"].forEach(id=>{const el=document.getElementById(id);if(el)el.oninput=upd});
+  const tr=document.getElementById("tip-round");if(tr)tr.onchange=upd;
+  const ss=document.getElementById("state-search");if(ss)ss.oninput=()=>{S.stateSearch=ss.value;render()};
+}
+
+function routeSvg(stops){
+  if(stops.length<2)return "";
+  const pts=stops.map((s,i)=>{
+    const c=getC(s.city);
+    return {x:Math.round(((c.lon+125)/60)*540)+20,y:Math.round(((50-c.lat)/25)*180)+20,label:s.city,idx:i+1};
+  });
+  return `<svg viewBox="0 0 580 220" style="width:100%;background:var(--s2);border:1px solid var(--bdr);border-radius:10px"><path d="M ${pts.map(p=>`${p.x} ${p.y}`).join(" L ")}" stroke="var(--acc)" stroke-width="3" fill="none"/>${pts.map(p=>`<g><circle cx="${p.x}" cy="${p.y}" r="7" fill="var(--acc2)"/><text x="${p.x+10}" y="${p.y-10}" fill="var(--t1)" font-size="10">${p.idx}. ${esc(p.label)}</text></g>`).join("")}</svg>`;
+}
+
+function rAppsMaps(){
+  const cities=(S.stops.length?S.stops.map(s=>s.city):Object.keys(TIER1_CITY_GUIDES).slice(0,6));
+  return `<div class="card fade-in"><div class="card-t">📱 Must-Have Apps & Connectivity</div>
+    ${MUST_HAVE_APPS.map(g=>`<div class="section"><div class="section-t">${g.cat}</div>${g.apps.map(a=>`<div class="sl"><div>${a.n}</div><div class="sl-a"><a class="hotel-link" href="${a.i}" target="_blank">App Store</a><a class="hotel-link" href="${a.a}" target="_blank">Play</a></div></div>`).join("")}</div>`).join("")}
+    <div class="section"><div class="section-t">📶 eSIM Comparison</div><table class="tbl"><thead><tr><th>Provider</th><th>Data</th><th>Price</th><th>Coverage</th><th>Best use</th></tr></thead><tbody>${ESIM_COMPARISON.map(e=>`<tr><td>${e.name}</td><td>${e.data}</td><td>${e.price}</td><td>${e.coverage}</td><td>${e.best}</td></tr>`).join("")}</tbody></table></div>
+    <div class="section"><div class="section-t">📡 WiFi + VPN + Messaging Culture</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Free WiFi: Starbucks, McDonald's, public libraries, hotel lobbies, airports.</li><li>Use VPN when accessing Indian banking portals on public WiFi.</li><li>US colleagues default to iMessage/SMS; keep WhatsApp for India teams.</li></ul></div>
+  </div>
+  <div class="card fade-in"><div class="card-t">🗺️ Offline Maps Assistant (Google Maps + Full-US alternatives)</div>
+    <div class="callout">Google Maps cannot store the <strong>entire USA</strong> as one offline block. Use city-by-city downloads, and keep <strong>MAPS.ME</strong> / <strong>OsmAnd</strong> for larger offline regional packs.</div>
+    ${cities.map(c=>{const g=cityGuide(c),lat=(g.coords||{}).lat||39.8283,lon=(g.coords||{}).lon||-98.5795;return `<div class="section"><div class="section-t">📍 ${esc(c)}</div><div class="detail"><strong>Area:</strong> ${g.mapArea}<br><strong>Est. size:</strong> ${g.mapSize}</div><div class="dl-bar"><a class="hotel-link" href="https://www.google.com/maps/@${lat},${lon},12z" target="_blank">Open ${esc(c)} in Google Maps</a><a class="hotel-link" href="geo:${lat},${lon}">geo:${lat},${lon}</a></div><div class="tiny">Steps: Profile → Offline maps → Select your own map → cover area above → Download.</div></div>`}).join("")}
+    <div class="section"><div class="section-t">🧭 Alternative Offline Map Apps</div><div class="dl-bar"><a class="hotel-link" target="_blank" href="https://maps.me/">MAPS.ME</a><a class="hotel-link" target="_blank" href="https://osmand.net/">OsmAnd</a><a class="hotel-link" target="_blank" href="https://support.apple.com/en-us/118353">Apple Maps Offline Guide</a></div></div>
+    <div class="section"><div class="section-t">🛣️ Static Route Diagram (offline SVG)</div>${routeSvg(S.stops)}</div>
+  </div>`;
+}
+function bAppsMaps(){}
+
+function rTransport(){return `<div class="card fade-in"><div class="card-t">🚗 Driving & Transport</div>
+  <div class="section"><div class="section-t">US Driving Rules Cheat Sheet</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Drive on right side, overtake on left.</li><li>Right turn on red allowed unless sign prohibits (NYC mostly disallows).</li><li>4-way stop: first to stop goes first; tie goes to vehicle on right.</li><li>School bus with stop arm out: stop both directions (unless divided road).</li><li>Typical speed limits: city 25–35 mph, highways 55–75 mph.</li><li>DUI legal limit generally 0.08 BAC (Utah 0.05).</li></ul></div>
+  <div class="section"><div class="section-t">Toll Roads</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>E‑ZPass: Northeast + Midwest states.</li><li>SunPass: Florida toll roads.</li><li>FasTrak: California bridges/lanes.</li><li>No transponder? Most roads bill by plate + admin fee.</li></ul></div>
+  <div class="section"><div class="section-t">Parking, Rental & Gas</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Read curb colors/signs carefully; use SpotHero/ParkWhiz apps.</li><li>Rental: Enterprise/Hertz/Turo. IDP is recommended though Indian DL often accepted for short stays.</li><li>Insurance options: CDW/LDW + liability (often worth it in US).</li><li>Gas stations are self-serve; choose Regular 87 octane unless rental says premium.</li><li>Keep in car: charger, water, reflective vest, warm layer, first-aid kit.</li></ul></div>
+</div>`}
+
+function rHealth(){
+  const q=(S.medQuery||"").toLowerCase();
+  const meds=MEDICINE_MAPPER.filter(([a,b])=>!q||a.toLowerCase().includes(q)||b.toLowerCase().includes(q));
+  return `<div class="card fade-in"><div class="card-t">💊 Health & Medicine</div>
+    <div class="section"><div class="section-t">Medicine Name Mapper (India → US)</div><input id="med-q" placeholder="Search medicine..." value="${esc(S.medQuery||"")}"><div style="max-height:260px;overflow:auto;margin-top:8px"><table class="tbl"><thead><tr><th>India</th><th>US Equivalent</th></tr></thead><tbody>${meds.map(m=>`<tr><td>${m[0]}</td><td>${m[1]}</td></tr>`).join("")}</tbody></table></div></div>
+    <div class="section"><div class="section-t">Pharmacy Guide</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>CVS/Walgreens: usually 8am–10pm, some 24x7 stores.</li><li>Walmart Pharmacy: typically 9am–7pm.</li><li>OTC examples: Tylenol, Advil, antacids, cold meds.</li><li>Prescription required: antibiotics, stronger pain meds, many inhalers.</li></ul></div>
+    <div class="section"><div class="section-t">Urgent Care vs ER</div><table class="tbl"><thead><tr><th>Use case</th><th>Typical wait</th><th>Typical cost</th></tr></thead><tbody><tr><td>Urgent Care (fever, minor injury)</td><td>15–90 min</td><td>$150–$300</td></tr><tr><td>ER (severe chest pain, fractures, emergencies)</td><td>30 min–hours</td><td>$1000+</td></tr></tbody></table></div>
+    <div class="section"><div class="section-t">Travel Insurance + Jet Lag Plan</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Carry policy number + emergency helpline + cashless network list.</li><li>Confirm OPD/urgent care reimbursement process before travel.</li><li>Jet lag (India → US): Day 1 sunlight exposure, avoid long naps; Day 2 move meals to local time; Day 3 normal schedule + hydration.</li></ul></div>
+  </div>`;
+}
+function bHealth(){const m=document.getElementById("med-q");if(m)m.oninput=()=>{S.medQuery=m.value;render()}}
+
+function zoneDate(offset){return new Date(Date.now()+offset*3600000)}
+function fmtTime(d){return d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}
+function rCulture(){
+  const base=(S.tzInput||"09:00").split(":");const h=parseInt(base[0]||"9"),m=parseInt(base[1]||"0");
+  const zoneOffsets={IST:5.5,EST:-4,CST:-5,MST:-6,PST:-7};
+  const src=zoneOffsets[S.tzZone]??-4;
+  const utc=(h-src)+(m/60);
+  const to=(z)=>{const v=utc+zoneOffsets[z];const hh=((Math.floor(v)%24)+24)%24;const mm=Math.round((v%1)*60);return `${String(hh).padStart(2,"0")}:${String((mm+60)%60).padStart(2,"0")}`};
+  return `<div class="card fade-in"><div class="card-t">🏢 Office & Work Culture</div>
+    <div class="section"><div class="section-t">US Work + Meeting Etiquette</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>On time means 5 min early.</li><li>Email concise: context → ask → deadline.</li><li>“Let's circle back” = revisit later; “action items” = assigned next steps.</li><li>Don't interrupt; summarize decisions in follow-up email.</li></ul></div>
+    <div class="section"><div class="section-t">Small Talk + Lunch + Kitchen Rules</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Safe topics: weather, sports, weekend plans.</li><li>Avoid: salary, age, politics, religion, weight.</li><li>Lunch usually 30–60 min; desk eating is normal.</li><li>Label food in shared fridge and clean microwave after use.</li></ul></div>
+    <div class="section"><div class="section-t">IST ↔ US Time Zone Converter</div>
+      <div class="fr"><div><label>Source Zone</label><select id="tz-zone">${Object.keys(zoneOffsets).map(z=>`<option ${S.tzZone===z?'selected':''}>${z}</option>`).join("")}</select></div><div><label>Time</label><input type="time" id="tz-input" value="${S.tzInput||"09:00"}"></div></div>
+      <div class="tiny">Schedule mode: ${S.tzInput||"09:00"} ${S.tzZone||"EST"} → IST ${to("IST")} · EST ${to("EST")} · CST ${to("CST")} · MST ${to("MST")} · PST ${to("PST")}</div>
+      <div class="tiny" style="margin-top:6px">Current now: IST ${fmtTime(zoneDate(5.5))} | EST ${fmtTime(zoneDate(-4))} | CST ${fmtTime(zoneDate(-5))} | MST ${fmtTime(zoneDate(-6))} | PST ${fmtTime(zoneDate(-7))}</div>
+    </div>
+    <div class="section"><div class="section-t">US Slang Decoder (100+)</div><div style="max-height:220px;overflow:auto"><table class="tbl"><thead><tr><th>US phrase</th><th>India equivalent</th></tr></thead><tbody>${SLANG_100.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join("")}</tbody></table></div></div>
+  </div>`;
+}
+function bCulture(){const i=document.getElementById("tz-input"),z=document.getElementById("tz-zone");if(i)i.oninput=()=>{S.tzInput=i.value;render()};if(z)z.onchange=()=>{S.tzZone=z.value;render()}}
+
+function rShopping(){
+  const wt=parseFloat(S.baggageWeight)||0;
+  const over=Math.max(0,wt-23);
+  return `<div class="card fade-in"><div class="card-t">🛒 Shopping & Daily Life</div>
+    <div class="section"><div class="section-t">Store Comparison</div><table class="tbl"><thead><tr><th>Store</th><th>Best for</th><th>Price level</th></tr></thead><tbody><tr><td>Walmart</td><td>Everything, low-cost basics</td><td>Low</td></tr><tr><td>Target</td><td>Better curated daily essentials</td><td>Low-Mid</td></tr><tr><td>Costco</td><td>Bulk packs (membership)</td><td>Bulk savings</td></tr><tr><td>Trader Joe's</td><td>Unique groceries/snacks</td><td>Mid</td></tr><tr><td>Aldi</td><td>Budget groceries</td><td>Very Low</td></tr><tr><td>Whole Foods</td><td>Premium organic</td><td>High</td></tr></tbody></table></div>
+    <div class="section"><div class="section-t">Electronics + Outlet + Sizes</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Tax-free shopping states: OR, NH, MT, DE.</li><li>AppleCare helps with international support; verify India warranty terms for each product.</li><li>Best deals: Black Friday/Cyber Monday.</li><li>US size quick map: India shoe 8 ≈ US 9; shirt 38/40/42 ≈ S/M/L.</li><li>Outlet malls: see each city profile in itinerary/map tab (Premium Outlets).</li></ul></div>
+    <div class="section"><div class="section-t">Baggage Allowance Calculator</div><div class="fr"><div><label>Total checked bag weight (kg)</label><input id="bag-weight" type="number" value="${esc(String(S.baggageWeight||""))}" placeholder="e.g. 26"></div></div><div class="detail">Typical economy check-in limit: 23kg per bag. Over by: <strong>${over.toFixed(1)}kg</strong> ${over>0?'(extra fee likely)':'(within common limit)'}</div></div>
+    <div class="section"><div class="section-t">India Return Customs</div><div class="tiny">Personal exemption ₹50K. Electronics above that are usually dutiable (~18–28% depending category). Use Red channel if carrying high-value sealed electronics and keep invoices ready.</div></div>
+  </div>`;
+}
+function bShopping(){const b=document.getElementById("bag-weight");if(b)b.oninput=()=>{S.baggageWeight=b.value;render()}}
+
+function weatherRowsForCity(city){
+  const base={Jan:[28,41],Feb:[31,45],Mar:[38,55],Apr:[47,66],May:[57,75],Jun:[65,83],Jul:[70,88],Aug:[69,86],Sep:[62,80],Oct:[51,69],Nov:[40,57],Dec:[32,45]};
+  const hot=["miami","orlando","tampa","houston","phoenix","dallas","austin"];const cold=["minneapolis","boston","chicago","denver","detroit","portland maine"];
+  const k=citySlug(city);
+  const tweak=(v,a,b)=>[v[0]+a,v[1]+b];
+  return Object.entries(base).map(([m,v])=>({m,r:hot.some(x=>k.includes(x))?tweak(v,10,12):cold.some(x=>k.includes(x))?tweak(v,-8,-7):v}));
+}
+function rWeather(){
+  const city=S.weatherCity||((S.stops[0]&&S.stops[0].city)||"new york");
+  const rows=weatherRowsForCity(city);
+  return `<div class="card fade-in"><div class="card-t">🌡️ Weather & Clothing</div>
+    <div class="fr"><div><label>City</label><input id="w-city" value="${esc(city)}" placeholder="Type Tier-1 city"></div></div>
+    <table class="tbl"><thead><tr><th>Month</th><th>Typical Low/High °F</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.m}</td><td>${r.r[0]}° / ${r.r[1]}°</td></tr>`).join("")}</tbody></table>
+    <div class="section"><div class="section-t">Snow/Ice Survival</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Walk like a penguin on ice; keep center of gravity over front foot.</li><li>Black ice can be invisible; reduce speed and avoid sudden braking.</li><li>Layering: base (dry) + insulating mid + waterproof outer shell.</li><li>At -10°F with wind, exposed skin can frostbite in ~30 mins.</li></ul></div>
+    <div class="section"><div class="section-t">Tornado/Hurricane Awareness</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Tornado peak: Great Plains & South (spring).</li><li>Hurricane season: Atlantic/Gulf states (Jun–Nov).</li><li>Shelter: interior room, lowest level, away from windows.</li></ul></div>
+    <div class="section"><div class="section-t">Where to buy winter gear</div><div class="tiny">Target, TJ Maxx, REI, Costco, Amazon (same-day in many metros).</div></div>
+  </div>`;
+}
+function bWeather(){const c=document.getElementById("w-city");if(c)c.oninput=()=>{S.weatherCity=c.value;render()}}
+
+function rExplore(){
+  const cities=(S.stops.length?S.stops.map(s=>s.city):Object.keys(TIER1_CITY_GUIDES).slice(0,8));
+  return `<div class="card fade-in"><div class="card-t">🎉 Weekend & Entertainment</div>
+    ${cities.map(c=>{const g=cityGuide(c);return `<div class="section"><div class="section-t">${esc(c)}</div><div class="tiny"><strong>Weekend trips:</strong> ${(g.weekend||[]).join(", ")}<br><strong>National parks nearby:</strong> ${(g.parks||[]).join(", ")}</div></div>`}).join("")}
+    <div class="section"><div class="section-t">Movies / Sports / Bars</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Movie chains: AMC, Regal. Tickets via Fandango. No intermission.</li><li>Sports tickets: SeatGeek, StubHub, Ticketmaster resale.</li><li>NFL/NBA/MLB/NHL games have bag policies and security checks.</li><li>Alcohol: legal age 21, hard ID checks even if you look older; open container laws are strict.</li></ul></div>
+  </div>`;
+}
+
+function rFlights(){return `<div class="card fade-in"><div class="card-t">✈️ Flight & Airport</div>
+  <div class="section"><div class="section-t">TSA Rules Cheat Sheet</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>3-1-1 liquids in carry-on (100ml each, 1 quart bag).</li><li>Shoes/belt/laptop may need removal at security.</li><li>No water bottle through security unless empty.</li><li>TSA PreCheck is faster but needs enrollment.</li></ul></div>
+  <div class="section"><div class="section-t">Domestic Flight Tips</div><ul class="tiny" style="margin-left:16px;line-height:1.6"><li>Boarding groups matter; overhead bins fill quickly.</li><li>Short US flights often have no free meals.</li><li>Carry charging cables + snacks.</li></ul></div>
+  <div class="section"><div class="section-t">Hub Layover Notes</div><table class="tbl"><thead><tr><th>Hub</th><th>Tip</th></tr></thead><tbody><tr><td>JFK</td><td>AirTrain between terminals; security lines can be long.</td></tr><tr><td>ORD</td><td>Use airport train; allow extra transfer time.</td></tr><tr><td>ATL</td><td>Plane train is quick but gates are huge walks.</td></tr><tr><td>DFW</td><td>Skylink for terminal hops.</td></tr><tr><td>LAX</td><td>Terminal changes can be slow; shuttle/people mover help.</td></tr><tr><td>SFO</td><td>AirTrain and terminal food options are good.</td></tr></tbody></table></div>
+  <div class="section"><div class="section-t">Baggage Claim</div><div class="tiny">Use AirTag/Tile, add colorful strap to black suitcases, and verify carousel number on airport screens.</div></div>
+</div>`}
+
+function rVault(){
+  return `<div class="card fade-in"><div class="card-t">🔒 Document Vault (local encrypted storage)</div>
+    <div class="tiny">Store passport, visa, I-94, insurance card photos securely in your browser. Reminder: photograph documents before travel.</div>
+    <div class="fr" style="margin-top:10px"><div><label>Vault Password</label><input id="vault-pass" type="password" placeholder="Create or enter password"></div></div>
+    <div class="dl-bar"><button class="btn btn-p btn-s" id="vault-unlock">${S.vaultUnlocked?'Re-lock / Re-open':'Unlock Vault'}</button><button class="btn btn-g btn-s" id="vault-clear">Delete vault</button></div>
+    ${S.vaultUnlocked?`<div class="section"><div class="section-t">Add Document</div><input type="file" id="vault-file" accept="image/*,.pdf"><button class="btn btn-p btn-s" id="vault-add" style="margin-top:8px">Encrypt & Save</button></div><div class="section"><div class="section-t">Saved documents</div>${(S.vaultDocs||[]).length?S.vaultDocs.map((d,i)=>`<div class="vault-item"><div><strong>${esc(d.name)}</strong><div class="tiny">${new Date(d.ts).toLocaleString()}</div></div><div class="sl-a"><button class="btn btn-g btn-s" data-v-open="${i}">Open</button><button class="btn btn-g btn-s" data-v-del="${i}">Delete</button></div></div>`).join(""):'<div class="tiny">No documents saved yet.</div>'}</div>`:''}
+  </div>`;
+}
+
+async function deriveVaultKey(pass,salt){
+  const enc=new TextEncoder();
+  const base=await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:100000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+async function encVault(pass,text){
+  const enc=new TextEncoder(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveVaultKey(pass,salt);const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,enc.encode(text));
+  return {salt:Array.from(salt),iv:Array.from(iv),data:Array.from(new Uint8Array(cipher))};
+}
+async function decVault(pass,payload){
+  const key=await deriveVaultKey(pass,new Uint8Array(payload.salt));
+  const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(payload.iv)},key,new Uint8Array(payload.data));
+  return new TextDecoder().decode(plain);
+}
+function saveVault(){try{localStorage.setItem("tp_vault",JSON.stringify(S.vaultDocs||[]))}catch(e){}}
+function loadVault(){try{S.vaultDocs=JSON.parse(localStorage.getItem("tp_vault")||"[]")}catch(e){S.vaultDocs=[]}}
+function bVault(){
+  const pass=document.getElementById("vault-pass"),unlock=document.getElementById("vault-unlock"),clear=document.getElementById("vault-clear");
+  if(unlock)unlock.onclick=()=>{S.vaultPass=pass.value;S.vaultUnlocked=!!S.vaultPass;render()};
+  if(clear)clear.onclick=()=>{if(confirm("Delete all encrypted vault documents?")){S.vaultDocs=[];saveVault();render()}};
+  const add=document.getElementById("vault-add"),f=document.getElementById("vault-file");
+  if(add)add.onclick=async()=>{
+    if(!S.vaultPass||!f.files[0])return alert("Enter password and choose file.");
+    const file=f.files[0],reader=new FileReader();
+    reader.onload=async(ev)=>{
+      try{
+        const payload=await encVault(S.vaultPass,ev.target.result);
+        S.vaultDocs.push({name:file.name,ts:Date.now(),payload});
+        saveVault();render();
+      }catch(e){alert("Could not encrypt document.")}
+    };
+    reader.readAsDataURL(file);
+  };
+  document.querySelectorAll("[data-v-del]").forEach(b=>b.onclick=()=>{S.vaultDocs.splice(parseInt(b.dataset.vDel),1);saveVault();render()});
+  document.querySelectorAll("[data-v-open]").forEach(b=>b.onclick=async()=>{
+    const doc=S.vaultDocs[parseInt(b.dataset.vOpen)];
+    if(!doc||!S.vaultPass)return;
+    try{
+      const data=await decVault(S.vaultPass,doc.payload);
+      const w=window.open();
+      w.document.write(`<img src="${data}" style="max-width:100%">`);
+    }catch(e){alert("Wrong password or corrupted vault file.");}
+  });
+}
+
+function toggleTheme(){S.theme=S.theme==="dark"?"light":"dark";applyTheme();render()}
+function applyTheme(){
+  document.body.classList.toggle("light",S.theme==="light");
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",S.theme==="light"?"#e9eeff":"#3d8bfd");
+  try{localStorage.setItem("tp_theme",S.theme)}catch(e){}
+}
 
 // ─── ALERTS TAB ────────────────────────────────────────────────
 const REMIND_OPTIONS=[
@@ -1023,7 +1640,8 @@ function rChecklist(){
     {c:"Before Leaving India",items:["Valid passport (6+ months validity beyond return date)","US visa (B1/B2 or L1/L2) approved and stamped","Flight tickets booked (Chennai → JFK or as applicable)","Travel insurance purchased (covers medical + cancellation)","International credit/debit card activated for overseas use","Inform your bank about US travel to avoid card blocks","eSIM QR code received from office / or Airalo eSIM purchased","Color photocopies of passport, visa, I-797 (if applicable)","Company invitation letter / client site visit approval","Power adapter — US Type A/B plug (120V, Indian chargers work)","Carry medicines with prescriptions (generic names — brands differ in US)","Indian snacks: MTR ready meals, instant noodles, pickle, tea powder","Clothes appropriate for season (check weather guide)","Universal power strip (1 adapter powers all devices)","Reusable water bottle (US tap water is safe)","Download offline Google Maps for all cities"]},
     {c:"Apps to Install Before Flying",items:["Uber — ride hailing (link card before travel)","Lyft — alternative to Uber (compare prices)","Google Maps — download offline maps for each city","Google Flights — compare and track flight prices","Booking.com or Hotels.com — hotel booking","Yelp — restaurant reviews & ratings","Uber Eats or DoorDash — food delivery to hotel","Amtrak — train booking (Northeast corridor)","Google Translate — just in case","WhatsApp / Slack — stay in touch with team","Wallet / Apple Pay / Google Pay — set up contactless payments"]},
     {c:"On Landing in the US",items:["Clear immigration — have passport + visa + I-94 ready","Collect luggage from carousel","Activate eSIM (Settings → Cellular → turn on travel eSIM)","Connect to airport WiFi while eSIM activates","Book Uber/Lyft to hotel (DO NOT take unmarked cabs)","Notify team of safe arrival","Check into hotel (passport + credit card needed for deposit)","Buy US SIM or top-up data if eSIM insufficient","Find nearest CVS/Walgreens for essentials","Set alarm and review next day's schedule"]},
-    {c:"Daily Office Visit Routine",items:["Dress business casual (collared shirt + chinos + clean shoes)","Carry laptop, charger, notepad, business cards","Check Uber/Google Maps for travel time to office","Arrive 10 minutes early","After visit (1-3 hrs): Uber back to hotel or explore nearby","Keep passport photo on phone (don't carry physical daily)","Track expenses for reimbursement","Charge all devices overnight"]}
+    {c:"Daily Office Visit Routine",items:["Dress business casual (collared shirt + chinos + clean shoes)","Carry laptop, charger, notepad, business cards","Check Uber/Google Maps for travel time to office","Arrive 10 minutes early","After visit (1-3 hrs): Uber back to hotel or explore nearby","Keep passport photo on phone (don't carry physical daily)","Track expenses for reimbursement","Charge all devices overnight"]},
+    {c:"Return Trip Checklist",items:["Cancel unused subscriptions/trials before departure","Return rental car with full tank and keep fuel receipt","Complete hotel checkout and ask for final folio invoice","Pack gifts/electronics in checked baggage safely","Keep all purchase receipts for Indian customs declaration","Understand Green vs Red channel at Indian airport","Keep US boarding pass + receipts for company reimbursement","Sync all expense entries and export CSV before flying back"]}
   ];
   return `<div class="card"><div class="card-t">✅ Complete Travel Checklist</div>
   ${cats.map(c=>`<div class="cc">${c.c}</div>${c.items.map(it=>`<label class="ci"><input type="checkbox" data-ck="${esc(it)}" ${S.checked.has(it)?'checked':''}><span class="${S.checked.has(it)?'done':''}">${it}</span></label>`).join('')}`).join('')}</div>`}
@@ -1031,11 +1649,19 @@ function rChecklist(){
 // ─── BINDING ───────────────────────────────────────────────────
 function bMain(){
   document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{S.tab=t.dataset.tab;render()});
+  const tbtn=document.getElementById("btn-theme");if(tbtn)tbtn.onclick=()=>toggleTheme();
+  const pbtn=document.getElementById("btn-print");if(pbtn)pbtn.onclick=()=>window.print();
   if(S.tab==="plan")bPlan();
   if(S.tab==="alerts")bAlerts();
   if(S.tab==="check")bCheck();
   if(S.tab==="itin")bItin();
-  if(S.tab==="expenses")bExpenses();
+  if(S.tab==="money")bMoney();
+  if(S.tab==="apps")bAppsMaps();
+  if(S.tab==="health")bHealth();
+  if(S.tab==="culture")bCulture();
+  if(S.tab==="shopping")bShopping();
+  if(S.tab==="weather")bWeather();
+  if(S.tab==="vault")bVault();
 }
 
 function bPlan(){
@@ -1074,7 +1700,22 @@ function bPlan(){
 function bItin(){
   const gp=document.getElementById("btn-gp");if(gp)gp.onclick=()=>{S.tab="plan";render()};
   const dl=document.getElementById("btn-dl");if(dl)dl.onclick=()=>downloadItin();
-  const sh=document.getElementById("btn-share");if(sh)sh.onclick=()=>copyItin()}
+  const sh=document.getElementById("btn-share");if(sh)sh.onclick=()=>copyItin();
+  const qr=document.getElementById("btn-qr");if(qr)qr.onclick=()=>showQRShare();
+  document.querySelectorAll("[data-sadd]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.sadd,time=document.getElementById(`st-time-${id}`).value,title=document.getElementById(`st-title-${id}`).value.trim();
+    if(!title)return alert("Enter event title");
+    if(!S.schedules[id])S.schedules[id]=[];
+    S.schedules[id].push({time:time||"10:00",title});
+    render();
+  });
+  document.querySelectorAll("[data-sdel]").forEach(b=>b.onclick=()=>{
+    const [id,idx]=b.dataset.sdel.split("|");
+    if(!S.schedules[id])return;
+    S.schedules[id].splice(parseInt(idx),1);
+    render();
+  });
+}
 
 function bCheck(){document.querySelectorAll("[data-ck]").forEach(cb=>cb.onchange=()=>{const it=cb.dataset.ck;if(cb.checked)S.checked.add(it);else S.checked.delete(it);render()})}
 
@@ -1348,6 +1989,23 @@ function copyItin(){
   navigator.clipboard.writeText(text).then(()=>alert("Itinerary copied to clipboard! Paste it in WhatsApp, Email, or Notes.")).catch(()=>{
     const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);alert("Itinerary copied!")})}
 
+function showQRShare(){
+  const payload=JSON.stringify({name:S.trip?.name||"",from:S.trip?.from||"",land:S.trip?.land||"",stops:S.stops.map(s=>({city:s.city,arrive:s.arrive,depart:s.depart}))});
+  const wrap=document.createElement("div");
+  wrap.className="receipt-preview";
+  const matrix=(()=>{
+    const bits=Array.from(new TextEncoder().encode(payload)).flatMap(v=>v.toString(2).padStart(8,"0").split("").map(Number));
+    const size=25;let idx=0;let out="";
+    for(let y=0;y<size;y++){for(let x=0;x<size;x++){const b=bits[idx++%bits.length];out+=`<rect x="${x*8}" y="${y*8}" width="8" height="8" fill="${b?'#000':'#fff'}"/>`}}
+    return `<svg width="200" height="200" viewBox="0 0 200 200" style="background:#fff;border-radius:8px">${out}</svg>`;
+  })();
+  const onlineQR=`https://quickchart.io/qr?text=${encodeURIComponent(payload)}&size=220`;
+  wrap.innerHTML=`<div style="background:var(--s1);border:1px solid var(--bdr);padding:14px;border-radius:12px;max-width:320px" onclick="event.stopPropagation()"><div style="font-size:13px;font-weight:700;margin-bottom:8px">Share Itinerary</div>${navigator.onLine?`<img src="${onlineQR}" width="220" height="220" alt="QR code" style="display:block;margin:0 auto;border-radius:8px;background:#fff">`:`${matrix}<div class="tiny" style="margin-top:6px">Offline visual code (fallback)</div>`}<textarea style="width:100%;margin-top:8px;height:80px">${payload}</textarea><div class="tiny">Teammate can copy JSON above and import manually if QR scan is unavailable offline.</div><button class="btn btn-g btn-s" id="qr-close" style="margin-top:8px">Close</button></div>`;
+  wrap.onclick=()=>wrap.remove();
+  document.body.appendChild(wrap);
+  const c=document.getElementById("qr-close");if(c)c.onclick=()=>wrap.remove();
+}
+
 // ─── INIT ──────────────────────────────────────────────────────
 window.onerror=function(msg,url,line,col,err){
   document.getElementById("app").innerHTML='<div style="padding:40px;text-align:center;color:#ff6b6b"><h2>⚠️ Something went wrong</h2><p style="color:#9499b3;margin:12px 0">Error: '+msg+'</p><p style="color:#9499b3">Line: '+line+'</p><button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:#3d8bfd;color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer">Reload App</button></div>';
@@ -1356,10 +2014,13 @@ window.onerror=function(msg,url,line,col,err){
 
 function initApp(){
   try{loadExpenses()}catch(e){}
+  try{loadVault()}catch(e){}
   try{
     var saved=localStorage.getItem("tp_state");
-    if(saved){var p=JSON.parse(saved);if(p&&p.trip){S.trip=p.trip;S.stops=p.stops||[];S.screen="main"}}
+    if(saved){var p=JSON.parse(saved);if(p&&p.trip){S.trip=p.trip;S.stops=p.stops||[];S.schedules=p.schedules||{};S.tip=p.tip||S.tip;S.customsInr=p.customsInr||"";S.tab=p.tab||S.tab;S.screen="main"}}
   }catch(e){}
+  try{S.theme=localStorage.getItem("tp_theme")||"dark"}catch(e){}
+  applyTheme();
   try{
     var rem=localStorage.getItem("tp_reminders");
     if(rem)S.customReminders=JSON.parse(rem);
@@ -1376,7 +2037,7 @@ function initApp(){
   var origRender=render;
   render=function(){
     origRender();
-    try{if(S.trip)localStorage.setItem("tp_state",JSON.stringify({trip:S.trip,stops:S.stops}))}catch(e){}
+    try{if(S.trip)localStorage.setItem("tp_state",JSON.stringify({trip:S.trip,stops:S.stops,schedules:S.schedules,tip:S.tip,customsInr:S.customsInr,tab:S.tab}))}catch(e){}
   };
 
   // Start notification checker if permission granted
