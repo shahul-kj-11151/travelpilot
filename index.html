@@ -686,17 +686,26 @@ const SLANG_100=[
 ["restroom","washroom"],["check","bill"],["takeout","parcel"],["apartment","flat"],["elevator","lift"],["trunk","dickey"],["hood","bonnet"],["gas","petrol"],["sidewalk","footpath"],["crosswalk","zebra crossing"],["cell phone","mobile"],["line","queue"],["vacation","holiday"],["zip code","pin code"],["soccer","football"],["fries","chips"],["chips","crisps"],["cookie","biscuit"],["candy","toffee"],["diaper","nappy"],["stroller","pram"],["sweater","jumper"],["sneakers","sports shoes"],["faucet","tap"],["trash","garbage"],["garbage can","dustbin"],["store","shop"],["drugstore","chemist"],["pharmacy","medical shop"],["interstate","highway"],["vacuum","hoover"],["math","maths"],["eraser","rubber"],["semester","term"],["principal","headmaster"],["grade","marks"],["movie theater","cinema"],["parking lot","car park"],["cart","trolley"],["to-go","parcel"],["server","waiter"],["full stop","period"],["round trip","return ticket"],["one-way","single"],["carry-on","cabin bag"],["checked bag","check-in bag"],["carton","tetra pack"],["ground floor","first floor (US)"],["first floor","second floor (India)"],["resume","CV"],["fanny pack","waist pouch"],["couch","sofa"],["realtor","property broker"],["soda","soft drink"],["subway","metro"],["yard","garden"],["bachelor's","undergrad"],["major","specialization"],["minor","elective focus"],["gas station","petrol bunk"],["windshield","windscreen"],["flashlight","torch"],["traffic circle","roundabout"],["resume call","circle back"],["ASAP","as soon as possible"],["FYI","for your information"],["OOO","out of office"],["ETA","expected time of arrival"],["PTO","paid time off"],["green card","permanent residence"],["zip","fasten"],["backpack","rucksack"],["closet","wardrobe"],["laundromat","dhobi/laundry"],["mailbox","letter box"],["package","courier"],["sales tax","GST-like tax at checkout"],["ID","proof"],["driver's license","driving licence"],["clerk","counter person"],["coupon","discount voucher"],["receipt","bill"],["debit","debit card"],["checking account","current/savings account"],["toilet paper","tissue roll"],["napkin","tissue"],["fridge","refrigerator"],["trash pickup","garbage collection"],["high school","secondary school"],["college","university"],["shopping cart return","return trolley"],["rain check","do later"],["hit me up","message me"],["my bad","my mistake"],["hang out","spend time"],["no worries","it's okay"],["gotcha","understood"],["bucks","dollars"],["quarter","25 cents"],["rest stop","highway service area"],["tailgating","pre-game parking lot party"]
 ];
 
+const CITY_GUIDE_CACHE={};
+const THEME_META_COLORS={dark:"#3d8bfd",light:"#e9eeff"};
+const QR_GRID_SIZE=25;
+const QR_CELL_SIZE=8;
+const VAULT_PBKDF2_ITERATIONS=600000;
+
 function citySlug(s){return (s||"").toLowerCase().trim()}
 function cityGuide(city){
   const k=citySlug(city);
-  if(TIER1_CITY_GUIDES[k])return {tier:1,...TIER1_CITY_GUIDES[k]};
+  if(CITY_GUIDE_CACHE[k])return CITY_GUIDE_CACHE[k];
+  if(TIER1_CITY_GUIDES[k]){const out={tier:1,...TIER1_CITY_GUIDES[k]};CITY_GUIDE_CACHE[k]=out;return out;}
   const exact=Object.keys(TIER1_CITY_GUIDES).find(c=>k.includes(c)||c.includes(k));
-  if(exact)return {tier:1,...TIER1_CITY_GUIDES[exact]};
+  if(exact){const out={tier:1,...TIER1_CITY_GUIDES[exact]};CITY_GUIDE_CACHE[k]=out;return out;}
   const code=TIER2_CITY_AIRPORTS[k];
   if(code){
-    return {tier:2,airports:[`${code} — Nearest commercial airport for ${city}`],hotels:[],indian:[`Use Google Maps search for Indian restaurants near ${city}`],landmarks:[`Top things to do in ${city}`],officeAreas:[`${city} downtown business district`],parks:[`Nearest state/national park to ${city}`],weekend:[`Weekend drive from ${city}`],mapArea:`Download ${city} metro area`,mapSize:"~140–220MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+    const out={tier:2,airports:[`${code} — Nearest commercial airport for ${city}`],hotels:[],indian:[`Use Google Maps search for Indian restaurants near ${city}`],landmarks:[`Top things to do in ${city}`],officeAreas:[`${city} downtown business district`],parks:[`Nearest state/national park to ${city}`],weekend:[`Weekend drive from ${city}`],mapArea:`Download ${city} metro area`,mapSize:"~140–220MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+    CITY_GUIDE_CACHE[k]=out;return out;
   }
-  return {tier:3,airports:[`Search nearest airport for ${city}`],hotels:[],indian:[`Search Indian food near ${city}`],landmarks:[`Search things to do in ${city}`],officeAreas:[`${city} downtown`],parks:[`Nearest parks around ${city}`],weekend:[`Weekend options from ${city}`],mapArea:`Download ${city} + 20 mi radius`,mapSize:"~120–200MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+  const out={tier:3,airports:[`Search nearest airport for ${city}`],hotels:[],indian:[`Search Indian food near ${city}`],landmarks:[`Search things to do in ${city}`],officeAreas:[`${city} downtown`],parks:[`Nearest parks around ${city}`],weekend:[`Weekend options from ${city}`],mapArea:`Download ${city} + 20 mi radius`,mapSize:"~120–200MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+  CITY_GUIDE_CACHE[k]=out;return out;
 }
 
 
@@ -993,7 +1002,7 @@ function rItin(){
                 <div class="hotel-price">${h.price}</div>
               </div>
               <a href="${h.book}" target="_blank" class="hotel-link">🔗 Check Availability</a>
-              ${h.geo?`<a href="geo:${h.geo}" class="hotel-link" style="margin-left:4px">📍 geo</a>`:""}
+              ${h.geo?`<a href="geo:${h.geo}" class="hotel-link" style="margin-left:4px">📍 View Location</a>`:""}
               <a href="${hotelBookingLink(s.city,s.arrive,s.depart)}" target="_blank" class="hotel-link" style="margin-left:4px">📅 Book for ${fD(s.arrive)}</a>
             </div>`).join('');
           } else {
@@ -1221,7 +1230,8 @@ function rVault(){
 async function deriveVaultKey(pass,salt){
   const enc=new TextEncoder();
   const base=await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveKey"]);
-  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:100000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+  // 600k iteration baseline (OWASP-aligned) for stronger at-rest protection of travel documents.
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:VAULT_PBKDF2_ITERATIONS,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
 }
 async function encVault(pass,text){
   const enc=new TextEncoder(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
@@ -1267,7 +1277,7 @@ function bVault(){
 function toggleTheme(){S.theme=S.theme==="dark"?"light":"dark";applyTheme();render()}
 function applyTheme(){
   document.body.classList.toggle("light",S.theme==="light");
-  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",S.theme==="light"?"#e9eeff":"#3d8bfd");
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",THEME_META_COLORS[S.theme]||THEME_META_COLORS.dark);
   try{localStorage.setItem("tp_theme",S.theme)}catch(e){}
 }
 
@@ -1995,8 +2005,8 @@ function showQRShare(){
   wrap.className="receipt-preview";
   const matrix=(()=>{
     const bits=Array.from(new TextEncoder().encode(payload)).flatMap(v=>v.toString(2).padStart(8,"0").split("").map(Number));
-    const size=25;let idx=0;let out="";
-    for(let y=0;y<size;y++){for(let x=0;x<size;x++){const b=bits[idx++%bits.length];out+=`<rect x="${x*8}" y="${y*8}" width="8" height="8" fill="${b?'#000':'#fff'}"/>`}}
+    const size=QR_GRID_SIZE;let idx=0;let out="";
+    for(let y=0;y<size;y++){for(let x=0;x<size;x++){const b=bits[idx++%bits.length];out+=`<rect x="${x*QR_CELL_SIZE}" y="${y*QR_CELL_SIZE}" width="${QR_CELL_SIZE}" height="${QR_CELL_SIZE}" fill="${b?'#000':'#fff'}"/>`}}
     return `<svg width="200" height="200" viewBox="0 0 200 200" style="background:#fff;border-radius:8px">${out}</svg>`;
   })();
   const onlineQR=`https://quickchart.io/qr?text=${encodeURIComponent(payload)}&size=220`;
