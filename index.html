@@ -703,7 +703,9 @@ function cityGuide(city){
     const out={tier:2,airports:[`${code} — Nearest commercial airport for ${city}`],hotels:[],indian:[`Use Google Maps search for Indian restaurants near ${city}`],landmarks:[`Top things to do in ${city}`],officeAreas:[`${city} downtown business district`],parks:[`Nearest state/national park to ${city}`],weekend:[`Weekend drive from ${city}`],mapArea:`Download ${city} metro area`,mapSize:"~140–220MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
     CITY_GUIDE_CACHE[k]=out;return out;
   }
-  const out={tier:3,airports:[`Search nearest airport for ${city}`],hotels:[],indian:[`Search Indian food near ${city}`],landmarks:[`Search things to do in ${city}`],officeAreas:[`${city} downtown`],parks:[`Nearest parks around ${city}`],weekend:[`Weekend options from ${city}`],mapArea:`Download ${city} + 20 mi radius`,mapSize:"~120–200MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
+  const airportMatch=Object.keys(AIRPORTS).find(a=>k.includes(a)||a.includes(k));
+  const airportList=AIRPORTS[k]?AIRPORTS[k]:(airportMatch?AIRPORTS[airportMatch]:[`Search nearest airport for ${city}`]);
+  const out={tier:3,airports:airportList,hotels:[],indian:[`Search Indian food near ${city}`],landmarks:[`Search things to do in ${city}`],officeAreas:[`${city} downtown`],parks:[`Nearest parks around ${city}`],weekend:[`Weekend options from ${city}`],mapArea:`Download ${city} + 20 mi radius`,mapSize:"~120–200MB",coords:COORDS[k]||{lat:39.8283,lon:-98.5795}};
   CITY_GUIDE_CACHE[k]=out;return out;
 }
 
