@@ -690,6 +690,7 @@ const CITY_GUIDE_CACHE={};
 const THEME_META_COLORS={dark:"#3d8bfd",light:"#e9eeff"};
 const QR_GRID_SIZE=25;
 const QR_CELL_SIZE=8;
+// OWASP-aligned baseline for browser-side PBKDF2 while keeping unlock latency practical on phones.
 const VAULT_PBKDF2_ITERATIONS=600000;
 
 function citySlug(s){return (s||"").toLowerCase().trim()}
@@ -1227,6 +1228,12 @@ function rVault(){
   </div>`;
 }
 
+/**
+ * Derives an AES-GCM key from a user password using PBKDF2.
+ * @param {string} pass
+ * @param {Uint8Array} salt
+ * @returns {Promise<CryptoKey>}
+ */
 async function deriveVaultKey(pass,salt){
   const enc=new TextEncoder();
   const base=await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveKey"]);
