@@ -655,6 +655,39 @@ const ALL_50_STATES={
   "wyoming":{tax:"4% + local",alcohol:"Limited sales hours in some towns",driving:"High-wind advisories common",tolls:"No toll roads",weather:"High plains, harsh winters"}
 };
 
+const STATE_DETAIL_GUIDES={
+  "florida":{region:"Sha's states",dos:["Stay hydrated — humidity is brutal even in \"winter\"","Carry sunscreen; UV index is high year-round","Book beach hotels 2-3 weeks ahead in winter (snowbird season)"],donts:["Don't feed alligators or approach wildlife in canals/ponds","Don't walk barefoot on hot asphalt/sand at midday","Don't ignore hurricane warnings Jun–Nov"],ordering:["\"Can I get that no ice?\" (common for Indian palates unused to constant ice)","\"Is this dish spicy or mild?\" — Southern food can be surprisingly bland or very spicy","Cuban coffee counters (Miami): just say \"cortadito\" for a small sweet espresso"],smoking:"Banned indoors statewide (Clean Indoor Air Act). Beach smoking banned in many counties — check local signage. Vaping treated same as smoking indoors.",bars:"Budget-friendly: local dive bars in Orlando/Tampa (beer $4-6), Wynwood breweries in Miami for craft beer flights ($10-15). Avoid South Beach clubs — cover charges $30-50+.",shopping:"Sawgrass Mills (Sunrise, FL) is one of the largest outlet malls in the US — genuinely good discounts on brands. Target/Walmart for basics.",visit:"Budget picks: public beaches (free), Eastern Market-style farmers markets, Kennedy Space Center (book online for discount), state parks ($6-8 entry) instead of theme parks."},
+  "georgia":{region:"Sha's states",dos:["Say \"y'all\" naturally — it's normal, not mocking","Expect sweet tea by default; ask for unsweetened if you don't want it","Tip well — Southern hospitality culture expects it"],donts:["Don't rush Southern conversations — small talk before business is the norm","Don't assume Atlanta traffic will be light — always add 30+ min buffer"],ordering:["\"I'll have the sweet tea, unsweetened please\" (they default to sweet)","Waffle House / diner counters: \"scattered, smothered, covered\" is real hash brown lingo — ask staff to explain if curious","Ask \"is there a vegetarian option\" — Southern food is meat-heavy by default"],smoking:"Banned in most enclosed workplaces/restaurants (Georgia Smokefree Air Act) but bars and some restaurants without minors can allow it — check before entering.",bars:"Budget-friendly: Sweetwater Brewery taproom tours (~$12 incl. beer), Little Five Points dive bars in Atlanta (beer $4-5). Avoid Buckhead's upscale lounges.",shopping:"North Georgia Premium Outlets (Dawsonville) for discount brands. Ponce City Market for local goods (pricier but walkable).",visit:"Budget picks: Piedmont Park (free), Atlanta BeltLine walk (free), Georgia Aquarium (book online in advance for lower price), state parks."},
+  "ohio":{region:"Sha's states",dos:["Dress in layers — Ohio weather swings fast","Expect Midwest directness mixed with friendliness"],donts:["Don't expect much nightlife outside Columbus/Cleveland/Cincinnati downtowns","Don't skip checking for lake-effect snow alerts near Cleveland in winter"],ordering:["Cincinnati chili: order \"3-way\" (spaghetti+chili+cheese), \"4-way\" adds onions or beans — don't be confused by numbers on the menu","\"Buckeye\" on a menu = peanut butter chocolate candy, not the actual nut"],smoking:"Banned indoors statewide (Ohio Smoke Free Workplace Act) including bars and restaurants. Outdoor patios often allow it.",bars:"Budget-friendly: Columbus Brewing District taprooms ($5-7 pints), Cleveland's Ohio City breweries. College-town bars near Ohio State are cheap.",shopping:"Jeffersonville Outlets or Aurora Farms Premium Outlets for discounts. Costco/Target widely available.",visit:"Budget picks: Cleveland's Rock & Roll Hall of Fame (discount online), Columbus Zoo, free downtown walking areas, Amish Country day trip (free scenic drive)."},
+  "indiana":{region:"Sha's states",dos:["Expect a strong basketball culture — sports small talk works well","Layer for cold winters and humid summers"],donts:["Don't expect much public transit outside Indianapolis — plan car/Uber","Don't schedule tight meetings around Indy 500 weekend (late May) — city gets packed"],ordering:["Pork tenderloin sandwiches are a state specialty — huge breaded cutlet, order \"no bun overhang\" jokes aside, it's normal size","Sugar cream pie = Indiana's state pie, worth trying at a diner"],smoking:"Banned in most indoor public places and workplaces (Indiana Smoke Free Air Law) with some bar/private club exceptions.",bars:"Budget-friendly: Broad Ripple Village in Indianapolis has cheap college-town bars ($4-5 beers). Sun King Brewery taproom is affordable and popular.",shopping:"Edinburgh Premium Outlets (between Indy and Louisville) for discount shopping. Meijer/Target for essentials.",visit:"Budget picks: White River State Park (free), Indianapolis Cultural Trail (free walk/bike path), Indiana State Museum (discount days)."},
+  "kentucky":{region:"Sha's states",dos:["Bourbon culture runs deep — showing polite interest is welcomed","Expect Southern hospitality and slower conversational pace"],donts:["Don't call bourbon \"whiskey\" dismissively to a local — they're proud of the distinction","Don't rush through Louisville/Lexington without trying local BBQ or Hot Brown sandwich"],ordering:["\"Hot Brown\" is an open-face turkey sandwich — a Louisville classic, order it at least once","Ask staff for \"small pour\" if doing a bourbon flight and want to pace yourself"],smoking:"No comprehensive statewide indoor ban — varies heavily by city/county. Louisville and Lexington have local ordinances banning indoor smoking in most places; rural areas may allow it in bars.",bars:"Budget-friendly: Louisville's NuLu district has affordable bourbon bars with $8-12 tasting flights — much cheaper than distillery tours ($20-30+).",shopping:"Simpson County / Louisville outlet options are limited — plan bigger shopping in Ohio/Indiana malls nearby if needed.",visit:"Budget picks: Louisville Waterfront Park (free), Kentucky Bourbon Trail — pick 1-2 free/cheap distillery tours instead of paid VIP versions."},
+  "wisconsin":{region:"Sha's states",dos:["Expect intense Green Bay Packers pride — sports talk is a great icebreaker","Dress warmly — genuinely cold winters, lake-effect snow near Milwaukee"],donts:["Don't skip trying cheese curds — Wisconsin takes cheese seriously, it's not a gimmick","Don't schedule outdoor client visits without checking winter road conditions"],ordering:["\"Friday fish fry\" is a real cultural institution at most restaurants/bars — order the fish fry on Fridays specifically","Cheese curds should be ordered fresh/squeaky, not the rubbery pre-packaged kind"],smoking:"Banned indoors statewide (Wisconsin Smoke-Free Air Law) in restaurants, bars, and workplaces since 2010.",bars:"Budget-friendly: Milwaukee's tavern culture is famously cheap — old-school taverns pour $3-4 beers. Avoid downtown rooftop bars which run $12-15/drink.",shopping:"Pleasant Prairie Premium Outlets (near Chicago border) for discount shopping.",visit:"Budget picks: Milwaukee's lakefront (free), Wisconsin State Capitol tour (free), Door County day trip in summer (scenic, mostly free)."},
+  "michigan":{region:"Sha's states",dos:["Expect genuine Midwest friendliness","Layer heavily for lake-effect winters near Detroit/Grand Rapids"],donts:["Don't underestimate driving times around the Great Lakes — distances look short on map but aren't","Don't skip trying a Coney dog in Detroit — it's a local point of pride"],ordering:["A \"Coney\" in Detroit means a hot dog with chili, mustard, onion — order it \"all the way\" for the full version","Vernors ginger ale is a Michigan classic soft drink, worth trying"],smoking:"Banned indoors statewide (Michigan's Dr. Ron Davis Law) in restaurants, bars, and most workplaces.",bars:"Budget-friendly: Ann Arbor and Ferndale have affordable craft breweries ($5-7 pints). Detroit's Eastern Market area has cheap local bars.",shopping:"Great Lakes Crossing Outlets (Auburn Hills) — large discount mall, good for electronics and apparel.",visit:"Budget picks: Belle Isle Park (Detroit, free), Eastern Market Saturdays (free to browse), Henry Ford Museum (book online discount)."},
+  "south carolina":{region:"Sha's states",dos:["Expect warm, slow-paced Southern hospitality","Try shrimp and grits — a genuine Lowcountry specialty, not just tourist food"],donts:["Don't rush greetings — a little small talk before business is expected","Don't skip sunscreen on Charleston/Myrtle Beach visits — humidity masks sun intensity"],ordering:["\"Sweet tea\" is the default drink — ask for unsweetened if preferred","BBQ style varies by region in SC (mustard-based sauce is distinctive) — ask what \"Carolina style\" means at that specific restaurant"],smoking:"No comprehensive statewide ban — South Carolina leaves it to local ordinances. Charleston and Columbia have banned indoor smoking in restaurants/bars; many smaller towns have not.",bars:"Budget-friendly: Charleston's upper King Street has happy-hour deals ($5-6 drinks 4-6pm). Avoid waterfront tourist bars which mark up prices heavily.",shopping:"Tanger Outlets (Myrtle Beach and Charleston both have locations) for reliable discount shopping.",visit:"Budget picks: Charleston's free walking historic district, Folly Beach (free), Congaree National Park (free entry, real swamp/forest hiking)."},
+  "north carolina":{region:"Sha's states",dos:["Expect a mix of Southern charm (rural) and fast-paced tech culture (Raleigh-Durham)","Layer for mountain cold in Asheville area vs. humid coast"],donts:["Don't confuse Eastern NC BBQ (vinegar-based) with Western NC BBQ (tomato-based) when ordering — locals have strong opinions","Don't skip checking hurricane season Jun-Nov if visiting coastal areas"],ordering:["Ask \"is this Eastern or Lexington style\" when ordering BBQ — it changes the whole flavor profile","Cheerwine is a NC-original cherry soda worth trying"],smoking:"Banned indoors statewide in restaurants and bars (NC law since 2010), though some private clubs are exempt.",bars:"Budget-friendly: Raleigh/Durham's Research Triangle has cheap college-town bars and breweries ($5-6 pints). Asheville has an enormous craft brewery scene, often with $2 off happy hours.",shopping:"Tanger Outlets locations across NC (Charlotte, Blowing Rock) for discount shopping.",visit:"Budget picks: Blue Ridge Parkway drive (free, stunning), Duke Gardens (free/small donation), Charlotte's free Rail Trail walk."},
+  "iowa":{region:"Sha's states",dos:["Expect quiet, polite Midwest friendliness — very low-key culture","Layer heavily for genuinely cold winters"],donts:["Don't expect much nightlife or public transit outside Des Moines","Don't underestimate distances — Iowa is rural with long drives between towns"],ordering:["\"Maid-Rite\" loose meat sandwiches are a local specialty, distinct from a sloppy joe — worth trying once","Ask for \"tenderloin\" if you want the famous oversized breaded pork tenderloin sandwich"],smoking:"Banned indoors statewide (Iowa Smokefree Air Act) in workplaces, restaurants and bars, with narrow exemptions for some casinos/tobacco shops.",bars:"Budget-friendly: Des Moines East Village bars are inexpensive ($4-5 beers). College towns like Iowa City and Ames have cheap student-oriented bars.",shopping:"Tanger Outlets in Williamsburg, IA (between Des Moines and Iowa City) for discount shopping.",visit:"Budget picks: Des Moines Art Center (free admission), State Capitol tour (free), John Deere Pavilion in nearby Illinois if driving through."},
+  "california":{region:"Imran's states",dos:["Expect very casual dress even in business settings, especially in tech","Stay very hydrated — dry climate inland, even near coast"],donts:["Don't underestimate LA/Bay Area traffic — always double your expected drive time","Don't jaywalk in smaller cities — it's actually enforced and ticketed in many CA towns (unlike NYC)"],ordering:["In-N-Out \"animal style\" is real secret-menu lingo, not a joke — ask for it if curious","California uses \"soda\" not \"pop\"; \"Cali\" is a term mostly used by non-Californians, avoid it with locals"],smoking:"Banned indoors statewide including bars and restaurants (California Labor Code). Many cities also ban outdoor smoking within 20-25 feet of building entrances and on some beaches.",bars:"Budget-friendly: LA's Eastside (Highland Park, Echo Park) has cheap dive bars ($6-8 cocktails). SF's Mission District has affordable happy hours. Avoid West Hollywood/Beverly Hills bars — $18-20+ cocktails standard.",shopping:"Citadel Outlets (LA) and San Francisco Premium Outlets (Livermore) for discount shopping. Costco is everywhere and genuinely useful for a long stay.",visit:"Budget picks: Griffith Observatory (free), Santa Monica beach (free), Golden Gate Park (free), hiking trails throughout — avoid $150+ theme park days unless it's a planned weekend."},
+  "hawaii":{region:"Imran's states — outlier, own hub logic needed",dos:["Learn basic Hawaiian/Pidgin greetings: \"Aloha\" (hello/goodbye), \"Mahalo\" (thank you) — genuinely appreciated","Remove shoes when entering someone's home — cultural norm, not optional"],donts:["Don't touch or approach marine life (sea turtles, monk seals) — it's illegal and heavily fined","Don't rent a car assuming mainland US distances — islands are small but roads are slow and winding"],ordering:["\"Plate lunch\" is the everyday budget meal — 2 scoops rice, mac salad, protein — genuinely cheap and filling ($10-14)","Poke bowls are a real local food, not just a mainland trend — try a local poke shop, not a hotel restaurant"],smoking:"Banned indoors statewide and on most beaches statewide (including e-cigarettes) — Hawaii has some of the strictest beach smoking bans in the US.",bars:"Budget-friendly: local \"pau hana\" (after-work) happy hours in Honolulu are genuinely affordable ($5-7 drinks 4-6pm). Waikiki tourist bars are 2-3x pricier.",shopping:"Ala Moana Center (Honolulu) has both discount and premium stores. Skip resort gift shops — everything is marked up 2-3x versus a regular ABC Store.",visit:"Budget picks: most beaches are free and public by law, hiking trails (Diamond Head has a small entry fee), free Pearl Harbor visitor center (though USS Arizona tickets should be booked in advance)."},
+  "alaska":{region:"Imran's states — outlier, own hub logic needed",dos:["Pack genuinely serious cold-weather gear even in \"summer\" if visiting interior/north","Book accommodations well ahead in summer (short tourist season, high demand)"],donts:["Don't underestimate driving distances — towns can be hundreds of miles apart with no services between","Don't treat wildlife encounters casually — bears and moose are a real, common hazard, not tourist theater"],ordering:["Fresh salmon and halibut are genuinely excellent and often cheaper than mainland due to local catch — order the daily catch, not imported items","Reindeer sausage at a hot dog stand is a real, normal Anchorage street food"],smoking:"Banned indoors statewide in workplaces, bars and restaurants (Alaska law since 2018).",bars:"Budget-friendly: Anchorage has affordable brewery taprooms ($6-7 pints). Remote areas may only have one or two options — expect higher prices due to shipping costs.",shopping:"Very limited outlet/mall shopping — plan any bulk purchases before arriving in Alaska; prices run high due to shipping.",visit:"Budget picks: many hiking trails around Anchorage are free, Tony Knowles Coastal Trail (free), visiting during shoulder season (May/Sept) is notably cheaper than peak summer."},
+  "idaho":{region:"Imran's states",dos:["Expect quiet, rural friendliness outside Boise","Layer for cold winters, especially in mountain areas"],donts:["Don't expect much public transit — a car is essential almost everywhere","Don't skip checking road conditions in winter for mountain routes"],ordering:["Idaho potatoes are a genuine point of local pride — a restaurant offering a \"loaded baked potato\" is leaning into real state culture, not a gimmick"],smoking:"Banned indoors statewide (Idaho Indoor Clean Air Act) in workplaces and most restaurants; some bars without minors may be exempt.",bars:"Budget-friendly: Boise's downtown has affordable brewery taprooms ($5-6 pints) — genuinely one of the cheaper state capitals for going out.",shopping:"Boise Towne Square and outlet options are limited compared to bigger states — Costco/Target cover most needs.",visit:"Budget picks: Boise's Greenbelt river path (free), State Capitol building tour (free), Bogus Basin scenic drive (free in summer)."},
+  "arizona":{region:"Imran's states",dos:["Stay very hydrated — desert heat is genuinely dangerous May-Sept, even short outdoor time needs water","Book outdoor visits (hiking, Grand Canyon side trips) for early morning to avoid peak heat"],donts:["Don't underestimate summer heat — 110°F+ is common in Phoenix; check forecasts before any outdoor client visit","Don't touch cacti or wander off marked trails in desert areas"],ordering:["Sonoran-style Mexican food (different from Tex-Mex) is common in Phoenix/Tucson — ask what makes it \"Sonoran style\" if curious, it's a genuine regional cuisine"],smoking:"Banned indoors statewide (Arizona Smoke-Free Air Act) in restaurants, bars, and workplaces.",bars:"Budget-friendly: Tempe (near ASU) has cheap college-town bars ($4-5 beers). Scottsdale's bars run notably more expensive — avoid for budget nights out.",shopping:"Tanger Outlets Phoenix and Scottsdale area outlets for discount shopping.",visit:"Budget picks: Papago Park (free), Desert Botanical Garden (discount online tickets), South Mountain Park (free, largest municipal park in the US)."},
+  "washington":{region:"Imran's states",dos:["Carry a light rain jacket year-round in Seattle — locals rarely use umbrellas, just hooded jackets","Expect a quieter, more reserved conversational style (\"Seattle Freeze\" is a real observed social pattern)"],donts:["Don't expect much sun Nov-March — plan indoor backup activities","Don't skip trying real Seattle coffee culture beyond Starbucks — local roasters are a genuine point of pride"],ordering:["Ordering coffee: \"flat white\" and precise size/milk requests are completely normal here, baristas expect specificity","Dungeness crab and fresh seafood are genuinely good value here compared to elsewhere in the US"],smoking:"Banned indoors statewide (Washington Clean Indoor Air Act) in workplaces, restaurants, and bars.",bars:"Budget-friendly: Capitol Hill and Ballard neighborhoods in Seattle have affordable breweries ($6-7 pints). Avoid downtown waterfront tourist bars.",shopping:"Seattle Premium Outlets (Tulalip) — large, genuinely good discounts, about 40 min from downtown.",visit:"Budget picks: Pike Place Market (free to browse), Discovery Park (free), Kerry Park for skyline views (free)."},
+  "oregon":{region:"Imran's states",dos:["Enjoy the tax-free shopping — Oregon has no state sales tax, genuinely useful for electronics/big purchases","Carry a rain jacket most of the year in Portland"],donts:["Don't try to pump your own gas in some areas — Oregon historically required attendant service (rules have relaxed but check locally)","Don't skip an umbrella-free mindset — locals use hoods, not umbrellas, similar to Seattle"],ordering:["Portland's food cart culture is genuine and excellent — don't dismiss food trucks as \"lesser\" than restaurants here","Ask about local IPA recommendations — Oregon takes craft beer seriously and staff enjoy recommending"],smoking:"Banned indoors statewide (Oregon Indoor Clean Air Act) in workplaces, restaurants and bars.",bars:"Budget-friendly: Portland has one of the best cheap craft beer scenes in the US — many taprooms $5-6 pints, some breweries offer free tours.",shopping:"No state sales tax makes almost any Portland retail store effectively a discount compared to other states — genuinely worth timing bigger purchases here.",visit:"Budget picks: Washington Park/Rose Garden (free), Powell's Books (free to browse, iconic), Forest Park trails (free)."},
+  "nevada":{region:"Imran's states",dos:["Expect 24/7 everything in Las Vegas — restaurants, casinos, stores never really close","Stay hydrated — desert heat is intense outside the casino AC bubble"],donts:["Don't assume all-you-can-drink is free at casinos — comps are tied to active gambling, don't just wander in expecting freebies","Don't walk long distances on the Strip expecting it to be quick — blocks are much longer than they look"],ordering:["Off-strip local restaurants are dramatically cheaper than anything inside a casino — ask locals/Uber drivers for off-strip recommendations","Buffets vary wildly in value — check recent reviews before paying $40-60 for a casino buffet"],smoking:"Nevada allows smoking in casinos and some bars — one of the few states with broad indoor smoking exemptions for gaming areas. Restaurants that serve alcohol without food may also allow it.",bars:"Budget-friendly: off-Strip local bars (Fremont Street area, Chinatown Vegas) pour drinks for $5-8 vs $18-20+ on the Strip.",shopping:"Las Vegas North Premium Outlets and South Premium Outlets — both large, genuinely good discounts, easy Uber ride from the Strip.",visit:"Budget picks: Fremont Street Experience (free light show), Red Rock Canyon (small entry fee, real hiking), walking the Strip at night (free)."},
+  "new mexico":{region:"Imran's states",dos:["Expect \"red or green?\" as a genuine daily question about chile preference — answer confidently or say \"Christmas\" for both","Layer for high-desert temperature swings — hot days, cold nights"],donts:["Don't confuse New Mexican cuisine with Tex-Mex — locals consider it a distinct, older culinary tradition","Don't skip sunscreen — high altitude means stronger UV exposure than expected"],ordering:["\"Red or green?\" chile question is asked at nearly every restaurant — it's totally normal to ask the server which is spicier that day","Try Frito pie or a breakfast burrito with red chile — genuine local specialties, not gimmicks"],smoking:"Banned indoors statewide (New Mexico Dee Johnson Clean Indoor Air Act) in restaurants, bars, and workplaces.",bars:"Budget-friendly: Albuquerque's Nob Hill area has cheap, laid-back bars ($5-6 drinks). Santa Fe tends to run pricier due to tourism.",shopping:"Limited large outlet malls — Albuquerque has standard mall shopping; plan bigger purchases in neighboring Arizona/Colorado if needed.",visit:"Budget picks: Old Town Albuquerque (free to walk), Sandia Peak Tramway (moderate fee, worth it for views), Santa Fe Plaza (free historic area)."},
+  "colorado":{region:"Imran's states",dos:["Stay hydrated and pace alcohol — altitude in Denver (5,280 ft) and mountain towns genuinely affects tolerance faster","Layer heavily — mountain weather changes rapidly even in summer"],donts:["Don't plan strenuous hikes on day one — give your body 1-2 days to adjust to altitude","Don't drive mountain passes in winter without checking chain/traction law requirements"],ordering:["Colorado has legal recreational cannabis — dispensaries are common but this is optional context, not an instruction to use it; some hotels prohibit any consumption on premises","Rocky Mountain oysters are a genuine (if unusual) regional specialty — ask before ordering if you want to know what it is"],smoking:"Banned indoors statewide (Colorado Clean Indoor Air Act) in restaurants, bars, and workplaces.",bars:"Budget-friendly: Denver's RiNo (River North) district has affordable breweries ($5-7 pints) — Colorado has one of the highest brewery-per-capita rates in the US.",shopping:"Outlets at Castle Rock (between Denver and Colorado Springs) for discount shopping.",visit:"Budget picks: Red Rocks Park (free outside concert times), Denver's free walking 16th Street Mall, Garden of the Gods in Colorado Springs (free entry)."},
+  "utah":{region:"Imran's states",dos:["Respect the strong local culture around alcohol moderation — it's not just law, it's a cultural norm here","Book national park visits (Zion, Arches, Bryce) well ahead — permits/shuttle reservations fill up"],donts:["Don't expect casual bar-hopping culture like other cities — Utah's bar/liquor rules are genuinely different (heavier restrictions on pour sizes historically)","Don't skip checking opening hours — many businesses close early or are closed Sundays, especially outside Salt Lake City"],ordering:["Ask directly about alcohol content/pour size if ordering a cocktail — Utah has had unique regulations historically, staff are used to explaining","Try a \"Utah scone\" — it's actually fry bread with honey butter, not a British scone"],smoking:"Banned indoors statewide (Utah Indoor Clean Air Act) in restaurants, bars, and workplaces.",bars:"Budget-friendly: Salt Lake City's downtown breweries are affordable ($5-6 pints) despite the state's conservative reputation — genuinely worth trying.",shopping:"Tanger Outlets Park City — good discounts, especially outdoor/ski gear given the mountain location.",visit:"Budget picks: Utah's \"Mighty 5\" national parks have relatively low entry fees ($20-35/vehicle, valid for a week), Liberty Park in SLC (free)."},
+  "montana":{region:"Imran's states",dos:["Expect genuine small-town friendliness and slower pace of life","Layer heavily — genuinely harsh, long winters"],donts:["Don't underestimate distances — Montana is huge with very few services between towns","Don't approach wildlife (bison, bears) in Yellowstone/Glacier areas — real, serious hazard each year"],ordering:["Bison burgers are a real, common local specialty, not a novelty item","Huckleberry-flavored everything (pie, beer, ice cream) is a genuine Montana thing worth trying"],smoking:"Banned indoors statewide (Montana Clean Indoor Air Act) in workplaces, restaurants, and bars, with narrow exemptions for some casinos.",bars:"Budget-friendly: Missoula and Bozeman (college towns) have cheap bars ($4-5 beers). Very remote areas may have only one bar in town.",shopping:"Very limited large-scale outlet shopping — plan bigger purchases before arriving or during a trip to a bigger neighboring state.",visit:"Budget picks: Glacier National Park (entry fee ~$35/vehicle, worth it), free scenic drives throughout, small-town Main Streets (free to explore)."},
+  "wyoming":{region:"Imran's states",dos:["Expect extremely low population density — plan for long solo drives between towns","Layer heavily; genuinely harsh winters and big day/night temperature swings"],donts:["Don't rely on cell signal in remote areas — download offline maps before driving anywhere rural","Don't approach wildlife in Yellowstone/Grand Teton — bison-related injuries happen to tourists most years"],ordering:["Elk and bison are common, normal menu items here, not novelty — order confidently","Ask locals for the nearest real grocery store — small towns can have very limited food options"],smoking:"Banned indoors statewide (Wyoming Clean Air Act) in most workplaces and restaurants; some bars may have exemptions — check locally.",bars:"Budget-friendly: Jackson and Cheyenne have small but affordable local bars ($4-6 beers) — very little tourist markup outside peak Jackson Hole season.",shopping:"Essentially no large outlet malls — plan any significant shopping in a neighboring state (Colorado/Utah/Idaho).",visit:"Budget picks: Grand Teton and Yellowstone entry fees (~$35/vehicle, valid 7 days) are genuinely worth it, free scenic byways throughout."},
+  "missouri":{region:"Imran's states — geographic outlier (central US)",dos:["Expect Midwest friendliness with a slight Southern lean, especially outside St. Louis/Kansas City","Layer for genuinely variable weather — Missouri sees everything from tornadoes to snow"],donts:["Don't schedule outdoor client visits without checking severe weather alerts, spring tornado season is real","Don't confuse St. Louis style and Kansas City style BBQ — locals have strong, genuine opinions on both"],ordering:["Kansas City BBQ: ask what \"burnt ends\" are if you haven't had them — genuine local specialty, not a mistake on the menu","St. Louis-style pizza uses Provel cheese, cut into squares — don't expect a New York-style slice"],smoking:"No comprehensive statewide ban — Missouri leaves it to local ordinances. St. Louis and Kansas City have banned indoor smoking in most restaurants/bars; smaller towns may not.",bars:"Budget-friendly: St. Louis' The Grove and KC's Westport district have cheap bars ($4-6 drinks) with genuine local character.",shopping:"Outlet Shoppes at Branson and St. Louis Premium Outlets for discount shopping.",visit:"Budget picks: Gateway Arch grounds (park is free, tram ride to top is a small fee), Forest Park in St. Louis (free, bigger than Central Park), Kansas City's free fountains/parks."}
+};
+
+function stateGuideFor(name){
+  const k=(name||"").toLowerCase().trim();
+  return STATE_DETAIL_GUIDES[k]||null;
+}
+
+
 const MEDICINE_MAPPER=[
 ["Crocin","Tylenol (Acetaminophen)"],["Dolo 650","Tylenol Extra Strength"],["Combiflam","Advil + Tylenol combination"],["Brufen","Motrin/Advil (Ibuprofen)"],["Disprin","Bayer Aspirin"],["Saridon","Excedrin"],["Zintac","Zantac/Famotidine"],["Digene","Tums / Mylanta"],["Gelusil","Maalox"],["Eno","Alka-Seltzer"],["Imodium","Imodium A-D"],["ORS","Pedialyte"],["Allegra","Allegra"],["Cetirizine","Zyrtec"],["Benadryl India","Benadryl US (different formula)"],["Vicks VapoRub","Vicks VapoRub"],["Strepsils","Halls / Cepacol"],["Betadine","Betadine"],["Band-Aid","Band-Aid"],["Moov","Bengay / IcyHot"],["Volini","Bengay / IcyHot"],["Burnol","Neosporin + burn gel"],["Savlon","Bactine / antiseptic"],["Parachute oil","Coconut oil (CVS/Walmart)"],["Calpol","Tylenol"],["Azee 500","Azithromycin (Rx required)"],["Augmentin","Augmentin (Rx required)"],["Pantocid","Pantoprazole (Rx/OTC variants)"],["Pan-D","Pantoprazole + Domperidone (ask doctor)"],["Rantac","Famotidine"],["Dulcolax","Dulcolax"],["Electral","Pedialyte / DripDrop"],["Voveran","Diclofenac gel/tablet"],["Meftal Spas","Ibuprofen + antispasmodic (consult pharmacist)"],["Domstal","Dramamine / anti-nausea"],["Sinarest","DayQuil/NyQuil equivalents"],["Cofsils","Halls"],["Honitus","Cough syrups (Delsym/Mucinex)"],["Relispray","IcyHot spray"],["Becosules","B-complex vitamins"],["Shelcal","Calcium + D3 supplements"],["Revital","Multivitamin equivalents"],["Soframycin","Neosporin / Bacitracin"],["Dermicool","Gold Bond powder"],["Lacto Calamine","Calamine lotion"],["Avil","Chlorpheniramine (sedating antihistamine)"],["Digene gel","Mylanta"],["Combiflam suspension","Children's ibuprofen + acetaminophen"],["Nicip Plus","Acetaminophen + anti-inflammatory (consult doc)"],["Liv 52","No direct US equivalent; ask pharmacist"],["Baidyanath Janma ghunti","No direct equivalent"],["Honitus lozenges","Halls"],["Cetrizine","Zyrtec"],["Pudin Hara","Peppermint antacid drops"],["BoroPlus","Moisturizer + antiseptic cream"],["Iodex","Bengay"],["Odomos","OFF! mosquito repellent"],["Mortein cream","Hydrocortisone itch cream"],["Amrutanjan","Menthol pain balm"]
 ];
@@ -742,10 +775,20 @@ function fDL(d){return new Date(d+"T00:00").toLocaleDateString("en-US",{weekday:
 function nights(a,d){return Math.max(1,Math.ceil((new Date(d)-new Date(a))/864e5))}
 
 function estTransport(from,to){const d=dist(from,to);const r=[];
+  const isNYC=(c)=>c.toLowerCase().includes("new york");
+  const nycInvolved=isNYC(from)||isNYC(to);
   if(d>250)r.push({mode:"flight",dur:`${Math.round(d/450*60+120)} min total`,cost:`$${Math.round(80+d*.12)}–$${Math.round(150+d*.22)}`,rec:d>400,note:`Book on Google Flights or Kayak. Airports: ${airport(from)[0]} → ${airport(to)[0]}. Arrive 2 hrs early.`,so:d>400?1:3});
   r.push({mode:"car",dur:`${Math.round(d/55)}h ${Math.round(d%55/55*60)}m`,cost:`Gas: $${Math.round(d*.15)}–$${Math.round(d*.25)} · Rental: ~$${Math.round(d*.35+45)}/day`,rec:d>=50&&d<=400,note:d>300?"Long drive — consider overnight stop. Rent via Enterprise/Hertz. Need valid license.":"Direct drive OK. Rent via Enterprise, Hertz, or Turo app. Valid license needed.",so:d>=50&&d<=400?1:4});
-  if(d<50){r.push({mode:"uber",dur:`${Math.round(d/30*60)} min`,cost:`$${Math.round(15+d*1.5)}–$${Math.round(25+d*2.2)}`,rec:d<30,note:"Use Uber or Lyft app. UberX = cheapest. Tip 15–20% is customary.",so:d<30?1:2});
-    r.push({mode:"transit",dur:`${Math.round(d/15*60)} min`,cost:`$2.75–$${Math.round(5+d*.3)}`,rec:d<15,note:"Use Google Maps for transit routes. NYC: MetroCard/OMNY. Most cities have bus.",so:d<15?1:2})}
+  if(d<50){
+    if(nycInvolved){
+      r.push({mode:"transit",dur:`${Math.round(d/15*60)} min`,cost:`$2.90 flat (MetroCard/OMNY)`,rec:true,note:"⚠️ NYC is the most expensive US city for Uber/Lyft (~$35+ for 6 miles). Subway is dramatically cheaper — use Google Maps for the route.",so:1});
+      r.push({mode:"uber",dur:`${Math.round(d/30*60)} min`,cost:`$${Math.round(20+d*2)}–$${Math.round(35+d*3)} (NYC surcharges apply)`,rec:false,note:"Yellow taxis often beat Uber/Lyft here — they have flat rates for common routes and no surge pricing. Compare before booking a rideshare.",so:3});
+      r.push({mode:"uber",dur:`${Math.round(d/30*60)} min`,cost:`$${Math.round(15+d*1.3)}–$${Math.round(25+d*2)} (yellow cab, metered)`,rec:false,note:"Yellow cab: metered fare, no surge, flat rate to/from airports. Often cheaper than Uber in Manhattan traffic.",so:2});
+    } else {
+      r.push({mode:"uber",dur:`${Math.round(d/30*60)} min`,cost:`$${Math.round(15+d*1.5)}–$${Math.round(25+d*2.2)}`,rec:d<30,note:"Use Uber or Lyft app. UberX = cheapest. Tip 15–20% is customary.",so:d<30?1:2});
+      r.push({mode:"transit",dur:`${Math.round(d/15*60)} min`,cost:`$2.75–$${Math.round(5+d*.3)}`,rec:d<15,note:"Use Google Maps for transit routes. Most cities have bus.",so:d<15?1:2});
+    }
+  }
   if(d>80&&d<600)r.push({mode:"bus",dur:`${Math.round(d/45)}h ${Math.round(d%45/45*60)}m`,cost:`$${Math.round(15+d*.06)}–$${Math.round(30+d*.12)}`,rec:false,note:"Greyhound or FlixBus. Book early on Wanderu.com for best rates.",so:5});
   if(d>100&&d<500&&isAmtrak(from,to))r.push({mode:"train",dur:`${Math.round(d/60)}h ${Math.round(d%60/60*60)}m`,cost:`$${Math.round(30+d*.1)}–$${Math.round(60+d*.2)}`,rec:d<300,note:"Amtrak Northeast Corridor. Book at amtrak.com. Comfortable, WiFi, power outlets.",so:d<300?2:4});
   return r.sort((a,b)=>a.so-b.so)}
@@ -753,39 +796,82 @@ function estTransport(from,to){const d=dist(from,to);const r=[];
 // ═══════════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════════
-let S={screen:"setup",trip:null,stops:[],tab:"guide",dismissed:new Set(),checked:new Set(),expenses:[],expRate:84.5,expFilter:"all",receiptPreview:null,theme:"dark",tip:{bill:"",split:1,round:false},customsInr:"",tzInput:"09:00",tzZone:"EST",baggageItems:[],baggageWeight:"",vaultUnlocked:false,vaultPass:"",vaultDocs:[],schedules:{}};
+let S={screen:"setup",trip:null,stops:[],tab:"guide",dismissed:new Set(),checked:new Set(),expenses:[],expRate:84.5,expFilter:"all",receiptPreview:null,theme:"dark",tip:{bill:"",split:1,round:false},customsInr:"",tzInput:"09:00",tzZone:"EST",baggageItems:[],baggageWeight:"",vaultUnlocked:false,vaultPass:"",vaultDocs:[],schedules:{},stateDetailSearch:"",stateDetailSelected:null};
 
 // ═══════════════════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════════════════
 function render(){const a=document.getElementById("app");if(S.screen==="setup"){a.innerHTML=rSetup();bSetup()}else{a.innerHTML=rMain();bMain()}}
 
+function tripDurationDays(trip){
+  if(!trip||!trip.startDate)return 30;
+  if(trip.endDate){
+    const start=new Date(trip.startDate+"T00:00"),end=new Date(trip.endDate+"T00:00");
+    return Math.max(1,Math.round((end-start)/86400000)+1);
+  }
+  // backward compatibility with old preset-based trips
+  return {"1week":7,"2weeks":14,"1month":30,"2months":60}[trip.duration]||30;
+}
+
+function rTripProgress(){
+  if(!S.trip||!S.trip.startDate)return "";
+  const durDays=tripDurationDays(S.trip);
+  const start=new Date(S.trip.startDate+"T00:00");
+  const end=new Date(start.getTime()+durDays*86400000);
+  const now=new Date();
+  const dayNum=Math.floor((now-start)/86400000)+1;
+  const daysLeft=Math.ceil((end-now)/86400000);
+  const pct=Math.min(100,Math.max(0,Math.round((dayNum/durDays)*100)));
+  let statusText="";
+  if(dayNum<1)statusText=`Trip starts in ${Math.abs(dayNum)+1} day${Math.abs(dayNum)+1!==1?'s':''}`;
+  else if(dayNum>durDays)statusText="Trip complete!";
+  else statusText=`Day ${dayNum} of ${durDays} · ${daysLeft} day${daysLeft!==1?'s':''} remaining`;
+  // Find next stop
+  let nextStop=null;
+  S.stops.forEach(s=>{const a=new Date(s.arrive+"T00:00");if(a>=now&&(!nextStop||a<new Date(nextStop.arrive+"T00:00")))nextStop=s});
+  const nextInfo=nextStop?`Next: <strong>${esc(nextStop.city)}</strong> in ${Math.max(0,Math.ceil((new Date(nextStop.arrive+"T00:00")-now)/86400000))} day(s)`:"";
+  return `<div class="card fade-in" style="padding:12px 16px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px"><strong>${statusText}</strong><span class="tiny">${nextInfo}</span></div>
+    <div style="height:8px;background:var(--s3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:4px"></div></div>
+  </div>`;
+}
+
 function rSetup(){return `<div class="setup-wrap"><div class="setup fade-in">
   <div class="setup-logo">🛫</div>
   <h2><span>TravelPilot</span></h2>
   <p class="sub">Your complete US travel assistant. Built for teams visiting the US from India.<br>Works on iPhone, Android & Desktop — save this page to your home screen.</p>
   <div class="fg"><label>Your Name</label><input id="inp-n" placeholder="e.g. Rajesh Kumar"></div>
-  <div class="fg"><label>Trip Start Date</label><input id="inp-d" type="date"></div>
+  <div class="fr"><div><label>Trip Start Date</label><input id="inp-d" type="date"></div><div><label>Trip End Date</label><input id="inp-end" type="date"></div></div>
+  <div class="fg"><label>Quick-fill duration (optional shortcut)</label><div class="chips" id="dur-ch">
+    <button class="chip" data-v="7">1 Week</button><button class="chip" data-v="14">2 Weeks</button><button class="chip" data-v="30">1 Month</button><button class="chip" data-v="40">40 Days</button><button class="chip" data-v="60">2 Months</button>
+  </div><div class="tiny" style="margin-top:4px">Tapping a shortcut fills the End Date above based on your Start Date — you can still edit it manually for any custom length.</div></div>
   <div class="fg"><label>Departing From</label><input id="inp-from" value="Chennai (MAA)" placeholder="e.g. Chennai (MAA)"></div>
   <div class="fg"><label>Landing At</label>
     <select id="inp-land"><option value="JFK">New York — JFK</option><option value="EWR">New York — Newark</option><option value="ORD">Chicago — O'Hare</option><option value="SFO">San Francisco — SFO</option><option value="LAX">Los Angeles — LAX</option><option value="IAD">Washington DC — Dulles</option><option value="BOS">Boston — Logan</option><option value="ATL">Atlanta — ATL</option><option value="DFW">Dallas — DFW</option><option value="SEA">Seattle — SEA</option></select></div>
-  <div class="fg"><label>Trip Duration</label><div class="chips" id="dur-ch">
-    <button class="chip on" data-v="1week">1 Week</button><button class="chip" data-v="2weeks">2 Weeks</button><button class="chip" data-v="1month">1 Month</button><button class="chip" data-v="2months">2 Months</button>
-  </div></div>
   <button class="btn btn-p" style="width:100%;margin-top:14px" id="btn-go">Launch TravelPilot →</button>
 </div></div>`}
 
-function bSetup(){let dur="1week";
-  document.querySelectorAll("#dur-ch .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#dur-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");dur=c.dataset.v});
+function bSetup(){
+  document.querySelectorAll("#dur-ch .chip").forEach(c=>c.onclick=()=>{
+    document.querySelectorAll("#dur-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");
+    const days=parseInt(c.dataset.v);
+    const startEl=document.getElementById("inp-d");
+    const start=startEl.value?new Date(startEl.value+"T00:00"):new Date();
+    if(!startEl.value)startEl.value=start.toISOString().split("T")[0];
+    const end=new Date(start.getTime()+(days-1)*86400000);
+    document.getElementById("inp-end").value=end.toISOString().split("T")[0];
+  });
   document.getElementById("btn-go").onclick=()=>{
-    const n=document.getElementById("inp-n").value.trim(),d=document.getElementById("inp-d").value,from=document.getElementById("inp-from").value.trim(),land=document.getElementById("inp-land").value;
+    const n=document.getElementById("inp-n").value.trim(),d=document.getElementById("inp-d").value,endDate=document.getElementById("inp-end").value,from=document.getElementById("inp-from").value.trim(),land=document.getElementById("inp-land").value;
     if(!n||!d)return alert("Please enter your name and trip start date.");
-    S.trip={name:n,startDate:d,from,land,duration:dur};S.screen="main";render()}}
+    if(!endDate)return alert("Please enter your trip end date (or tap a quick-fill shortcut above).");
+    if(new Date(endDate)<new Date(d))return alert("End date must be after start date.");
+    S.trip={name:n,startDate:d,endDate,from,land};S.screen="main";render()}}
 
 function rMain(){
   const tabs=[
     {k:"guide",l:"📖 Guide"},{k:"plan",l:"📍 Stops"},{k:"itin",l:"🗺️ Itinerary"},
-    {k:"money",l:"💰 Money"},{k:"apps",l:"📱 Apps & Maps"},{k:"transport",l:"🚗 Transport"},
+    {k:"states",l:"🗽 States"},{k:"packing",l:"🧳 Packing"},{k:"money",l:"💰 Money"},{k:"apps",l:"📱 Apps & Maps"},{k:"transport",l:"🚗 Transport"},
     {k:"health",l:"💊 Health"},{k:"culture",l:"🏢 Culture"},{k:"shopping",l:"🛒 Shopping"},
     {k:"weather",l:"🌡️ Weather"},{k:"explore",l:"🎉 Explore"},{k:"flights",l:"✈️ Flights"},
     {k:"alerts",l:"🔔 Alerts & Calendar"},{k:"check",l:"✅ Checklist"},{k:"vault",l:"🔒 Vault"}
@@ -794,6 +880,8 @@ function rMain(){
   if(S.tab==="guide")content=rGuide();
   else if(S.tab==="plan")content=rPlan();
   else if(S.tab==="itin")content=rItin();
+  else if(S.tab==="states")content=rStates();
+  else if(S.tab==="packing")content=rPacking();
   else if(S.tab==="money")content=rMoney();
   else if(S.tab==="apps")content=rAppsMaps();
   else if(S.tab==="transport")content=rTransport();
@@ -807,6 +895,7 @@ function rMain(){
   else if(S.tab==="check")content=rChecklist();
   else if(S.tab==="vault")content=rVault();
   return `<div class="hdr"><div><h1>🛫 <em>TravelPilot</em></h1><p class="hdr-sub">${esc(S.trip.name)} · ${S.stops.length} stop${S.stops.length!==1?'s':''} · ${S.trip.from} → ${S.trip.land}</p></div><div class="hdr-actions"><button class="btn btn-g btn-s" id="btn-theme">${S.theme==="light"?"🌙 Dark":"☀️ Light"}</button><button class="btn btn-g btn-s" id="btn-print">🖨️ Print</button></div></div>
+  ${rTripProgress()}
   <div class="tabs">${tabs.map(t=>`<button class="tab ${S.tab===t.k?'on':''}" data-tab="${t.k}">${t.l}</button>`).join("")}</div>${content}`}
 
 // ─── GUIDE TAB ─────────────────────────────────────────────────
@@ -938,17 +1027,119 @@ function rGuide(){return `
     <li>Comfortable walking shoes</li>
   </ul>
 </div>
+
+<div class="guide-card fade-in"><h3>⛈️ If You Get Stuck — Weather Disruption Protocol</h3>
+  <p>Winter storms, hurricanes, and severe weather regularly disrupt US domestic flights. Here's what to actually do if you're stranded:</p>
+  <div class="step"><div class="step-n">1</div><div class="step-c"><strong>The moment a flight shows "delayed":</strong> Immediately check the airline app for rebooking options yourself — don't wait in the airport line. Airlines often let you rebook via app/website faster than the counter.</div></div>
+  <div class="step"><div class="step-n">2</div><div class="step-c"><strong>If cancelled:</strong> US airlines are NOT required to give you a hotel for weather-related cancellations (unlike EU rules) — this is airline-discretionary, not a legal right. Ask anyway, but budget for a self-paid hotel night as backup.</div></div>
+  <div class="step"><div class="step-n">3</div><div class="step-c"><strong>Travel insurance:</strong> Check your policy's "trip delay" clause — most reimburse hotel/meals after a 6-12 hour delay threshold. Keep every receipt and take a photo of the departure board showing the delay/cancellation as evidence.</div></div>
+  <div class="step"><div class="step-n">4</div><div class="step-c"><strong>Notify your office immediately:</strong> A short "flight cancelled due to weather, rebooking, will update on new arrival time" message avoids confusion with clients waiting on your visit.</div></div>
+  <div class="step"><div class="step-n">5</div><div class="step-c"><strong>Build in buffer days:</strong> Never schedule a spoke trip to end the same day you fly home from the hub, or schedule back-to-back client visits with zero slack. Leave at least 1 buffer day between a spoke return and your next hub commitment — this is the single biggest protection against weather disruption cascading into missed meetings.</div></div>
+  <div class="callout warn">💡 <strong>Prefer your hub's home airline:</strong> If your hub is Atlanta, flying Delta gives you the most rebooking options during disruptions since Atlanta is Delta's largest hub with the highest flight frequency — more alternate flights same-day if yours gets cancelled.</div>
+</div>
 `}
+
+// ─── STATES TAB ────────────────────────────────────────────────
+const YOUR_STATES=["florida","georgia","ohio","indiana","kentucky","wisconsin","michigan","south carolina","north carolina","iowa"];
+const IMRAN_STATES=["california","hawaii","alaska","idaho","arizona","washington","oregon","nevada","new mexico","colorado","utah","montana","wyoming","missouri"];
+
+function rStates(){
+  const q=(S.stateDetailSearch||"").toLowerCase().trim();
+  const sel=S.stateDetailSelected;
+  const allStates=[...YOUR_STATES,...IMRAN_STATES];
+  const filtered=q?allStates.filter(s=>s.includes(q)):allStates;
+  let detail="";
+  if(sel){
+    const g=stateGuideFor(sel);
+    if(g){
+      detail=`<div class="card fade-in">
+        <div class="card-t">🗽 ${sel.replace(/\b\w/g,c=>c.toUpperCase())} <span class="pill">${g.region}</span></div>
+        <div class="section"><div class="section-t">✅ Do</div><ul class="tiny" style="margin-left:16px;line-height:1.7">${g.dos.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="section"><div class="section-t">🚫 Don't</div><ul class="tiny" style="margin-left:16px;line-height:1.7">${g.donts.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="section"><div class="section-t">🍽️ Ordering at counters/restaurants</div><ul class="tiny" style="margin-left:16px;line-height:1.7">${g.ordering.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="section"><div class="section-t">🚬 Smoking rules</div><div class="detail">${g.smoking}</div></div>
+        <div class="section"><div class="section-t">🍺 Budget-friendly bars & pubs</div><div class="detail">${g.bars}</div></div>
+        <div class="section"><div class="section-t">🛍️ Budget shopping</div><div class="detail">${g.shopping}</div></div>
+        <div class="section"><div class="section-t">📍 Places to visit (budget picks)</div><div class="detail">${g.visit}</div></div>
+      </div>`;
+    }
+  }
+  return `<div class="card fade-in"><div class="card-t">🗽 State-by-State Guide</div>
+    <div class="tiny" style="margin-bottom:10px">Covers your assigned territory: <strong>Sha's states</strong> (Southeast/Midwest) and <strong>Imran's states</strong> (West/Mountain). Visiting somewhere else? Search any state — if it's not covered yet, use the Guide/Culture tabs for general US etiquette and search online for that state's specifics.</div>
+    <input id="state-detail-search" placeholder="Search a state..." value="${esc(S.stateDetailSearch||"")}">
+    <div class="section"><div class="section-t">📋 Sha's states</div><div class="chips">${YOUR_STATES.filter(s=>!q||s.includes(q)).map(s=>`<button class="chip ${sel===s?'on':''}" data-state="${s}">${s.replace(/\b\w/g,c=>c.toUpperCase())}</button>`).join("")}</div></div>
+    <div class="section"><div class="section-t">📋 Imran's states</div><div class="chips">${IMRAN_STATES.filter(s=>!q||s.includes(q)).map(s=>`<button class="chip ${sel===s?'on':''}" data-state="${s}">${s.replace(/\b\w/g,c=>c.toUpperCase())}</button>`).join("")}</div></div>
+    ${!filtered.length?'<div class="empty" style="padding:16px"><p>No state matches your search.</p></div>':''}
+  </div>${detail}`;
+}
+function bStates(){
+  const s=document.getElementById("state-detail-search");
+  if(s)s.oninput=()=>{S.stateDetailSearch=s.value;render()};
+  document.querySelectorAll("[data-state]").forEach(b=>b.onclick=()=>{S.stateDetailSelected=b.dataset.state;render()});
+}
+
+// ─── PACKING & LAUNDRY TAB ─────────────────────────────────────
+function rPacking(){
+  const durDays=tripDurationDays(S.trip);
+  const hubs=S.stops.filter(s=>s.isHub).length;
+  const outfits=Math.min(10,Math.max(5,Math.ceil(durDays/5)));
+  const laundryCycles=Math.ceil(durDays/7);
+  return `<div class="card fade-in"><div class="card-t">🧳 Packing Calculator</div>
+    <div class="tiny" style="margin-bottom:10px">For a ${durDays}-day trip, you don't pack ${durDays} outfits — you pack for one laundry cycle and repeat.</div>
+    <div class="sg">
+      <div class="si"><div class="si-v">${outfits}</div><div class="si-l">Outfits to pack</div></div>
+      <div class="si"><div class="si-v">${laundryCycles}</div><div class="si-l">Laundry cycles</div></div>
+      <div class="si"><div class="si-v">${hubs||"0-2"}</div><div class="si-l">Hub cities</div></div>
+    </div>
+    <div class="section"><div class="section-t">🎒 What to actually carry</div>
+      <ul class="tiny" style="margin-left:16px;line-height:1.8">
+        <li><strong>${outfits} business-casual outfits</strong> (mix-and-match shirts/trousers so ${outfits} tops + 4-5 bottoms covers it)</li>
+        <li>1 blazer/jacket for client meetings (versatile, wear multiple times)</li>
+        <li>1 warm layer + 1 rain layer regardless of season — US weather changes fast</li>
+        <li>7-8 pairs socks/underwear (one laundry cycle worth)</li>
+        <li>1 pair formal shoes + 1 pair comfortable walking shoes</li>
+        <li>Small toiletry kit — buy top-ups at Target/Walmart/CVS instead of over-packing</li>
+        <li>Universal adapter + power strip, laptop + charger, 1-2 days of Indian snacks as backup</li>
+      </ul>
+    </div>
+    <div class="section"><div class="section-t">🧺 Laundry: hotel vs. laundromat</div>
+      <table class="tbl"><thead><tr><th>Option</th><th>Cost</th><th>Best for</th></tr></thead><tbody>
+      <tr><td>Hotel laundry service</td><td>$15-30 per load (per-item pricing, adds up fast)</td><td>Hub stays 3+ nights, when time-poor</td></tr>
+      <tr><td>Hotel self-service machine</td><td>$3-6 wash + $3-6 dry</td><td>Extended-stay hotels, most economical hotel option</td></tr>
+      <tr><td>Laundromat (coin-op)</td><td>$4-8 wash + $2-4 dry per load</td><td>Cheapest overall; look up "laundromat near me" at hub city</td></tr>
+      <tr><td>Hand-wash in room</td><td>Free</td><td>Quick top-ups between laundry days — pack a small detergent sheet pack</td></tr>
+      </tbody></table>
+      <div class="callout" style="margin-top:8px">💡 <strong>Hub & Spoke tip:</strong> Do laundry on hub days (when you're not carrying your bag around), not on spoke days. Time it every 6-7 days.</div>
+    </div>
+    <div class="section"><div class="section-t">🧳 Hub vs. Spoke packing</div>
+      <div class="detail"><strong>At the hub:</strong> keep your full suitcase, do laundry, restock toiletries/snacks.<br><strong>For each spoke trip:</strong> pack only a small cabin bag/backpack for 2-4 days — 2 outfits + 1 spare, toiletry pouch, laptop, chargers. Leave the big suitcase at the hub hotel or a Bounce/Stasher storage point.</div>
+    </div>
+  </div>`;
+}
 
 // ─── PLAN TAB ──────────────────────────────────────────────────
 function rPlan(){
   const purposes=[["office","🏢 Office"],["client","🤝 Client"],["training","📚 Training"],["conference","🎤 Conference"],["other","📌 Other"]];
+  const hubs=S.stops.filter(s=>s.isHub);
   let list="";
   if(S.stops.length>0){
     list=`<div class="card"><div class="card-t">Your Stops (${S.stops.length})</div>
-    ${S.stops.map((s,i)=>`<div class="sl"><div class="sl-l"><div class="sl-n">${i+1}</div><div><div class="sl-c">${esc(s.city)}</div><div class="sl-d">${fD(s.arrive)} – ${fD(s.depart)}</div></div></div><div class="sl-a"><button class="ib" data-a="up" data-id="${s.id}">↑</button><button class="ib" data-a="dn" data-id="${s.id}">↓</button><button class="ib x" data-a="rm" data-id="${s.id}">✕</button></div></div>`).join("")}
+    ${S.stops.map((s,i)=>`<div class="sl"><div class="sl-l"><div class="sl-n" style="${s.isHub?'background:linear-gradient(135deg,var(--grn),#00a86b)':''}">${s.isHub?'⭐':i+1}</div><div><div class="sl-c">${esc(s.city)}${s.isHub?' <span class="pill" style="background:var(--grng);color:var(--grn)">HUB</span>':''}</div><div class="sl-d">${fD(s.arrive)} – ${fD(s.depart)}${s.hubRef?' · spoke of '+esc(s.hubRef):''}</div></div></div><div class="sl-a"><button class="ib" data-a="hub" data-id="${s.id}" title="Toggle hub">⭐</button><button class="ib" data-a="up" data-id="${s.id}">↑</button><button class="ib" data-a="dn" data-id="${s.id}">↓</button><button class="ib x" data-a="rm" data-id="${s.id}">✕</button></div></div>`).join("")}
     <button class="btn btn-p" style="width:100%;margin-top:12px" id="btn-itin">Generate Full Itinerary →</button>
     ${S.stops.length>=3?`<button class="btn btn-g" style="width:100%;margin-top:8px" id="btn-optimize">🧠 Optimize Route Order</button>`:''}
+    </div>`;
+  }
+  // Hub & Spoke summary
+  if(hubs.length>0){
+    const spokes=S.stops.filter(s=>!s.isHub);
+    list+=`<div class="card fade-in"><div class="card-t">⭐ Hub & Spoke Plan (${hubs.length} hub${hubs.length!==1?'s':''})</div>
+      <div class="tiny" style="margin-bottom:10px">Mark 1-2 central cities as hubs (⭐ button above). Every other stop becomes a there-and-back trip from its nearest hub — you keep your main luggage at the hub and travel light to each spoke.</div>
+      ${spokes.map(s=>{
+        let nearest=null,nd=Infinity;
+        hubs.forEach(h=>{const d=dist(s.city,h.city);if(d<nd){nd=d;nearest=h}});
+        return nearest?`<div class="hotel-card"><div class="hotel-name">${esc(s.city)} <span class="tiny">(spoke)</span></div><div class="hotel-meta">Nearest hub: <strong>${esc(nearest.city)}</strong> — ${nd.toLocaleString()} mi round trip ≈ ${Math.round(nd*2).toLocaleString()} mi</div><div class="hotel-meta">🧳 Leave main luggage at ${esc(nearest.city)} hub · carry only a small bag for ${nights(s.arrive,s.depart)} night${nights(s.arrive,s.depart)!==1?'s':''}</div></div>`:'';
+      }).join("")}
+      <div class="callout" style="margin-top:8px">💼 <strong>Luggage storage at hub:</strong> Use Bounce, Stasher, or Vertoe (from $3–6/day, insured up to $10,000, bookable for a full month) to store your big suitcase near the hub hotel/airport while you're away on spoke trips — or ask your hub hotel if they'll hold it if you're returning within a few days.</div>
     </div>`;
   }
   // Route optimization result
@@ -974,6 +1165,7 @@ function rPlan(){
   <div class="fr"><div><label>City/Region *</label><input id="a-city" placeholder="e.g. New York, Detroit, Portland Maine"></div><div><label>Office/Site Address</label><input id="a-addr" placeholder="e.g. 123 Main St, Suite 400"></div></div>
   <div class="fr"><div><label>Arrive *</label><input id="a-arr" type="date"></div><div><label>Depart *</label><input id="a-dep" type="date"></div></div>
   <div class="fg"><label>Purpose</label><div class="chips" id="purp-ch">${purposes.map(([v,l])=>`<button class="chip ${v==="office"?"on":""}" data-v="${v}">${l}</button>`).join("")}</div></div>
+  <label class="ci"><input type="checkbox" id="a-hub"><span>⭐ Make this a Hub city (central base for round trips)</span></label>
   <div class="fg"><label>Visit Details / Schedule</label><textarea id="a-notes" placeholder="e.g. Meeting at 10 AM with John, training 2-5 PM, dinner with team 7 PM..."></textarea></div>
   <button class="btn btn-p" id="btn-add">+ Add This Stop</button></div>${list}`}
 
@@ -1065,6 +1257,34 @@ function calcTipRows(){
   });
 }
 
+function rBudgetBurn(){
+  const durDays=tripDurationDays(S.trip);
+  const dailyBudgetUsd=parseFloat(S.dailyBudgetUsd)||150; // ~₹10-15k/day default
+  const start=S.trip&&S.trip.startDate?new Date(S.trip.startDate+"T00:00"):new Date();
+  const now=new Date();
+  const dayNum=Math.max(1,Math.min(durDays,Math.floor((now-start)/86400000)+1));
+  const totalSpentUsd=(S.expenses||[]).reduce((a,e)=>a+e.amount,0);
+  const expectedSpend=dailyBudgetUsd*dayNum;
+  const totalBudget=dailyBudgetUsd*durDays;
+  const pace=totalSpentUsd-expectedSpend;
+  const pctOfTotal=totalBudget>0?Math.round((totalSpentUsd/totalBudget)*100):0;
+  const status=pace>dailyBudgetUsd?"over":pace<-dailyBudgetUsd?"under":"on-track";
+  const statusColor=status==="over"?"var(--red)":status==="under"?"var(--grn)":"var(--acc)";
+  const statusMsg=status==="over"?`⚠️ Running ~$${Math.abs(Math.round(pace))} ahead of pace — at this rate you'll overshoot your budget by day ${durDays}.`:status==="under"?`✅ Running ~$${Math.abs(Math.round(pace))} under pace — comfortably within budget.`:`✅ On track with your daily budget.`;
+  return `<div class="card fade-in">
+    <div class="card-t">📊 Budget Burn Rate</div>
+    <div class="fr"><div><label>Daily budget (USD, all-in: hotel+food+local transport)</label><input id="daily-budget" type="number" value="${dailyBudgetUsd}" step="10"></div></div>
+    <div class="tiny" style="margin:4px 0 10px">₹10-15k/day ≈ $120-180/day at current rates — adjust above to match your actual policy.</div>
+    <div class="sg">
+      <div class="si"><div class="si-v">$${totalSpentUsd.toFixed(0)}</div><div class="si-l">Spent so far</div></div>
+      <div class="si"><div class="si-v">$${expectedSpend.toFixed(0)}</div><div class="si-l">Expected by Day ${dayNum}</div></div>
+      <div class="si"><div class="si-v">$${totalBudget.toFixed(0)}</div><div class="si-l">Total trip budget</div></div>
+    </div>
+    <div style="height:8px;background:var(--s3);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="height:100%;width:${Math.min(100,pctOfTotal)}%;background:${statusColor};border-radius:4px"></div></div>
+    <div class="detail" style="color:${statusColor}">${statusMsg}</div>
+  </div>`;
+}
+
 function rMoney(){
   const rows=calcTipRows();
   const q=(S.stateSearch||"").toLowerCase();
@@ -1072,7 +1292,7 @@ function rMoney(){
   const customs=parseFloat(S.customsInr)||0;
   const dutiable=Math.max(0,customs-50000);
   const duty=Math.round(dutiable*0.18);
-  return `<div class="card fade-in"><div class="card-t">💰 Smart Money Guide</div>
+  return `${rBudgetBurn()}<div class="card fade-in"><div class="card-t">💰 Smart Money Guide</div>
     <div class="grid-2">
       <div class="converter-box"><div class="section-t">🧮 Tipping Calculator</div>
         <div class="fr"><div><label>Bill (USD)</label><input id="tip-bill" type="number" step="0.01" value="${esc(String(S.tip.bill||""))}" placeholder="e.g. 48.75"></div><div><label>Split by people</label><input id="tip-split" type="number" min="1" value="${S.tip.split||1}"></div></div>
@@ -1106,6 +1326,7 @@ function bMoney(){
   ["tip-bill","tip-split","customs-inr"].forEach(id=>{const el=document.getElementById(id);if(el)el.oninput=upd});
   const tr=document.getElementById("tip-round");if(tr)tr.onchange=upd;
   const ss=document.getElementById("state-search");if(ss)ss.oninput=()=>{S.stateSearch=ss.value;render()};
+  const db=document.getElementById("daily-budget");if(db)db.oninput=()=>{S.dailyBudgetUsd=db.value;render()};
 }
 
 function routeSvg(stops){
@@ -1220,7 +1441,11 @@ function rFlights(){return `<div class="card fade-in"><div class="card-t">✈️
 </div>`}
 
 function rVault(){
-  return `<div class="card fade-in"><div class="card-t">🔒 Document Vault (local encrypted storage)</div>
+  return `<div class="card fade-in"><div class="card-t">💾 Full Trip Data Backup</div>
+    <div class="tiny">Everything lives in your browser only (stops, expenses, reminders, vault). For a 40-day trip across many hotels, export a backup regularly so you never lose data if you switch phones or clear browser data.</div>
+    <div class="dl-bar" style="margin-top:10px"><button class="btn btn-p btn-s" id="btn-export-all">📥 Export Full Backup (.json)</button><label class="btn btn-g btn-s" style="cursor:pointer">📤 Restore from Backup<input type="file" id="btn-import-all" accept=".json" style="display:none"></label></div>
+  </div>
+  <div class="card fade-in"><div class="card-t">🔒 Document Vault (local encrypted storage)</div>
     <div class="tiny">Store passport, visa, I-94, insurance card photos securely in your browser. Reminder: photograph documents before travel.</div>
     <div class="fr" style="margin-top:10px"><div><label>Vault Password</label><input id="vault-pass" type="password" placeholder="Create or enter password"></div></div>
     <div class="dl-bar"><button class="btn btn-p btn-s" id="vault-unlock">${S.vaultUnlocked?'Re-lock / Re-open':'Unlock Vault'}</button><button class="btn btn-g btn-s" id="vault-clear">Delete vault</button></div>
@@ -1279,6 +1504,41 @@ function bVault(){
       w.document.write(`<img src="${data}" style="max-width:100%">`);
     }catch(e){alert("Wrong password or corrupted vault file.");}
   });
+  // Full backup export/import
+  const expBtn=document.getElementById("btn-export-all");
+  if(expBtn)expBtn.onclick=()=>{
+    const backup={version:1,exportedAt:new Date().toISOString(),trip:S.trip,stops:S.stops,expenses:S.expenses,customReminders:S.customReminders,vaultDocs:S.vaultDocs,dailyBudgetUsd:S.dailyBudgetUsd,expRate:S.expRate,tip:S.tip,customsInr:S.customsInr};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download=`TravelPilot_Backup_${(S.trip&&S.trip.name||"trip").replace(/\s+/g,"_")}_${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  };
+  const impInput=document.getElementById("btn-import-all");
+  if(impInput)impInput.onchange=(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      try{
+        const backup=JSON.parse(ev.target.result);
+        if(!confirm("This will replace your current trip data with the backup. Continue?"))return;
+        if(backup.trip)S.trip=backup.trip;
+        if(backup.stops)S.stops=backup.stops;
+        if(backup.expenses)S.expenses=backup.expenses;
+        if(backup.customReminders)S.customReminders=backup.customReminders;
+        if(backup.vaultDocs)S.vaultDocs=backup.vaultDocs;
+        if(backup.dailyBudgetUsd)S.dailyBudgetUsd=backup.dailyBudgetUsd;
+        if(backup.expRate)S.expRate=backup.expRate;
+        if(backup.tip)S.tip=backup.tip;
+        if(backup.customsInr)S.customsInr=backup.customsInr;
+        S.screen="main";
+        saveVault();saveExpenses();
+        alert("Backup restored successfully!");
+        render();
+      }catch(err){alert("Could not read backup file — it may be corrupted or not a TravelPilot backup.")}
+    };
+    reader.readAsText(file);
+  };
 }
 
 function toggleTheme(){S.theme=S.theme==="dark"?"light":"dark";applyTheme();render()}
@@ -1679,6 +1939,7 @@ function bMain(){
   if(S.tab==="shopping")bShopping();
   if(S.tab==="weather")bWeather();
   if(S.tab==="vault")bVault();
+  if(S.tab==="states")bStates();
 }
 
 function bPlan(){
@@ -1686,12 +1947,21 @@ function bPlan(){
   document.querySelectorAll("#purp-ch .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#purp-ch .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");purp=c.dataset.v});
   document.getElementById("btn-add").onclick=()=>{
     const city=document.getElementById("a-city").value.trim(),addr=document.getElementById("a-addr").value.trim(),arrive=document.getElementById("a-arr").value,depart=document.getElementById("a-dep").value,notes=document.getElementById("a-notes").value.trim();
+    const isHub=document.getElementById("a-hub").checked;
     if(!city||!arrive||!depart)return alert("Enter city, arrive & depart dates.");
     if(new Date(depart)<=new Date(arrive))return alert("Depart must be after arrive date.");
-    S.stops.push({id:genId(),city,addr,arrive,depart,purpose:purp,notes});render()};
+    if(isHub&&S.stops.filter(s=>s.isHub).length>=2)return alert("You can only have 2 hub cities max (e.g. one East, one West). Remove a hub first if you need to change it.");
+    S.stops.push({id:genId(),city,addr,arrive,depart,purpose:purp,notes,isHub});render()};
   document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
     const a=b.dataset.a,id=b.dataset.id;
     if(a==="rm"){S.stops=S.stops.filter(s=>s.id!==id)}
+    else if(a==="hub"){
+      const stop=S.stops.find(s=>s.id===id);
+      if(stop){
+        if(!stop.isHub&&S.stops.filter(s=>s.isHub).length>=2){alert("Max 2 hubs allowed. Unmark one first.");return}
+        stop.isHub=!stop.isHub;
+      }
+    }
     else{const idx=S.stops.findIndex(s=>s.id===id);const dir=a==="up"?-1:1;
       if((dir===-1&&idx===0)||(dir===1&&idx===S.stops.length-1))return;
       [S.stops[idx],S.stops[idx+dir]]=[S.stops[idx+dir],S.stops[idx]]}
